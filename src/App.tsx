@@ -106,7 +106,9 @@ function AppHeader({ page }: { page: Page }) {
         ? "Point & Ask"
         : page === "people"
           ? "My People"
-          : "Companion"
+          : page === "passport"
+            ? "Skill Passport"
+            : "Companion"
   return (
     <header className="app-header">
       <div className="brand">
@@ -114,7 +116,7 @@ function AppHeader({ page }: { page: Page }) {
           <Icon src={icons.logo} />
         </span>
         <span>
-          <b>COMPANION</b>
+          <b>Companion</b>
           <strong>{title}</strong>
         </span>
       </div>
@@ -137,20 +139,8 @@ function AppHeader({ page }: { page: Page }) {
     </header>
   )
 }
-function FlowBadge({ screen, name }: { screen: number name: string }) {
-  return (
-    <div className="flow-badge">
-      <span>
-        <i /> Flow 1 · Companion Hub
-      </span>
-      <b>
-        Screen {screen} of 3 ({name})
-      </b>
-    </div>
-  )
-}
-function BottomNav({ page, go }: { page: Page go: (page: Page) => void }) {
-  const items: { id: Page label: string icon: string }[] = [
+function BottomNav({ page, go }: { page: Page; go: (page: Page) => void }) {
+  const items: { id: Page; label: string; icon: string }[] = [
     { id: "home", label: "Home", icon: icons.home },
     { id: "point", label: "Point & Ask", icon: icons.point },
     { id: "passport", label: "Skill Passport", icon: icons.passport },
@@ -201,7 +191,6 @@ function BreathingCard() {
               ? "Breathe slowly with the circle"
               : "Take a calm breath"}
           </h3>
-          <span>Optional pause</span>
         </div>
         <p>
           {breathing
@@ -222,17 +211,6 @@ function BreathingCard() {
 function Home({ go }: { go: (page: Page) => void }) {
   return (
     <main className="page home-page">
-      <FlowBadge screen={1} name="Home" />
-      <div className="readiness">
-        <span>
-          <i />
-          Ready whenever you are
-        </span>
-        <button className="quiet-button" onClick={() => speak(pageCopy.home)}>
-          <Icon src={icons.sound} />
-          Listen
-        </button>
-      </div>
       <section className="greeting">
         <h1>Good morning, Maya.</h1>
         <p>How can I help you today?</p>
@@ -242,13 +220,12 @@ function Home({ go }: { go: (page: Page) => void }) {
           <div className="feature-top">
             <FeatureSticker kind="passport" />
             <div className="badge-row">
-              <span className="mint-badge">◎ 2/3 rings</span>
               <span className="slate-badge">
                 <i />3 tasks today
               </span>
             </div>
           </div>
-          <p className="eyebrow">SKILL PASSPORT</p>
+          <p className="eyebrow">Skill Passport</p>
           <h2>Practice My Skills</h2>
           <p>Today's schedule, step-by-step guides, and progress logs.</p>
           <button className="primary-button" onClick={() => go("passport")}>
@@ -258,9 +235,8 @@ function Home({ go }: { go: (page: Page) => void }) {
         <article className="feature-card">
           <div className="feature-top">
             <FeatureSticker kind="point" />
-            <span className="blue-badge">◉ Visual Help</span>
           </div>
-          <p className="eyebrow">POINT & ASK</p>
+          <p className="eyebrow">Point & Ask</p>
           <h2>Visual Help Anywhere</h2>
           <p>
             Point your camera at appliances, signs, labels, or counters for
@@ -316,21 +292,10 @@ function PointAsk({ go }: { go: (page: Page) => void }) {
   }
   return (
     <main className="page point-page">
-      <FlowBadge screen={2} name="Point & Ask" />
       <section className="screen-intro">
         <span className="slate-badge">✦ Visual Helper</span>
         <h1>Show me what you need help with.</h1>
         <p>Point at any appliance, transit sign, menu, button, or label.</p>
-      </section>
-      <section className="read-bar">
-        <span>
-          <Icon src={icons.sound} />
-          Need this screen read?
-        </span>
-        <button className="quiet-button" onClick={() => speak(pageCopy.point)}>
-          <Icon src={icons.sound} />
-          Listen
-        </button>
       </section>
       <section className="camera-card">
         <div className="viewfinder">
@@ -446,20 +411,12 @@ function Passport({ go }: { go: (page: Page) => void }) {
   const [highFive, setHighFive] = useState(false)
   return (
     <main className="page passport-page">
-      <FlowBadge screen={3} name="Skill Passport" />
       <section className="passport-banner">
         <span className="book-badge">▣</span>
         <span>
           <small>Skill Passport</small>
           <b>Today's Practice</b>
         </span>
-        <button
-          className="quiet-button"
-          onClick={() => speak(pageCopy.passport)}
-        >
-          <Icon src={icons.sound} />
-          Listen
-        </button>
       </section>
       <article className="routine-card">
         <div className="routine-photo">
@@ -493,7 +450,7 @@ function Passport({ go }: { go: (page: Page) => void }) {
           <div className="next-step">
             <span className="play">▶</span>
             <span>
-              <b>NEXT: NORMAL DIAL</b>
+              <b>Next: Normal dial</b>
               <p>Add 1 cup soap. Turn dial to Normal.</p>
             </span>
           </div>
@@ -543,7 +500,7 @@ function Passport({ go }: { go: (page: Page) => void }) {
       </section>
       <section className="monthly-summary-entry">
         <span>
-          <small>NOVEMBER 2024</small>
+          <small>November 2024</small>
           <h2>Monthly Summary</h2>
           <p>Review your routines, stamps, and progress.</p>
         </span>
@@ -551,12 +508,12 @@ function Passport({ go }: { go: (page: Page) => void }) {
       </section>
       <section className="credential-entry-grid">
         <button onClick={() => go("credential")}>
-          <span>OFFICIAL DOCUMENT</span>
+          <span>Official document</span>
           <b>Official Skill Passport</b>
           <small>View and export your verified credential.</small>
         </button>
         <button onClick={() => go("data-backup")}>
-          <span>LOCAL-FIRST</span>
+          <span>Local-first</span>
           <b>Backup Your Passport</b>
           <small>Save your progress to an offline file.</small>
         </button>
@@ -673,7 +630,7 @@ function Guidance({ go }: { go: (page: Page) => void }) {
         </aside>
         <div className="guidance-layout">
           <article className="instruction-card">
-            <p className="flow-label">INSTRUCTION</p>
+            <p className="flow-label">Instruction</p>
             <h1>Add one cup of soap. Close the soap drawer.</h1>
             <p>Pour detergent into compartment number 2.</p>
             <button
@@ -823,11 +780,11 @@ function Logging({ go }: { go: (page: Page) => void }) {
             </div>
           </section>
           <aside className="passport-preview">
-            <p className="flow-label">PASSPORT ENTRY PREVIEW</p>
+            <p className="flow-label">Passport entry preview</p>
             <div className="stamp-preview">
               <strong>
-                LEVEL {choice + 1}
-                <small>STAMP</small>
+                Level {choice + 1}
+                <small>Stamp</small>
               </strong>
               <span>
                 <b>Washing Machine Laundry</b>
@@ -982,7 +939,7 @@ function Celebration({ go }: { go: (page: Page) => void }) {
         <section className="celebration-grid">
           <article>
             <span>
-              <p className="flow-label">SKILL PASSPORT BALANCE</p>
+              <p className="flow-label">Skill Passport balance</p>
               <h2>14 Stamps</h2>
             </span>
             <img src={`${A}/6d93e.png`} alt="Laundry stamp preview" />
@@ -991,7 +948,7 @@ function Celebration({ go }: { go: (page: Page) => void }) {
           <article className="supporter-note">
             <img src={`${A}/1bb43.png`} alt="Coach Jordan" />
             <span>
-              <p className="flow-label">SUPPORTER NOTE</p>
+              <p className="flow-label">Supporter note</p>
               <h2>Coach Jordan</h2>
             </span>
             <blockquote>
@@ -1042,7 +999,7 @@ function CafeScan({ go }: { go: (page: Page) => void }) {
       />
       <main className="flow-main cafe-main">
         <div className="cafe-landmark">
-          <span>STEP 1 OF 4 · MEMORY-ONLY SCAN</span>
+          <span>Step 1 of 4 · Memory-only scan</span>
           <button onClick={() => speak(pageCopy.scan)}>
             <Icon src={icons.sound} />
             Read aloud
@@ -1147,7 +1104,7 @@ function CafeIdentify({ go }: { go: (page: Page) => void }) {
       />
       <main className="flow-main cafe-main">
         <div className="cafe-landmark">
-          <span>● CHECK-FIRST · 96% MATCH</span>
+          <span>● Check first · 96% match</span>
           <button onClick={() => speak(pageCopy.identify)}>
             <Icon src={icons.sound} />
             Read to me
@@ -1178,7 +1135,7 @@ function CafeIdentify({ go }: { go: (page: Page) => void }) {
           </button>
         </section>
         <section className="comparison-card">
-          <p className="flow-label">FAMILIAR MATCH</p>
+          <p className="flow-label">Familiar match</p>
           <div className="comparison-title">
             <h2>Comparing to your saved setup</h2>
             <span>Campus Café</span>
@@ -1218,7 +1175,7 @@ function CafeSteps({ go }: { go: (page: Page) => void }) {
       />
       <main className="flow-main cafe-main">
         <div className="cafe-landmark">
-          <span>● POINT & ASK GUIDANCE · SELF-PACED</span>
+          <span>● Point & Ask guidance · Self-paced</span>
           <b>Live AR</b>
         </div>
         <section className="cafe-step-counter">
@@ -1298,7 +1255,7 @@ function CafeComplete({ go }: { go: (page: Page) => void }) {
       />
       <main className="flow-main cafe-main">
         <div className="cafe-landmark">
-          <span>TASK COMPLETED · PASSPORT EXPANSION · SAFE STORAGE</span>
+          <span>Task completed · Passport expansion · Safe storage</span>
           <button onClick={() => speak(pageCopy.cafecomplete)}>
             <Icon src={icons.sound} />
             Read aloud
@@ -1306,7 +1263,7 @@ function CafeComplete({ go }: { go: (page: Page) => void }) {
         </div>
         <section className="cafe-done">
           <span className="done-badge">
-            ✓<b>DONE</b>
+            ✓<b>Done</b>
           </span>
           <h1>You did it, Maya!</h1>
           <p>Café order completed at Uptown Coffee.</p>
@@ -1407,7 +1364,7 @@ function MonthlySummary({ go }: { go: (page: Page) => void }) {
       />
       <main className="summary-main">
         <SummaryLandmark
-          label="MONTHLY SUMMARY · NOVEMBER 2024"
+          label="November 2024 summary"
           copy={pageCopy.summary}
         />
         <header className="summary-intro">
@@ -1533,7 +1490,7 @@ function SummaryEditor({ go }: { go: (page: Page) => void }) {
       />
       <main className="summary-main">
         <SummaryLandmark
-          label="SUMMARY EDITOR · PER-LINE EDITING"
+          label="Edit your summary"
           action="Read Aloud"
           copy={pageCopy["summary-editor"]}
         />
@@ -1548,7 +1505,7 @@ function SummaryEditor({ go }: { go: (page: Page) => void }) {
         </div>
         <section className="line-card">
           <header>
-            <span className="line-tag">AI DRAFT</span>
+            <span className="line-tag">AI draft</span>
             <small>Line 1</small>
           </header>
           {editingOne ? (
@@ -1571,7 +1528,7 @@ function SummaryEditor({ go }: { go: (page: Page) => void }) {
         </section>
         <section className="line-card active-line">
           <header>
-            <span className="line-tag active">CURRENTLY EDITING</span>
+            <span className="line-tag active">Currently editing</span>
             <small>Line 2</small>
           </header>
           <label htmlFor="line-two">Rewrite this line:</label>
@@ -1610,7 +1567,7 @@ function SummaryEditor({ go }: { go: (page: Page) => void }) {
         </section>
         <section className="line-card">
           <header>
-            <span className="line-tag edited">EDITED BY YOU</span>
+            <span className="line-tag edited">Edited by you</span>
             <small>Line 3</small>
           </header>
           {editingThree ? (
@@ -1685,7 +1642,7 @@ function PrivateSharing({ go }: { go: (page: Page) => void }) {
       />
       <main className="summary-main">
         <SummaryLandmark
-          label="PRIVATE SHARING · RECIPIENT CONTROL"
+          label="Share privately"
           copy={pageCopy["summary-sharing"]}
         />
         <header className="summary-intro">
@@ -1821,7 +1778,7 @@ function ActiveShares({ go }: { go: (page: Page) => void }) {
       />
       <main className="summary-main">
         <SummaryLandmark
-          label="SHARED LINKS · ACCESS MANAGEMENT"
+          label="Your shared links"
           action="Read"
           copy={pageCopy["summary-shares"]}
         />
@@ -2013,7 +1970,7 @@ function SupportersHub({ go }: { go: (page: Page) => void }) {
         <Flow5Landmark
           group="hub"
           icon="21ec9.svg"
-          label="MY PEOPLE · TRUSTED CIRCLE"
+          label="Your trusted people"
           action="Read"
           copy={pageCopy.supporters}
         />
@@ -2025,10 +1982,10 @@ function SupportersHub({ go }: { go: (page: Page) => void }) {
         <section className="reward-card">
           <header>
             <span className="reward-symbol" aria-hidden="true">
-              CUP
+              ☕
             </span>
             <span>
-              <small>REWARD GOAL</small>
+              <small>Reward goal</small>
               <h2>Coffee with Jordan</h2>
             </span>
             <b>1 stamp left!</b>
@@ -2081,7 +2038,7 @@ function SupportersHub({ go }: { go: (page: Page) => void }) {
               className="cheer-preview"
               onClick={() => go("cheer-detail")}
             >
-              <span aria-hidden="true">CHEER</span>
+              <span aria-hidden="true">Cheer</span>
               <span>
                 <b>“Proud of you”</b>
                 <small>On your Laundry routine today</small>
@@ -2202,7 +2159,7 @@ function AddSupporter({ go }: { go: (page: Page) => void }) {
         <Flow5Landmark
           group="add"
           icon="fc627.svg"
-          label="STEP 2 · SUPPORTER LINK"
+          label="Create a supporter link"
           action="Listen"
           copy={pageCopy["add-supporter"]}
         />
@@ -2364,7 +2321,7 @@ function CheerDetail({ go }: { go: (page: Page) => void }) {
         <Flow5Landmark
           group="cheer"
           icon="ee4c1.svg"
-          label="CHEER RECEIVED"
+          label="Cheer received"
           action="Read Aloud"
           copy={pageCopy["cheer-detail"]}
         />
@@ -2470,7 +2427,7 @@ function ConfirmerTap({ go }: { go: (page: Page) => void }) {
         <Flow5Landmark
           group="confirm"
           icon="dc66e.svg"
-          label="IN-PERSON VERIFICATION"
+          label="Confirm in person"
           action="Listen"
           copy={pageCopy.confirmer}
           darkAction
@@ -2710,7 +2667,7 @@ function makeCredentialPdf(
   includePrivateNotes = false,
 ) {
   const lines = [
-    "COMPANION - OFFICIAL SKILL PASSPORT",
+    "Companion - Official Skill Passport",
     "Maya Lin - Member ID FP-2024-884",
     "Issued by First Place AZ - November 2024",
     "14 verified stamps - 4 life domains - 100% mastery",
@@ -2831,25 +2788,25 @@ async function downloadPassportBackup() {
 }
 const credentialSkills = [
   {
-    domain: "HOUSEHOLD",
+    domain: "Household",
     title: "Washing Machine Laundry",
     copy: "Validated across 3 separate home laundry setups.",
     icon: "9476d.svg",
   },
   {
-    domain: "NUTRITION",
+    domain: "Nutrition",
     title: "Stovetop Warm Meal & Pasta",
     copy: "Safely completed burner controls and drainage.",
     icon: "6761f.svg",
   },
   {
-    domain: "MOBILITY",
+    domain: "Mobility",
     title: "Light Rail Public Transit",
     copy: "Boarding, card tap, and destination transfer.",
     icon: "10d95.svg",
   },
   {
-    domain: "COMMERCE",
+    domain: "Commerce",
     title: "Grocery Store & Touchscreen Kiosk",
     copy: "Self-scan checkout, bagging, and receipt checks.",
     icon: "9e7fd.svg",
@@ -2892,7 +2849,7 @@ function CredentialPreview({ go }: { go: (page: Page) => void }) {
         <Flow6Landmark
           group="credential"
           icon="43bc6.svg"
-          label="PRINTABLE PASSPORT · OFFICIAL CREDENTIAL · PDF EXPORT"
+          label="Your official Skill Passport"
           copy={pageCopy.credential}
         />
         <header className="flow6-intro">
@@ -2906,12 +2863,12 @@ function CredentialPreview({ go }: { go: (page: Page) => void }) {
               <Flow6Asset group="credential" file="7a70b.svg" />
             </span>
             <span>
-              <small>COMPANION · CREDENTIAL</small>
+              <small>Companion · Credential</small>
               <b>Independent Living Passport</b>
             </span>
             <strong>
               <Flow6Asset group="credential" file="463eb.svg" />
-              VERIFIED
+              Verified
             </strong>
           </header>
           <section className="candidate-record">
@@ -2926,7 +2883,7 @@ function CredentialPreview({ go }: { go: (page: Page) => void }) {
               <span>
                 <Flow6Asset group="credential" file="45fcc.svg" />
               </span>
-              <b>SCAN TO VERIFY</b>
+              <b>Scan to verify</b>
               <small>Offline verification</small>
             </div>
           </section>
@@ -2984,13 +2941,13 @@ function CredentialPreview({ go }: { go: (page: Page) => void }) {
               <Flow6Asset group="credential" file="f0ef9.svg" />
             </span>
             <span>
-              <small>ATTESTATION</small>
+              <small>Attestation</small>
               <b>Coach Sarah Martinez</b>
               <p>Staff Lead, First Place Transition Academy</p>
             </span>
             <strong>
               <Flow6Asset group="credential" file="4caf8.svg" />
-              PASSPORT VERIFIED
+              Passport verified
             </strong>
           </footer>
         </article>
@@ -3077,7 +3034,7 @@ function CredentialExport({ go }: { go: (page: Page) => void }) {
       <main className="flow6-main">
         <Flow6Landmark
           group="export"
-          label="DOCUMENT SETUP · PRINT & PDF"
+          label="Print or save as PDF"
           copy={pageCopy["credential-export"]}
         />
         <header className="flow6-intro">
@@ -3215,7 +3172,7 @@ function DataBackup({ go }: { go: (page: Page) => void }) {
       <main className="flow6-main">
         <Flow6Landmark
           group="backup"
-          label="LOCAL-FIRST STORAGE · BACKUP & RECOVERY"
+          label="Back up your data"
           copy={pageCopy["data-backup"]}
         />
         <header className="flow6-intro">
@@ -3413,7 +3370,7 @@ function StorageControl({ go }: { go: (page: Page) => void }) {
         <Flow6Landmark
           group="storage"
           icon="a012d.svg"
-          label="DATA OWNERSHIP · PER-ITEM MANAGEMENT"
+          label="Manage your data"
           copy={pageCopy["storage-control"]}
         />
         <header className="flow6-intro storage-intro">
@@ -3668,7 +3625,7 @@ function SafetyBlock({ go }: { go: (page: Page) => void }) {
             <Flow7Asset group="block" file="0b19f.svg" />
           </span>
           <span>
-            <b>SAFETY GUARDRAIL</b>
+            <b>Safety guardrail</b>
             <small>Automatic safety rule active</small>
           </span>
           <button
@@ -3693,7 +3650,7 @@ function SafetyBlock({ go }: { go: (page: Page) => void }) {
           />
           <figcaption className="blocked-badge">
             <Flow7Asset group="block" file="d132b.svg" />
-            SAFETY BLOCKED TOPIC (R14.5)
+            Blocked for your safety
           </figcaption>
           <span className="detection-card">
             <span className="flow7-round-icon">
@@ -3778,7 +3735,7 @@ function PhotoConfirmation({ go }: { go: (page: Page) => void }) {
       <main className="flow7-main">
         <div className="flow7-progress">
           <span>
-            <i /> STAFF HANDOFF · STEP 2 OF 2
+            <i /> Staff handoff · Step 2 of 2
           </span>
           <b>Photo Check</b>
         </div>
@@ -3849,7 +3806,7 @@ function PhotoConfirmation({ go }: { go: (page: Page) => void }) {
         )}
         <section className="message-preview">
           <header>
-            <b>MESSAGE PREVIEW</b>
+            <b>Message preview</b>
             <span>Local preview</span>
           </header>
           <div className="coach-recipient">
@@ -3921,7 +3878,7 @@ function CoachStandby({ go }: { go: (page: Page) => void }) {
       <main className="flow7-main">
         <div className="flow7-live">
           <span>
-            <i /> LIVE SUPPORT · COACH NOTIFIED
+            <i /> Live support · Coach notified
           </span>
           <button onClick={() => speak(pageCopy["coach-standby"])}>
             <Flow7Asset group="standby" file="dc99e.svg" /> Listen
@@ -4073,8 +4030,8 @@ function SafeAlternatives({ go }: { go: (page: Page) => void }) {
         <section className="alternatives-banner">
           <header>
             <span>
-              <Flow7Asset group="alternatives" file="b57b7.svg" /> SAFE
-              ALTERNATIVES · ZERO PRESSURE
+              <Flow7Asset group="alternatives" file="b57b7.svg" /> Safe
+              alternatives · Zero pressure
             </span>
             <button onClick={() => speak(pageCopy["safe-alternatives"])}>
               <Flow7Asset group="alternatives" file="1af84.svg" /> Listen
@@ -4304,7 +4261,7 @@ function VoiceLogInput({
         <Flow8Landmark
           group="input"
           icon="f8f4c.svg"
-          label="VOICE & TEXT · FREE-FORM LOGGING"
+          label="Tell us what you did"
           copy={pageCopy["voice-log"]}
         />
         <header className="flow8-intro">
@@ -4416,7 +4373,7 @@ function SkillMapping({
       <main className="flow8-main">
         <Flow8Landmark
           group="mapping"
-          label="AI SKILL MAPPING · AUTO MATCH"
+          label="Matching your skills"
           copy={pageCopy["skill-mapping"]}
         />
         <header className="flow8-intro">
@@ -4441,7 +4398,7 @@ function SkillMapping({
         </section>
         <section className="matched-skill">
           <header>
-            <span>MOBILITY · COMMUNITY TRANSIT</span>
+            <span>Mobility · Community transit</span>
             <b>
               <i />
               96% Verified Match
@@ -4494,7 +4451,7 @@ function SkillMapping({
             ☕
           </span>
           <p>
-            <b>STAMP GOAL PROGRESS</b>
+            <b>Stamp goal progress</b>
             <strong>This log earns your 15th stamp!</strong>
             You will unlock your Coffee with Jordan reward goal.
           </p>
@@ -4542,7 +4499,7 @@ function SkillClarification({ go }: { go: (page: Page) => void }) {
       <main className="flow8-main">
         <Flow8Landmark
           group="clarification"
-          label="CLARIFICATION · ONE SIMPLE QUESTION"
+          label="One quick question"
           copy={pageCopy["skill-clarification"]}
           warning
         />
@@ -4675,7 +4632,7 @@ function VoiceLogConfirmed({ go }: { go: (page: Page) => void }) {
         <Flow8Landmark
           group="confirmed"
           icon="fe87c.svg"
-          label="VOICE LOG SAVED · REWARD UNLOCKED"
+          label="Log saved"
           copy={pageCopy["voice-confirmed"]}
         />
         {saved ? (
@@ -4706,7 +4663,7 @@ function VoiceLogConfirmed({ go }: { go: (page: Page) => void }) {
                 </span>
                 <div>
                   <small>Goal Complete · 15 of 15 Stamps</small>
-                  <h2>REWARD UNLOCKED: Coffee with Jordan!</h2>
+                  <h2>Reward unlocked: Coffee with Jordan!</h2>
                 </div>
               </header>
               <p>
@@ -4722,7 +4679,7 @@ function VoiceLogConfirmed({ go }: { go: (page: Page) => void }) {
             </section>
             <section className="saved-entry">
               <header>
-                <b>SAVED ENTRY DETAILS</b>
+                <b>Saved entry details</b>
                 <span>
                   <Flow8Asset group="confirmed" file="4f6b0.svg" />
                   Verified Log
@@ -4893,7 +4850,10 @@ export default function App() {
   ].includes(page)
   const go = (next: Page) => {
     setPage(next)
-    window.scrollTo({ top: 0, behavior: "smooth" })
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches
+    window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" })
   }
   return (
     <div className="app-shell">

@@ -1,6 +1,7 @@
 import { defineConfig, type HtmlTagDescriptor, type Plugin } from "vite"
 import react from "@vitejs/plugin-react"
 import tailwindcss from "@tailwindcss/vite"
+import { VitePWA } from "vite-plugin-pwa"
 import fs from "node:fs"
 import path from "node:path"
 
@@ -27,6 +28,20 @@ export default defineConfig(({ mode }) => {
       figmaReactRefreshBoundaryFallback(),
       figmaMakeKitPlugin({ storiesGlob: "/src/**/*.stories.{ts,tsx,js,jsx}" }),
       figmaLinkedPackageSourcemaps(),
+      // Offline support and calm, user-confirmed updates (see src/UpdateBanner.tsx).
+      // Off for development-mode builds so Figma's cached previews never get a service worker.
+      VitePWA({
+        disable: emitSourcemaps,
+        registerType: "prompt",
+        injectRegister: false,
+        manifest: false, // public/manifest.webmanifest is the source of truth
+        workbox: {
+          globPatterns: ["**/*.{js,css,html,svg,png,woff2,webmanifest,ico}"],
+          navigateFallback: "index.html",
+          cleanupOutdatedCaches: true,
+          maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
+        },
+      }),
     ],
     resolve: {
       alias: {
