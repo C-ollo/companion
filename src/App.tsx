@@ -3722,9 +3722,6 @@ function SafetyBlock({ go }: { go: (page: Page) => void }) {
             Stoves, ovens, heaters, and medication need a support person
             present. This rule keeps you safe.
           </p>
-          <b>
-            <i /> Coach Sarah is on standby at First Place
-          </b>
         </aside>
         <Flow7Actions>
           <button onClick={() => go("point")}>
