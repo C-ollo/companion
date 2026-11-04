@@ -241,9 +241,6 @@ function Home({ go }: { go: (page: Page) => void }) {
             <i className="corner tr" aria-hidden="true" />
             <i className="corner bl" aria-hidden="true" />
             <i className="corner br" aria-hidden="true" />
-            <span className="feature-camera-orb" aria-hidden="true">
-              <Icon src={icons.camera} />
-            </span>
             <figcaption>Aim camera at any confusing item</figcaption>
           </figure>
           <p className="eyebrow feature-heading">Point & Ask</p>
