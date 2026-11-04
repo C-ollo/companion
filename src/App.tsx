@@ -24,7 +24,7 @@ const pageCopy: Record<Page, string> = {
   point:
     "Point and Ask. Show me what you need help with. Point at any appliance, transit sign, menu, button, or label. Photos are never saved.",
   passport:
-    "Skill Passport. Today's practice is Washing Machine Laundry. Your next step is to add one cup of soap and turn the dial to Normal.",
+    "Skill Passport. You have three practice choices today: Washing Machine Laundry, Café Self-Order, and Warm Food Safely. Choose the skill you want to practice.",
   people:
     "My People. Your private support network. Coach Marcus is on standby, and Jordan sent you a cheer.",
   guidance:
@@ -436,8 +436,54 @@ const practices = [
   ["Light Rail Route", "Transit", "Tuesday", "rail"],
   ["Grocery List", "Shopping", "Monday", "list"],
 ]
+const todaysPractices: {
+  title: string
+  description: string
+  image: string
+  imageAlt: string
+  duration: string
+  sticker: string
+  page: Page
+}[] = [
+  {
+    title: "Washing Machine Laundry",
+    description: "Wash towels and t-shirts.",
+    image: `${A}/b942e.png`,
+    imageAlt: "A calm residential laundry room with front-loading machines",
+    duration: "15 min",
+    sticker: "washer",
+    page: "guidance",
+  },
+  {
+    title: "Café Self-Order",
+    description: "Practice ordering a drink at a touchscreen.",
+    image: `${A}/83e74.png`,
+    imageAlt: "A self-order touchscreen inside a café",
+    duration: "10 min",
+    sticker: "menu",
+    page: "scan",
+  },
+  {
+    title: "Warm Food Safely",
+    description: "Practice choosing a safe way to warm a meal.",
+    image: `${A}/dd509.png`,
+    imageAlt: "A kitchen counter with a toaster, kettle, and other appliances",
+    duration: "8 min",
+    sticker: "dial",
+    page: "safe-alternatives",
+  },
+]
 function Passport({ go }: { go: (page: Page) => void }) {
   const [highFive, setHighFive] = useState(false)
+  const [practiceIndex, setPracticeIndex] = useState(0)
+  const practice = todaysPractices[practiceIndex]
+  const showPreviousPractice = () =>
+    setPracticeIndex(
+      (practiceIndex - 1 + todaysPractices.length) % todaysPractices.length,
+    )
+  const showNextPractice = () =>
+    setPracticeIndex((practiceIndex + 1) % todaysPractices.length)
+
   return (
     <main className="page passport-page">
       <section className="passport-banner">
@@ -447,62 +493,82 @@ function Passport({ go }: { go: (page: Page) => void }) {
           <b>Today's Practice</b>
         </span>
       </section>
-      <article className="routine-card">
-        <div className="routine-photo">
-          <img
-            src={`${A}/b942e.png`}
-            alt="A calm residential laundry room with front-loading machines"
-          />
-          <span className="duration">◷ 15 min</span>
-          <span className="up-next">Up Next</span>
+      <section
+        className="routine-carousel"
+        aria-label="Today's practice choices"
+        aria-roledescription="carousel"
+      >
+        <div className="routine-carousel-heading">
+          <span>
+            <h1>Choose a skill to practice</h1>
+            <p>You have {todaysPractices.length} options today.</p>
+          </span>
+          <strong>
+            {practiceIndex + 1} of {todaysPractices.length}
+          </strong>
         </div>
-        <div className="routine-body">
-          <div className="routine-title">
-            <span className="category-sticker washer">
-              <i />
-            </span>
-            <span>
-              <h1>Washing Machine Laundry</h1>
-              <p>Wash towels and t-shirts.</p>
-            </span>
+        <article className="routine-card" aria-live="polite">
+          <div className="routine-photo">
+            <img src={practice.image} alt={practice.imageAlt} />
+            <span className="duration">◷ {practice.duration}</span>
           </div>
-          <div className="level-card">
-            <span className="level-ring">
-              <Icon src={icons.levelRing} />
-            </span>
-            <span>
-              <b>With a prompt</b>
-              <small>Independence Level 2 of 3</small>
-            </span>
-            <strong>◉ Level 2</strong>
+          <div className="routine-body">
+            <div className="routine-title">
+              <span className={`category-sticker ${practice.sticker}`}>
+                <i />
+              </span>
+              <span>
+                <h2>{practice.title}</h2>
+                <p>{practice.description}</p>
+              </span>
+            </div>
+            <div className="level-card">
+              <span className="level-ring">
+                <Icon src={icons.levelRing} />
+              </span>
+              <b>Independence Level 2 of 3</b>
+              <strong>◉ Level 2</strong>
+            </div>
+            <button
+              className="primary-button centered"
+              onClick={() => go(practice.page)}
+            >
+              Start Steps →
+            </button>
           </div>
-          <div className="next-step">
-            <span className="play">▶</span>
-            <span>
-              <b>Next: Normal dial</b>
-              <p>Add 1 cup soap. Turn dial to Normal.</p>
-            </span>
+        </article>
+        <div className="carousel-controls">
+          <button onClick={showPreviousPractice} aria-label="Previous skill">
+            ← <span>Previous</span>
+          </button>
+          <div className="carousel-dots" aria-label="Choose a skill">
+            {todaysPractices.map((item, index) => (
+              <button
+                className={practiceIndex === index ? "active" : ""}
+                key={item.title}
+                onClick={() => setPracticeIndex(index)}
+                aria-label={`Show ${item.title}`}
+                aria-current={practiceIndex === index ? true : undefined}
+              />
+            ))}
           </div>
-          <button
-            className="primary-button centered"
-            onClick={() => go("guidance")}
-          >
-            Start Steps →
+          <button onClick={showNextPractice} aria-label="Next skill">
+            <span>Next</span> →
           </button>
         </div>
-      </article>
+      </section>
       <section className="ring-legend" aria-label="Independence level legend">
         <span>
           <i className="rings one" />
-          1. With help
+          Level 1
         </span>
         <span className="selected">
           <i className="rings two" />
-          2. With prompt
+          Level 2
         </span>
         <span>
           <i className="rings three" />
-          3. Mastered
+          Level 3
         </span>
       </section>
       <section className="recent-section">
