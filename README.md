@@ -29,7 +29,7 @@ carry over when the environment, tools, or context change. See
 
 | Path | What it is |
 |---|---|
-| `apps/mobile` | Expo (React Native) app: iOS, Android and web from one codebase |
+| `apps/mobile` | Expo (React Native) app: iOS, Android and web from one codebase (coming once the UI design is final) |
 | `packages/shared` | Shared TypeScript types, the starter skill library, and level/stamp rules |
 | `services/api` | AWS Lambda handlers that call Claude on Amazon Bedrock |
 | `infra` | AWS CDK stack: HTTP API, Lambda functions, DynamoDB for share links |
@@ -60,9 +60,45 @@ Requires Node 20+, npm, and (for the backend) an AWS account with Bedrock access
 ```bash
 npm install
 cp .env.example .env   # fill in values
+npm test               # unit tests (no AWS calls)
 ```
 
-Per-package instructions are in each folder's README as they're added.
+### Backend (AWS CDK)
+
+You need AWS credentials for the target account, with model access enabled in Bedrock for
+Claude Opus 5.5 (`anthropic.claude-opus-5-5`) in `us-east-1`.
+
+```bash
+cd infra
+npx cdk bootstrap      # once per account and region
+npx cdk diff           # see what will be created
+npx cdk deploy         # prints ApiUrl; put it in EXPO_PUBLIC_API_URL
+npx cdk destroy        # remove everything
+```
+
+The stack creates an HTTP API (rate-limited, since there's no sign-in yet), seven Lambda
+functions, and one DynamoDB table for share links.
+
+**Live model test** (costs a fraction of a cent):
+
+```bash
+cd services/api
+RUN_BEDROCK_TESTS=1 AWS_REGION=us-east-1 npx vitest run log-parse.bedrock
+```
+
+### API
+
+| Route | Does |
+|---|---|
+| `POST /log/parse` | `{ text, level?, passport[] }` → skill, support level, confidence, reply, next skill |
+| `POST /point-ask` | `{ imageBase64, goal, knownSkills[] }` → what it sees, same/different, steps (or "not sure") |
+| `POST /check-step` | `{ imageBase64, action, done_when }` → `done` / `not_yet` / `not_sure`, what it sees, tip |
+| `POST /summary` | `{ month, logs[] }` → did, getting stronger, new places, ideas for next month |
+| `POST /share` | `{ recipients[], snapshot }` → `{ id, deleteToken }` |
+| `GET /share/{id}` | Read-only shared snapshot |
+| `DELETE /share/{id}` | Stop sharing (header `x-delete-token`) |
+
+Request and response shapes are in `packages/shared/src/ai-schemas.ts`.
 
 ## Team
 
