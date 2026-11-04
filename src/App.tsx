@@ -235,6 +235,27 @@ function Home({ go }: { go: (page: Page) => void }) {
           <div
             className="feature-image-placeholder"
             role="img"
+            aria-label="Point and Ask image placeholder"
+          >
+            <span>Point &amp; Ask image</span>
+          </div>
+          <p className="eyebrow feature-heading">Point & Ask</p>
+          <h2 className="feature-tagline">Visual Help Anywhere</h2>
+          <p>
+            Point your camera at appliances, signs, labels, or counters for
+            instant guidance.
+          </p>
+          <button
+            className="outline-button home-point-action"
+            onClick={() => go("point")}
+          >
+            Open Point & Ask Camera
+          </button>
+        </article>
+        <article className="feature-card">
+          <div
+            className="feature-image-placeholder"
+            role="img"
             aria-label="Skill Passport image placeholder"
           >
             <span>Skill Passport image</span>
@@ -254,27 +275,6 @@ function Home({ go }: { go: (page: Page) => void }) {
             onClick={() => go("passport")}
           >
             Open Skill Passport
-          </button>
-        </article>
-        <article className="feature-card">
-          <div
-            className="feature-image-placeholder"
-            role="img"
-            aria-label="Point and Ask image placeholder"
-          >
-            <span>Point &amp; Ask image</span>
-          </div>
-          <p className="eyebrow feature-heading">Point & Ask</p>
-          <h2 className="feature-tagline">Visual Help Anywhere</h2>
-          <p>
-            Point your camera at appliances, signs, labels, or counters for
-            instant guidance.
-          </p>
-          <button
-            className="outline-button home-point-action"
-            onClick={() => go("point")}
-          >
-            Open Point & Ask Camera
           </button>
         </article>
       </section>
