@@ -1,0 +1,67 @@
+:root {
+  /* Brand and actions */
+  --color-brand: #133326;
+  --color-brand-deep: #0c412d;
+  --color-brand-hover: #1b4332;
+  --color-mint: #b9eed1;
+  --color-mint-soft: #eefdf3;
+
+  /* Text */
+  --color-ink: #0f172a;
+  --color-ink-muted: #334155;
+  --color-ink-subtle: #475569;
+
+  /* Surfaces */
+  --color-canvas: #f6f9ff;
+  --color-canvas-flow: #f8f9ff;
+  --color-paper: #ffffff;
+  --color-neutral-soft: #e7eff8;
+  --color-blue-soft: #eff4fe;
+  --color-blue-mist: #ecf4fe;
+
+  /* Structure and feedback */
+  --color-border: #d3dbe4;
+  --color-border-soft: #cedfd4;
+  --color-focus: #f5bd43;
+  --color-info: #245c78;
+  --color-warning: #9a611f;
+  --color-danger: #9a3535;
+
+  /* Type */
+  --font-brand: 'Nova Square:Book';
+  --font-body: 'Public Sans:Regular', 'Public Sans', Arial, sans-serif;
+  --font-medium: 'Public Sans:SemiBold', 'Public Sans', Arial, sans-serif;
+  --font-strong: 'Public Sans:Bold', 'Public Sans', Arial, sans-serif;
+
+  /* Space */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+
+  /* Shape */
+  --radius-small: 8px;
+  --radius-medium: 12px;
+  --radius-large: 16px;
+  --radius-round: 50%;
+  --radius-pill: 999px;
+
+  /* Elevation */
+  --shadow-subtle: 0 1px 2px #0000000d;
+  --shadow-raised: 0 4px 12px #0000001a;
+  --shadow-overlay: 0 8px 24px #0f172a1f;
+
+  /* Layout */
+  --content-compact: 620px;
+  --content-standard: 920px;
+  --content-wide: 1120px;
+  --control-min-height: 48px;
+
+  /* User-triggered feedback */
+  --duration-feedback: 140ms;
+  --duration-reveal: 220ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+}
