@@ -111,7 +111,7 @@ function AppHeader({ page }: { page: Page }) {
           />
         </span>
         <span>
-          <b className="brand-wordmark">COMPANION</b>
+          <b className="brand-wordmark">Companion</b>
         </span>
       </div>
       <div className="header-actions">
@@ -133,8 +133,8 @@ function AppHeader({ page }: { page: Page }) {
     </header>
   )
 }
-function BottomNav({ page, go }: { page: Page go: (page: Page) => void }) {
-  const items: { id: Page label: string icon: string }[] = [
+function BottomNav({ page, go }: { page: Page; go: (page: Page) => void }) {
+  const items: { id: Page; label: string; icon: string }[] = [
     { id: "home", label: "Home", icon: icons.home },
     { id: "point", label: "Point & Ask", icon: icons.point },
     { id: "passport", label: "Skill Passport", icon: icons.passport },
