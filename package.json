@@ -5,8 +5,7 @@
   "workspaces": [
     "apps/*",
     "packages/*",
-    "services/*",
-    "infra"
+    "services/*"
   ],
   "scripts": {
     "test": "npm run test --workspaces --if-present",
