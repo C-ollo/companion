@@ -1,11 +1,11 @@
 {
-  "name": "Alongside — Daily Visual Guidance",
-  "short_name": "Alongside",
+  "name": "Companion — Daily Visual Guidance",
+  "short_name": "Companion",
   "description": "Calm visual guidance, daily skill practice, and trusted support.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f6f9ff",
   "theme_color": "#133326",
   "orientation": "portrait-primary",
-  "icons": [{"src": "/assets/b1c1e.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any"}]
+  "icons": [{"src": "/assets/companion-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any"}]
 }

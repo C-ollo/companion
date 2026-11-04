@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react"
 type Page = "home" | "point" | "passport" | "people" | "guidance" | "logging" | "celebration" | "scan" | "identify" | "cafesteps" | "cafecomplete" | "summary" | "summary-editor" | "summary-sharing" | "summary-shares" | "supporters" | "add-supporter" | "cheer-detail" | "confirmer" | "credential" | "credential-export" | "data-backup" | "storage-control" | "safety-block" | "photo-confirmation" | "coach-standby" | "safe-alternatives" | "voice-log" | "skill-mapping" | "skill-clarification" | "voice-confirmed"
 const A = "/assets"
 const icons = {
-  logo: `${A}/b1c1e.svg`,
+  logo: `${A}/companion-logo.svg`,
   sound: `${A}/8b506.svg`,
   profile: `${A}/59e02.svg`,
   home: `${A}/f6436.svg`,
@@ -106,7 +106,7 @@ function AppHeader({ page }: { page: Page }) {
         ? "Point & Ask"
         : page === "people"
           ? "My People"
-          : "Alongside"
+          : "Companion"
   return (
     <header className="app-header">
       <div className="brand">
@@ -114,7 +114,7 @@ function AppHeader({ page }: { page: Page }) {
           <Icon src={icons.logo} />
         </span>
         <span>
-          <b>ALONGSIDE</b>
+          <b>COMPANION</b>
           <strong>{title}</strong>
         </span>
       </div>
@@ -141,7 +141,7 @@ function FlowBadge({ screen, name }: { screen: number name: string }) {
   return (
     <div className="flow-badge">
       <span>
-        <i /> Flow 1 · Alongside Hub
+        <i /> Flow 1 · Companion Hub
       </span>
       <b>
         Screen {screen} of 3 ({name})
@@ -2710,7 +2710,7 @@ function makeCredentialPdf(
   includePrivateNotes = false,
 ) {
   const lines = [
-    "ALONGSIDE - OFFICIAL SKILL PASSPORT",
+    "COMPANION - OFFICIAL SKILL PASSPORT",
     "Maya Lin - Member ID FP-2024-884",
     "Issued by First Place AZ - November 2024",
     "14 verified stamps - 4 life domains - 100% mastery",
@@ -2765,7 +2765,7 @@ function makeCredentialPdf(
   return new Blob([pdf], { type: "application/pdf" })
 }
 const passportBackup = {
-  app: "Alongside",
+  app: "Companion",
   version: 1,
   member: { name: "Maya Lin", id: "FP-2024-884" },
   logs: 18,
@@ -2796,7 +2796,7 @@ async function createBackupEnvelope() {
   )
   const rawKey = await crypto.subtle.exportKey("raw", key)
   return {
-    app: "Alongside",
+    app: "Companion",
     version: 1,
     format: "AES-GCM",
     key: bytesToBase64(new Uint8Array(rawKey)),
@@ -2826,7 +2826,7 @@ async function downloadPassportBackup() {
     new Blob([JSON.stringify(backup, null, 2)], {
       type: "application/json",
     }),
-    "alongside-passport-backup.json",
+    "companion-passport-backup.json",
   )
 }
 const credentialSkills = [
@@ -2860,7 +2860,7 @@ function CredentialPreview({ go }: { go: (page: Page) => void }) {
   const shareCredential = async () => {
     const shareData = {
       title: "Maya Lin’s Official Skill Passport",
-      text: "View Maya Lin’s verified Alongside credential.",
+      text: "View Maya Lin’s verified Companion credential.",
       url: window.location.href,
     }
     if (navigator.share) {
@@ -2906,7 +2906,7 @@ function CredentialPreview({ go }: { go: (page: Page) => void }) {
               <Flow6Asset group="credential" file="7a70b.svg" />
             </span>
             <span>
-              <small>ALONGSIDE · CREDENTIAL</small>
+              <small>COMPANION · CREDENTIAL</small>
               <b>Independent Living Passport</b>
             </span>
             <strong>
@@ -3195,11 +3195,13 @@ function DataBackup({ go }: { go: (page: Page) => void }) {
     if (!file) return
     try {
       const data = await readBackupEnvelope(JSON.parse(await file.text()))
-      if (data.app !== "Alongside") throw new Error("Invalid backup")
-      localStorage.setItem("alongside-passport-backup", JSON.stringify(data))
+      // Backups made before the rename say "Alongside"; keep accepting them.
+      if (data.app !== "Companion" && data.app !== "Alongside")
+        throw new Error("Invalid backup")
+      localStorage.setItem("companion-passport-backup", JSON.stringify(data))
       setRestoreStatus(`Backup restored for ${data.member?.name || "Maya"}.`)
     } catch {
-      setRestoreStatus("This file is not a valid Alongside backup.")
+      setRestoreStatus("This file is not a valid Companion backup.")
     }
   }
   return (
@@ -3357,7 +3359,7 @@ function StorageControl({ go }: { go: (page: Page) => void }) {
   const [dataCleared, setDataCleared] = useState(false)
   const [undo, setUndo] = useState<StorageUndo>(null)
   useEffect(() => {
-    const saved = localStorage.getItem("alongside-storage-state")
+    const saved = localStorage.getItem("companion-storage-state")
     if (!saved) return
     try {
       const state = JSON.parse(saved)
@@ -3365,12 +3367,12 @@ function StorageControl({ go }: { go: (page: Page) => void }) {
       setShareActive(state.shareActive !== false)
       setDataCleared(state.dataCleared === true)
     } catch {
-      localStorage.removeItem("alongside-storage-state")
+      localStorage.removeItem("companion-storage-state")
     }
   }, [])
   useEffect(() => {
     localStorage.setItem(
-      "alongside-storage-state",
+      "companion-storage-state",
       JSON.stringify({ profilesActive, shareActive, dataCleared }),
     )
   }, [profilesActive, shareActive, dataCleared])
@@ -3382,7 +3384,7 @@ function StorageControl({ go }: { go: (page: Page) => void }) {
         ],
         { type: "text/csv" },
       ),
-      "alongside-routine-logs.csv",
+      "companion-routine-logs.csv",
     )
   const restore = () => {
     if (undo === "profiles") setProfilesActive(true)
@@ -3392,7 +3394,7 @@ function StorageControl({ go }: { go: (page: Page) => void }) {
       setShareActive(true)
       setDataCleared(false)
       localStorage.setItem(
-        "alongside-passport-backup",
+        "companion-passport-backup",
         JSON.stringify(passportBackup),
       )
     }
@@ -3569,7 +3571,7 @@ function StorageControl({ go }: { go: (page: Page) => void }) {
                 setClearReady(true)
                 return
               }
-              localStorage.removeItem("alongside-passport-backup")
+              localStorage.removeItem("companion-passport-backup")
               setProfilesActive(false)
               setShareActive(false)
               setDataCleared(true)

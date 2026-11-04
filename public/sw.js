@@ -1,5 +1,5 @@
-const CACHE = "alongside-v1"
-const CORE = ["/", "/manifest.webmanifest", "/assets/b1c1e.svg"]
+const CACHE = "companion-v1"
+const CORE = ["/", "/manifest.webmanifest", "/assets/companion-icon.svg", "/assets/companion-logo.svg"]
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(CORE)))
   self.skipWaiting()
