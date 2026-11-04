@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+*.tsbuildinfo
+
+# Expo
+.expo/
+web-build/
+expo-env.d.ts
+
+# CDK
+cdk.out/
+infra/cdk.context.json
+
+# Environment and secrets (never commit real keys)
+.env
+.env.*
+!.env.example
+
+# OS and editors
+.DS_Store
+.vscode/
+.idea/
+
+# Logs
+npm-debug.log*
+*.log
