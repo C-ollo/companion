@@ -232,6 +232,13 @@ function Home({ go }: { go: (page: Page) => void }) {
       </section>
       <section className="feature-grid" aria-label="Primary choices">
         <article className="feature-card">
+          <div
+            className="feature-image-placeholder"
+            role="img"
+            aria-label="Skill Passport image placeholder"
+          >
+            <span>Skill Passport image</span>
+          </div>
           <p className="eyebrow feature-heading">Skill Passport</p>
           <h2 className="feature-tagline">Practice My Skills</h2>
           <p>Skill tracker, step-by-step guides, and progress logs.</p>
@@ -250,6 +257,13 @@ function Home({ go }: { go: (page: Page) => void }) {
           </button>
         </article>
         <article className="feature-card">
+          <div
+            className="feature-image-placeholder"
+            role="img"
+            aria-label="Point and Ask image placeholder"
+          >
+            <span>Point &amp; Ask image</span>
+          </div>
           <p className="eyebrow feature-heading">Point & Ask</p>
           <h2 className="feature-tagline">Visual Help Anywhere</h2>
           <p>
