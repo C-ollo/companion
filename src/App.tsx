@@ -434,38 +434,30 @@ const practices = [
 ]
 const todaysPractices: {
   title: string
-  description: string
   image: string
   imageAlt: string
   duration: string
-  sticker: string
   page: Page
 }[] = [
   {
     title: "Washing Machine Laundry",
-    description: "",
     image: `${A}/b942e.png`,
     imageAlt: "A calm residential laundry room with front-loading machines",
     duration: "15 min",
-    sticker: "washer",
     page: "guidance",
   },
   {
     title: "Café Self-Order",
-    description: "",
     image: `${A}/83e74.png`,
     imageAlt: "A self-order touchscreen inside a café",
     duration: "10 min",
-    sticker: "menu",
     page: "scan",
   },
   {
     title: "Warm Food Safely",
-    description: "Practice choosing a safe way to warm a meal.",
     image: `${A}/dd509.png`,
     imageAlt: "A kitchen counter with a toaster, kettle, and other appliances",
     duration: "8 min",
-    sticker: "dial",
     page: "safe-alternatives",
   },
 ]
@@ -507,25 +499,10 @@ function Passport({ go }: { go: (page: Page) => void }) {
           </div>
           <div className="routine-body">
             <div className="routine-title">
-              {practiceIndex !== 0 && (
-                <span className={`category-sticker ${practice.sticker}`}>
-                  <i />
-                </span>
-              )}
               <span>
                 <h2>{practice.title}</h2>
-                {practice.description && <p>{practice.description}</p>}
               </span>
             </div>
-            {practiceIndex !== 0 && (
-              <div className="level-card">
-                <span className="level-ring">
-                  {practiceIndex !== 1 && <Icon src={icons.levelRing} />}
-                </span>
-                <b>Independence Level 2 of 3</b>
-                <strong>◉ Level 2</strong>
-              </div>
-            )}
             <button
               className="primary-button centered"
               onClick={() => go(practice.page)}
