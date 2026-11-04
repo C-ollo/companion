@@ -212,6 +212,9 @@ function Home({ go }: { go: (page: Page) => void }) {
       </section>
       <section className="feature-grid" aria-label="Primary choices">
         <article className="feature-card">
+          <p className="eyebrow feature-heading">Skill Passport</p>
+          <h2 className="feature-tagline">Practice My Skills</h2>
+          <p>Skill tracker, step-by-step guides, and progress logs.</p>
           <div className="feature-top">
             <div className="badge-row">
               <span className="slate-badge">
@@ -219,9 +222,6 @@ function Home({ go }: { go: (page: Page) => void }) {
               </span>
             </div>
           </div>
-          <p className="eyebrow feature-heading">Skill Passport</p>
-          <h2 className="feature-tagline">Practice My Skills</h2>
-          <p>Skill tracker, step-by-step guides, and progress logs.</p>
           <button
             className="primary-button home-passport-action"
             onClick={() => go("passport")}
