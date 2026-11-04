@@ -234,8 +234,8 @@ function Home({ go }: { go: (page: Page) => void }) {
         <article className="feature-card">
           <figure className="feature-cover">
             <img
-              src={`${A}/dd509.png`}
-              alt="A kitchen counter with a toaster, kettle, and other appliances"
+              src={`${A}/point-ask-cover.webp`}
+              alt="A person using Point and Ask to identify a washing machine control"
             />
             <i className="corner tl" aria-hidden="true" />
             <i className="corner tr" aria-hidden="true" />
