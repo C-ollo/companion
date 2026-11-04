@@ -26,7 +26,7 @@ const pageCopy: Record<Page, string> = {
   passport:
     "Skill Passport. You have three practice choices today: Washing Machine Laundry, Café Self-Order, and Warm Food Safely. Choose the skill you want to practice.",
   people:
-    "My People. Your private support network. Coach Marcus is on standby, and Jordan sent you a cheer.",
+    "My People. Your private support network. Sarah and Jordan are trusted people you added.",
   guidance:
     "Step guidance. Add one cup of soap. Close the soap drawer. Take all the time you need.",
   logging:
@@ -51,9 +51,9 @@ const pageCopy: Record<Page, string> = {
   "add-supporter":
     "Add a trusted person. Create a private cheer link. No account is needed.",
   "cheer-detail":
-    "Cheer from Coach Jordan. Proud of you. Cheers stay calm and positive.",
+    "Cheer from Jordan. Proud of you. Cheers stay calm and positive.",
   confirmer:
-    "In-person staff confirmation. Hand the phone to your coach. They tap to verify you did this together.",
+    "In-person confirmation. Hand the phone to a trusted friend or family member. They tap to verify you did this together.",
   credential:
     "Official Skill Passport. A verifiable summary of independent living routines earned by Maya Lin.",
   "credential-export":
@@ -63,11 +63,10 @@ const pageCopy: Record<Page, string> = {
   "storage-control":
     "Storage and data control. You own every piece of your data.",
   "safety-block":
-    "Stovetop burner detected. We do not guide stoves, ovens, heaters, or medication. A coach can help you in person.",
+    "Stovetop burner detected. We do not guide stoves, ovens, heaters, or medication. A trusted friend or family member can help you in person.",
   "photo-confirmation":
-    "Check your photo before sending. Your photo stays on this device unless you choose to share it with Coach Sarah.",
-  "coach-standby":
-    "Coach Sarah is on her way. Take a seat and relax while you wait.",
+    "Check your photo before sending. Your photo stays on this device unless you choose to share it with Sarah, your family friend.",
+  "coach-standby": "Sarah is on her way. Take a seat and relax while you wait.",
   "safe-alternatives":
     "Safe ways to warm food without turning on the stove. There is no pressure.",
   "voice-log":
@@ -589,10 +588,10 @@ function Passport({ go }: { go: (page: Page) => void }) {
       </section>
       <section className="cheer-card">
         <div className="cheer-person">
-          <img src={`${A}/1bb43.png`} alt="Jordan, job coach" />
+          <img src={`${A}/1bb43.png`} alt="Jordan, trusted friend" />
           <span>
             <b>Jordan</b>
-            <small>Job Coach</small>
+            <small>Trusted Friend</small>
           </span>
           <span className="heart">
             <Icon src={icons.heart} />
@@ -731,10 +730,10 @@ function Guidance({ go }: { go: (page: Page) => void }) {
             <section className="coach-support">
               <span className="coach-initial">S</span>
               <span>
-                <b>Coach Sarah</b>
-                <small>On standby for you</small>
+                <b>Sarah</b>
+                <small>Family friend in My People</small>
               </span>
-              <button onClick={() => speak("Coach Sarah is ready to help.")}>
+              <button onClick={() => speak("Sarah is ready to help.")}>
                 Get audio support
               </button>
             </section>
@@ -860,9 +859,9 @@ function Logging({ go }: { go: (page: Page) => void }) {
               </div>
             </dl>
             <div className="coach-quote">
-              <img src={`${A}/c2624.png`} alt="Coach Sarah" />
+              <img src={`${A}/c2624.png`} alt="Sarah, family friend" />
               <span>
-                <b>Coach Sarah says</b>
+                <b>Sarah says</b>
                 <p>“Steady steps count, Maya.”</p>
               </span>
             </div>
@@ -886,10 +885,10 @@ function Logging({ go }: { go: (page: Page) => void }) {
           </div>
           {confirmed && (
             <div className="verified-coach">
-              <span>CS</span>
+              <span>S</span>
               <p>
-                <b>Coach Sarah ✓</b>
-                <small>First Place AZ · In-person confirmed</small>
+                <b>Sarah ✓</b>
+                <small>Family Friend · In-person confirmed</small>
               </p>
             </div>
           )}
@@ -1000,10 +999,10 @@ function Celebration({ go }: { go: (page: Page) => void }) {
             <p>+1 permanent laundry stamp</p>
           </article>
           <article className="supporter-note">
-            <img src={`${A}/1bb43.png`} alt="Coach Jordan" />
+            <img src={`${A}/1bb43.png`} alt="Jordan, trusted friend" />
             <span>
               <p className="flow-label">Supporter note</p>
-              <h2>Coach Jordan</h2>
+              <h2>Jordan</h2>
             </span>
             <blockquote>
               “Proud of you starting before 11 today, Maya!”
@@ -1262,7 +1261,7 @@ function CafeSteps({ go }: { go: (page: Page) => void }) {
         </section>
         <div className="assist-row">
           <button onClick={() => setHint(!hint)}>Show hint</button>
-          <button onClick={() => speak("You can ask Coach Sarah for help.")}>
+          <button onClick={() => speak("You can ask Sarah for help.")}>
             Not sure
           </button>
         </div>
@@ -1274,11 +1273,11 @@ function CafeSteps({ go }: { go: (page: Page) => void }) {
         <section className="cafe-coach">
           <span className="coach-initial">S</span>
           <span>
-            <b>Coach Sarah</b>
-            <small>Ready to help you</small>
+            <b>Sarah</b>
+            <small>Family friend in My People</small>
           </span>
-          <button onClick={() => speak("Coach Sarah is ready to help.")}>
-            Ask Coach
+          <button onClick={() => speak("Sarah is ready to help.")}>
+            Ask Sarah
           </button>
         </section>
       </main>
@@ -1685,7 +1684,7 @@ function PrivateSharing({ go }: { go: (page: Page) => void }) {
     recipient === "mom"
       ? "Mom"
       : recipient === "coach"
-        ? "Coach Sarah"
+        ? "Sarah"
         : customName || "this person"
   return (
     <div className="flow-screen summary-flow">
@@ -1735,8 +1734,8 @@ function PrivateSharing({ go }: { go: (page: Page) => void }) {
             >
               <i aria-hidden="true" />
               <span>
-                <b>Coach Sarah</b>
-                <small>First Place Staff Coach</small>
+                <b>Sarah</b>
+                <small>Family Friend · My People</small>
               </span>
             </button>
             <button
@@ -1816,8 +1815,8 @@ function PrivateSharing({ go }: { go: (page: Page) => void }) {
 }
 function ActiveShares({ go }: { go: (page: Page) => void }) {
   const [momActive, setMomActive] = useState(true)
-  const [revoked, setRevoked] = useState<"Coach Jordan" | "Elena Lin" | null>(
-    "Coach Jordan",
+  const [revoked, setRevoked] = useState<"Jordan" | "Elena Lin" | null>(
+    "Jordan",
   )
   const undoRevocation = () => {
     if (revoked === "Elena Lin") setMomActive(true)
@@ -2116,24 +2115,24 @@ function SupportersHub({ go }: { go: (page: Page) => void }) {
               <img
                 className="supporter-photo"
                 src={`${A}/flow5-hub/ceb9d.png`}
-                alt="Coach Sarah"
+                alt="Sarah"
               />
               <span>
-                <h3>Coach Sarah</h3>
-                <p>First Place Staff Coach</p>
-                <small>Active link · On standby</small>
+                <h3>Sarah</h3>
+                <p>Family Friend</p>
+                <small>Active link · In My People</small>
               </span>
               <button
                 className="flow5-menu"
-                aria-label="Manage Coach Sarah's connection"
-                onClick={() => speak("Coach Sarah is on standby.")}
+                aria-label="Manage Sarah's connection"
+                onClick={() => speak("Sarah's private link is active.")}
               >
                 <Flow5Asset group="hub" file="fdfad.svg" />
               </button>
             </header>
             <p className="supporter-note">
               <Flow5Asset group="hub" file="180d9.svg" />
-              Standing by for handoffs and check-ins.
+              Available for check-ins when you choose.
             </p>
             <div className="supporter-actions">
               <button
@@ -2144,7 +2143,7 @@ function SupportersHub({ go }: { go: (page: Page) => void }) {
                 {updateSent ? "Update Sent" : "Send Quick Update"}
               </button>
               <button
-                onClick={() => speak("Coach Sarah's supporter link is active.")}
+                onClick={() => speak("Sarah's supporter link is active.")}
               >
                 Manage
               </button>
@@ -2189,13 +2188,13 @@ function SupportersHub({ go }: { go: (page: Page) => void }) {
 }
 const relationshipOptions = [
   ["Family / Parent", "d27a5.svg"],
-  ["Coach / Staff", "006e9.svg"],
+  ["Family Member", "006e9.svg"],
   ["Friend / Peer", "e8a6d.svg"],
-  ["Job Coach", "a8d91.svg"],
+  ["Trusted Friend", "a8d91.svg"],
 ] as const
 function AddSupporter({ go }: { go: (page: Page) => void }) {
   const [name, setName] = useState("Jordan Davis")
-  const [relationship, setRelationship] = useState("Coach / Staff")
+  const [relationship, setRelationship] = useState("Friend / Peer")
   const [permissions, setPermissions] = useState([true, true])
   const [linkCreated, setLinkCreated] = useState(false)
   const firstName = name.trim().split(/\s+/)[0] || "this person"
@@ -2261,7 +2260,7 @@ function AddSupporter({ go }: { go: (page: Page) => void }) {
                 <Flow5Asset group="add" file={icon} />
                 <span>
                   <b>{label}</b>
-                  {label === "Coach / Staff" && (
+                  {label === "Family Member" && (
                     <small>Recommended for support routines</small>
                   )}
                 </span>
@@ -2378,7 +2377,7 @@ function CheerDetail({ go }: { go: (page: Page) => void }) {
           copy={pageCopy["cheer-detail"]}
         />
         <header className="flow5-intro">
-          <h1>Cheer from Coach Jordan</h1>
+          <h1>Cheer from Jordan</h1>
           <p>Cheers arrive only after finishing a task.</p>
           <p>Words stay calm and positive.</p>
         </header>
@@ -2389,7 +2388,7 @@ function CheerDetail({ go }: { go: (page: Page) => void }) {
             </span>
             <span>
               <h2>
-                Coach Jordan <small>Staff Coach</small>
+                Jordan <small>Trusted Friend</small>
               </h2>
               <p>Received today at 3:15 PM</p>
             </span>
@@ -2457,16 +2456,18 @@ function CheerDetail({ go }: { go: (page: Page) => void }) {
   )
 }
 const confirmers = [
-  ["Coach Sarah", "First Place Staff"],
-  ["Coach Jordan", "Independent Living Coach"],
-  ["Other staff member", "Tap to enter name"],
+  ["Sarah", "Family Friend"],
+  ["Jordan", "Trusted Friend"],
+  ["Another trusted person", "Tap to enter name"],
 ] as const
 function ConfirmerTap({ go }: { go: (page: Page) => void }) {
-  const [confirmer, setConfirmer] = useState("Coach Sarah")
+  const [confirmer, setConfirmer] = useState("Sarah")
   const [otherName, setOtherName] = useState("")
   const [physicallyConfirmed, setPhysicallyConfirmed] = useState(false)
   const confirmerName =
-    confirmer === "Other staff member" ? otherName || "Other staff" : confirmer
+    confirmer === "Another trusted person"
+      ? otherName || "Trusted person"
+      : confirmer
   return (
     <div className="flow-screen flow5-screen">
       <Flow5TopBar
@@ -2485,8 +2486,8 @@ function ConfirmerTap({ go }: { go: (page: Page) => void }) {
           darkAction
         />
         <header className="flow5-intro">
-          <h1>In-Person Staff Confirmation</h1>
-          <p>Hand phone to your coach.</p>
+          <h1>In-Person Support Confirmation</h1>
+          <p>Hand the phone to your trusted person.</p>
           <p>They tap to verify you did this together.</p>
         </header>
         <section className="handover-card">
@@ -2494,8 +2495,8 @@ function ConfirmerTap({ go }: { go: (page: Page) => void }) {
             <Flow5Asset group="confirm" file="83a82.svg" />
           </span>
           <p>
-            <b>Please hand phone to your coach.</b>
-            Staff confirmation records physical presence with Maya.
+            <b>Please hand the phone to your trusted person.</b>
+            Confirmation records that they were physically present with Maya.
           </p>
         </section>
         <section className="routine-confirm-card">
@@ -2563,15 +2564,15 @@ function ConfirmerTap({ go }: { go: (page: Page) => void }) {
               </button>
             ))}
           </div>
-          {confirmer === "Other staff member" && (
+          {confirmer === "Another trusted person" && (
             <input
               value={otherName}
               onChange={(event) => {
                 setOtherName(event.target.value)
                 setPhysicallyConfirmed(false)
               }}
-              placeholder="Enter staff member’s name"
-              aria-label="Other staff member's name"
+              placeholder="Enter their name"
+              aria-label="Trusted person's name"
             />
           )}
         </section>
@@ -2582,7 +2583,9 @@ function ConfirmerTap({ go }: { go: (page: Page) => void }) {
           </h2>
           <button
             className="flow5-primary"
-            disabled={confirmer === "Other staff member" && !otherName.trim()}
+            disabled={
+              confirmer === "Another trusted person" && !otherName.trim()
+            }
             onClick={() => setPhysicallyConfirmed(true)}
           >
             <Flow5ButtonIcon group="confirm" file="00c68.svg" />
@@ -2720,8 +2723,8 @@ function makeCredentialPdf(
 ) {
   const lines = [
     "Companion - Official Skill Passport",
-    "Maya Lin - Member ID FP-2024-884",
-    "Issued by First Place AZ - November 2024",
+    "Maya Lin - Member ID CP-2024-884",
+    "Issued by Companion - November 2024",
     "14 verified stamps - 4 life domains - 100% mastery",
     ...(includeStamps
       ? [
@@ -2731,9 +2734,7 @@ function makeCredentialPdf(
           "Commerce: Grocery Store and Touchscreen Kiosk - Level 3",
         ]
       : []),
-    ...(includeSignature
-      ? ["Verified by Coach Sarah Martinez, Staff Lead"]
-      : []),
+    ...(includeSignature ? ["Confirmed by Sarah Martinez, Family Friend"] : []),
     ...(includePrivateNotes
       ? ["Private note: Maya prefers clear visual instructions."]
       : []),
@@ -2776,10 +2777,10 @@ function makeCredentialPdf(
 const passportBackup = {
   app: "Companion",
   version: 1,
-  member: { name: "Maya Lin", id: "FP-2024-884" },
+  member: { name: "Maya Lin", id: "CP-2024-884" },
   logs: 18,
   stamps: 14,
-  applianceProfiles: ["Uptown Coffee Kiosk", "First Place Washer"],
+  applianceProfiles: ["Uptown Coffee Kiosk", "Home Washer"],
   exportedAt: "November 2024",
 }
 const bytesToBase64 = (bytes: Uint8Array) => {
@@ -2929,7 +2930,7 @@ function CredentialPreview({ go }: { go: (page: Page) => void }) {
               Maya Lin <span>Age 24</span>
             </h2>
             <p>
-              Member ID: <b>#FP-2024-884</b>
+              Member ID: <b>#CP-2024-884</b>
             </p>
             <div className="credential-qr">
               <span>
@@ -2941,9 +2942,9 @@ function CredentialPreview({ go }: { go: (page: Page) => void }) {
           </section>
           <dl className="credential-meta">
             <div>
-              <dt>Issuing Partner</dt>
-              <dd>First Place AZ</dd>
-              <dd>Transition Academy</dd>
+              <dt>Issued By</dt>
+              <dd>Companion</dd>
+              <dd>Personal Skill Passport</dd>
             </div>
             <div>
               <dt>Certification Date</dt>
@@ -2994,8 +2995,8 @@ function CredentialPreview({ go }: { go: (page: Page) => void }) {
             </span>
             <span>
               <small>Attestation</small>
-              <b>Coach Sarah Martinez</b>
-              <p>Staff Lead, First Place Transition Academy</p>
+              <b>Sarah Martinez</b>
+              <p>Family Friend · My People</p>
             </span>
             <strong>
               <Flow6Asset group="credential" file="4caf8.svg" />
@@ -3043,7 +3044,7 @@ const exportDestinations = [
   {
     id: "print",
     title: "Send to AirPrint / Network Printer",
-    copy: "Print a paper copy for your binder or coach.",
+    copy: "Print a paper copy for your binder or trusted person.",
     icon: "1162c.svg",
   },
   {
@@ -3140,8 +3141,8 @@ function CredentialExport({ go }: { go: (page: Page) => void }) {
             {[
               ["Include 14 earned stamp badges", "Shows your mastery icons"],
               [
-                "Include coach confirmation signatures",
-                "Includes mentor approval",
+                "Include trusted person confirmations",
+                "Includes friend or family confirmation",
               ],
               ["Include private per-line notes", "Off by default for privacy"],
             ].map(([title, copy], index) => (
@@ -3499,7 +3500,7 @@ function StorageControl({ go }: { go: (page: Page) => void }) {
                 </h3>
                 <p>
                   {profilesActive
-                    ? "Uptown Coffee Kiosk & First Place Washer."
+                    ? "Uptown Coffee Kiosk & Home Washer."
                     : "Profiles removed from this device."}
                 </p>
               </span>
@@ -3774,14 +3775,15 @@ function PhotoConfirmation({ go }: { go: (page: Page) => void }) {
       <main className="flow7-main">
         <div className="flow7-progress">
           <span>
-            <i /> Staff handoff · Step 2 of 2
+            <i /> Trusted person handoff · Step 2 of 2
           </span>
           <b>Photo Check</b>
         </div>
         <header className="flow7-intro">
-          <h1>Share Photo with Coach Sarah?</h1>
+          <h1>Share Photo with Sarah?</h1>
           <p>
-            Check your photo before sending. Coach Sarah will see what you see.
+            Check your photo before sending. Sarah, your family friend in My
+            People, will see what you see.
           </p>
         </header>
         <section className="photo-check-card">
@@ -3817,10 +3819,7 @@ function PhotoConfirmation({ go }: { go: (page: Page) => void }) {
                 "No faces or personal items detected",
                 "Verified clean frame (R28.6)",
               ],
-              [
-                "Photo is sent only to Coach Sarah",
-                "Encrypted direct staff handoff",
-              ],
+              ["Photo is sent only to Sarah", "Encrypted direct share"],
               [
                 "Photo is erased immediately after help",
                 "Never stored permanently (R28.2)",
@@ -3852,11 +3851,11 @@ function PhotoConfirmation({ go }: { go: (page: Page) => void }) {
             <Flow7Asset
               group="consent"
               file="624b9.png"
-              alt="Coach Sarah Martinez"
+              alt="Sarah Martinez, family friend"
             />
             <span>
-              <b>Coach Sarah Martinez</b>
-              <small>First Place Staff Lead · On Site Now</small>
+              <b>Sarah Martinez</b>
+              <small>Family Friend · In My People</small>
             </span>
           </div>
           <blockquote>
@@ -3882,7 +3881,7 @@ function PhotoConfirmation({ go }: { go: (page: Page) => void }) {
             onChange={(event) => setConsent(event.target.checked)}
           />
           <span>
-            <b>I choose to share this photo with Coach Sarah.</b>
+            <b>I choose to share this photo with Sarah.</b>
             <small>
               The photo stays local until I confirm. I can cancel instead.
             </small>
@@ -3890,7 +3889,7 @@ function PhotoConfirmation({ go }: { go: (page: Page) => void }) {
         </label>
         <Flow7Actions>
           <button className="flow7-primary" disabled={!consent} onClick={send}>
-            Confirm & Send to Coach Sarah
+            Confirm & Send to Sarah
             <Flow7Asset group="consent" file="2ac9b.svg" />
           </button>
           <button onClick={cancel}>
@@ -3909,7 +3908,7 @@ function CoachStandby({ go }: { go: (page: Page) => void }) {
     <div className="flow-screen flow7-screen">
       <Flow7TopBar
         group="standby"
-        title="Staff Verification & Confirmation"
+        title="Friend or Family Support"
         copy={pageCopy["coach-standby"]}
         back={() => go("photo-confirmation")}
         close={() => go("home")}
@@ -3917,14 +3916,14 @@ function CoachStandby({ go }: { go: (page: Page) => void }) {
       <main className="flow7-main">
         <div className="flow7-live">
           <span>
-            <i /> Live support · Coach notified
+            <i /> Live support · Sarah notified
           </span>
           <button onClick={() => speak(pageCopy["coach-standby"])}>
             <Flow7Asset group="standby" file="dc99e.svg" /> Listen
           </button>
         </div>
         <header className="flow7-intro">
-          <h1>Coach Sarah Is On Her Way</h1>
+          <h1>Sarah Is On Her Way</h1>
           <p>
             Sarah received your photo. Take a seat and relax while you wait.
           </p>
@@ -3932,18 +3931,22 @@ function CoachStandby({ go }: { go: (page: Page) => void }) {
         <section className="coach-status-card">
           <header>
             <span className="coach-photo">
-              <Flow7Asset group="standby" file="4d7d4.png" alt="Coach Sarah" />
+              <Flow7Asset
+                group="standby"
+                file="4d7d4.png"
+                alt="Sarah, family friend"
+              />
               <i />
             </span>
             <span>
-              <h2>Coach Sarah</h2>
+              <h2>Sarah</h2>
               <b className="active-pill">
                 <i /> Active · Arriving in ~2 min
               </b>
-              <strong>First Place Staff Coach</strong>
+              <strong>Family Friend · My People</strong>
               <small>
                 <Flow7Asset group="standby" file="1dc61.svg" />
-                Currently at First Place 3rd Floor Hub
+                Nearby and on the way
               </small>
             </span>
           </header>
@@ -3970,7 +3973,7 @@ function CoachStandby({ go }: { go: (page: Page) => void }) {
           onClick={() => setCallStatus("Opening your phone call controls.")}
         >
           <Flow7Asset group="standby" file="5d6dd.svg" />
-          Call Coach Sarah Martinez
+          Call Sarah Martinez
         </a>
         {callStatus && (
           <p className="flow7-status" role="status">
@@ -4021,7 +4024,7 @@ function CoachStandby({ go }: { go: (page: Page) => void }) {
           </button>
           <button onClick={() => go("home")}>
             <Flow7Asset group="standby" file="fb28f.svg" />
-            Cancel Staff Call (I’m okay now)
+            Cancel Support Request (I’m okay now)
           </button>
         </Flow7Actions>
       </main>
@@ -4146,7 +4149,7 @@ function SafeAlternatives({ go }: { go: (page: Page) => void }) {
           </span>
           <p>
             <b>Zero Pressure</b>Take your time. Stovetop practice will be logged
-            as confirmed when you do it together with your coach.
+            as confirmed when you do it together with your trusted person.
           </p>
         </aside>
         <Flow7Actions>
@@ -4156,7 +4159,7 @@ function SafeAlternatives({ go }: { go: (page: Page) => void }) {
           </button>
           <button onClick={() => go("coach-standby")}>
             <Flow7Asset group="alternatives" file="28fb6.svg" />
-            Back to Coach Sarah Chat
+            Back to Sarah’s Message
           </button>
         </Flow7Actions>
       </main>
@@ -4818,7 +4821,7 @@ function MyPeople({ go }: { go: (page: Page) => void }) {
           <img src={`${A}/1bb43.png`} alt="" />
           <span>
             <h2>Jordan</h2>
-            <p>Job Coach · Available now</p>
+            <p>Trusted Friend · Available now</p>
           </span>
           <button
             onClick={() =>
@@ -4829,12 +4832,12 @@ function MyPeople({ go }: { go: (page: Page) => void }) {
           </button>
         </article>
         <article>
-          <span className="person-initial">M</span>
+          <span className="person-initial">S</span>
           <span>
-            <h2>Coach Marcus</h2>
-            <p>Skills Coach · Until 4:00 PM</p>
+            <h2>Sarah</h2>
+            <p>Family Friend · Available today</p>
           </span>
-          <button onClick={() => speak("Message sent to Coach Marcus.")}>
+          <button onClick={() => speak("Message sent to Sarah.")}>
             Message
           </button>
         </article>
