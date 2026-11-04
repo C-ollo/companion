@@ -3727,13 +3727,6 @@ function SafetyBlock({ go }: { go: (page: Page) => void }) {
           </b>
         </aside>
         <Flow7Actions>
-          <button
-            className="flow7-primary"
-            onClick={() => go("photo-confirmation")}
-          >
-            Request Coach Handoff
-            <Flow7Asset group="block" file="d3302.svg" />
-          </button>
           <button onClick={() => go("point")}>
             <Flow7Asset group="block" file="85b76.svg" />
             Cancel & Return to Camera
