@@ -1,0 +1,10 @@
+{
+  "description": "A supportive daily living app for autistic adults and people with IDD, offering step-by-step skill practice, visual guidance, and connection with trusted supporters.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
