@@ -237,6 +237,14 @@ function Home({ go }: { go: (page: Page) => void }) {
               src={`${A}/dd509.png`}
               alt="A kitchen counter with a toaster, kettle, and other appliances"
             />
+            <i className="corner tl" aria-hidden="true" />
+            <i className="corner tr" aria-hidden="true" />
+            <i className="corner bl" aria-hidden="true" />
+            <i className="corner br" aria-hidden="true" />
+            <span className="feature-camera-orb" aria-hidden="true">
+              <Icon src={icons.camera} />
+            </span>
+            <figcaption>Aim camera at any confusing item</figcaption>
           </figure>
           <p className="eyebrow feature-heading">Point & Ask</p>
           <h2 className="feature-tagline">Visual Help Anywhere</h2>
