@@ -407,7 +407,6 @@ function PointAsk({ go }: { go: (page: Page) => void }) {
         </div>
       </section>
       <section className="privacy-card">
-        <span className="shield">✓</span>
         <span>
           <h2>Your Privacy Is Safe</h2>
           <p>
