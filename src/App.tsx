@@ -447,7 +447,7 @@ const todaysPractices: {
 }[] = [
   {
     title: "Washing Machine Laundry",
-    description: "Wash towels and t-shirts.",
+    description: "",
     image: `${A}/b942e.png`,
     imageAlt: "A calm residential laundry room with front-loading machines",
     duration: "15 min",
@@ -514,26 +514,30 @@ function Passport({ go }: { go: (page: Page) => void }) {
           </div>
           <div className="routine-body">
             <div className="routine-title">
-              <span className={`category-sticker ${practice.sticker}`}>
-                <i />
-              </span>
+              {practiceIndex !== 0 && (
+                <span className={`category-sticker ${practice.sticker}`}>
+                  <i />
+                </span>
+              )}
               <span>
                 <h2>{practice.title}</h2>
-                <p>{practice.description}</p>
+                {practice.description && <p>{practice.description}</p>}
               </span>
             </div>
-            <div className="level-card">
-              <span className="level-ring">
-                <Icon src={icons.levelRing} />
-              </span>
-              <b>Independence Level 2 of 3</b>
-              <strong>◉ Level 2</strong>
-            </div>
+            {practiceIndex !== 0 && (
+              <div className="level-card">
+                <span className="level-ring">
+                  <Icon src={icons.levelRing} />
+                </span>
+                <b>Independence Level 2 of 3</b>
+                <strong>◉ Level 2</strong>
+              </div>
+            )}
             <button
               className="primary-button centered"
               onClick={() => go(practice.page)}
             >
-              Start Steps →
+              {practiceIndex === 0 ? "Start Steps" : "Start Steps →"}
             </button>
           </div>
         </article>
