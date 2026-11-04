@@ -634,22 +634,7 @@ function Passport({ go }: { go: (page: Page) => void }) {
           </button>
         </div>
       </section>
-      <section className="pause-card">
-        <span>
-          <b>Take a calm pause.</b>
-          <small>Rest whenever you want.</small>
-        </span>
-        <button
-          onClick={() =>
-            speak(
-              "Breathe in slowly. And breathe out slowly. Rest whenever you want.",
-            )
-          }
-        >
-          <Icon src={icons.breathe} />
-          Breathe
-        </button>
-      </section>
+      <BreathingCard />
     </main>
   )
 }
