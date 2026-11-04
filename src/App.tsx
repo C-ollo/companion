@@ -533,7 +533,7 @@ function Passport({ go }: { go: (page: Page) => void }) {
               className="primary-button centered"
               onClick={() => go(practice.page)}
             >
-              {practiceIndex === 0 ? "Start Steps" : "Start Steps →"}
+              Start Steps
             </button>
           </div>
         </article>
