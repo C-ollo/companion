@@ -195,7 +195,7 @@ function BreathingCard() {
     >
       <div className="calm-copy">
         <h3 id="breathing-title">Take a calm breath</h3>
-        <p>Tap the circle and breathe along at your own pace.</p>
+        <p>Tap to breathe. 4 seconds in and 4 seconds out.</p>
         <button
           className="breath-control"
           type="button"
@@ -207,16 +207,18 @@ function BreathingCard() {
         >
           <span className="breath-ring" aria-hidden="true" />
           <span className="breath-orb">
-            <strong aria-live="polite">
-              {breathing
-                ? breathPhase === "in"
-                  ? "Breathe in"
-                  : "Breathe out"
-                : "Tap to breathe"}
-            </strong>
-            <small>{breathing ? "Tap to stop" : "4 seconds in · 4 out"}</small>
+            {breathing && (
+              <strong aria-live="polite">
+                {breathPhase === "in" ? "Breathe in" : "Breathe out"}
+              </strong>
+            )}
           </span>
         </button>
+        {breathing && (
+          <p className="breath-stop-hint" aria-live="polite">
+            Tap whenever you’re ready to stop.
+          </p>
+        )}
       </div>
     </section>
   )
