@@ -260,13 +260,12 @@ function Home({ go }: { go: (page: Page) => void }) {
           </button>
         </article>
         <article className="feature-card">
-          <div
-            className="feature-image-placeholder"
-            role="img"
-            aria-label="Skill Passport image placeholder"
-          >
-            <span>Skill Passport image</span>
-          </div>
+          <figure className="feature-cover skill-passport-cover">
+            <img
+              src={`${A}/skill-passport-cover.webp`}
+              alt="An illustrated Skill Passport showing laundry, transit, grocery, community, and cooking skills"
+            />
+          </figure>
           <p className="eyebrow feature-heading">Skill Passport</p>
           <h2 className="feature-tagline">Practice My Skills</h2>
           <p>Skill tracker, step-by-step guides, and progress logs.</p>
