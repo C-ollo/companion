@@ -5,7 +5,6 @@
   --color-brand-hover: #1b4332;
   --color-mint: #b9eed1;
   --color-mint-soft: #eefdf3;
-  --color-on-brand: #ffffff;
 
   /* Text */
   --color-ink: #0f172a;
@@ -33,14 +32,6 @@
   --font-body: 'Public Sans:Regular', 'Public Sans', Arial, sans-serif;
   --font-medium: 'Public Sans:SemiBold', 'Public Sans', Arial, sans-serif;
   --font-strong: 'Public Sans:Bold', 'Public Sans', Arial, sans-serif;
-  --text-small: 16px;
-  --text-body: 18px;
-  --text-title: 28px;
-  --text-display: 36px;
-  --leading-small: 24px;
-  --leading-body: 29px;
-  --leading-title: 39px;
-  --leading-display: 46px;
 
   /* Space */
   --space-1: 4px;
@@ -50,13 +41,11 @@
   --space-5: 24px;
   --space-6: 32px;
   --space-7: 48px;
-  --space-8: 64px;
 
   /* Shape */
   --radius-small: 8px;
   --radius-medium: 12px;
   --radius-large: 16px;
-  --radius-extra-large: 24px;
   --radius-round: 50%;
   --radius-pill: 999px;
 
@@ -69,12 +58,7 @@
   --content-compact: 620px;
   --content-standard: 920px;
   --content-wide: 1120px;
-  --support-column-width: 272px;
-  --action-primary-min-width: 240px;
   --control-min-height: 48px;
-  --control-large-height: 56px;
-  --header-height: 80px;
-  --header-height-compact: 72px;
 
   /* User-triggered feedback */
   --duration-feedback: 140ms;

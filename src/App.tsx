@@ -1,15 +1,4 @@
 import { useEffect, useRef, useState } from "react"
-import {
-  ActionButton,
-  ActionDock,
-  ChecklistItem,
-  FlowHeader,
-  PageIntro,
-  ProgressPath,
-  SectionIntro,
-  StatusMessage,
-  WayfindingChoice,
-} from "./components/primitives"
 
 type Page = "home" | "point" | "passport" | "people" | "guidance" | "logging" | "celebration" | "scan" | "identify" | "cafesteps" | "cafecomplete" | "summary" | "summary-editor" | "summary-sharing" | "summary-shares" | "supporters" | "add-supporter" | "cheer-detail" | "confirmer" | "credential" | "credential-export" | "data-backup" | "storage-control" | "safety-block" | "photo-confirmation" | "coach-standby" | "safe-alternatives" | "voice-log" | "skill-mapping" | "skill-clarification" | "voice-confirmed"
 const A = "/assets"
@@ -145,8 +134,8 @@ function AppHeader({ page }: { page: Page }) {
     </header>
   )
 }
-function BottomNav({ page, go }: { page: Page go: (page: Page) => void }) {
-  const items: { id: Page label: string icon: string }[] = [
+function BottomNav({ page, go }: { page: Page; go: (page: Page) => void }) {
+  const items: { id: Page; label: string; icon: string }[] = [
     { id: "home", label: "Home", icon: icons.home },
     { id: "point", label: "Point & Ask", icon: icons.point },
     { id: "passport", label: "Skill Passport", icon: icons.passport },
@@ -166,6 +155,18 @@ function BottomNav({ page, go }: { page: Page go: (page: Page) => void }) {
         </button>
       ))}
     </nav>
+  )
+}
+function FeatureSticker({ kind }: { kind: "passport" | "point" }) {
+  return kind === "point" ? (
+    <span className="feature-sticker scanner-sticker">
+      <Icon src={icons.scanner} />
+    </span>
+  ) : (
+    <span className="feature-sticker passport-sticker" aria-hidden="true">
+      <i className="passport-crest">✦</i>
+      <i className="bookmark" />
+    </span>
   )
 }
 function BreathingCard() {
@@ -192,55 +193,65 @@ function BreathingCard() {
             : "You are doing great. Follow a gentle breath cycle anytime."}
         </p>
         {breathing && <div className="breath-orb" aria-hidden="true" />}
-        <ActionButton
-          variant="quiet"
+        <button
+          className="soft-button"
           onClick={() => setBreathing((value) => !value)}
         >
           {breathing ? "Stop breathing exercise" : "Start breathing"}
-        </ActionButton>
+        </button>
       </div>
     </section>
   )
 }
 function Home({ go }: { go: (page: Page) => void }) {
   return (
-    <main className="page home-page pilot-home">
-      <PageIntro
-        className="pilot-home__intro"
-        title="Good morning, Maya."
-        description="Choose where you want to begin. There is no rush."
-      />
-      <section className="pilot-route" aria-labelledby="home-route-title">
-        <SectionIntro
-          id="home-route-title"
-          title="What would you like help with?"
-          description="Start today's practice or ask about something around you."
-        />
-        <WayfindingChoice
-          emphasis="primary"
-          icon={<Icon src={icons.passport} />}
-          meta="Three tasks today"
-          title="Practice my skills"
-          description="Follow your schedule, use step-by-step guides, and record what you complete."
-          action="Open Skill Passport"
-          onAction={() => go("passport")}
-        />
-        <WayfindingChoice
-          emphasis="secondary"
-          icon={<Icon src={icons.camera} />}
-          meta="Point & Ask"
-          title="Get visual help"
-          description="Show Companion an appliance, sign, label, or counter and get one clear step at a time."
-          action="Open the camera"
-          onAction={() => go("point")}
-        />
+    <main className="page home-page">
+      <section className="greeting">
+        <h1>Good morning, Maya.</h1>
+        <p>How can I help you today?</p>
       </section>
-      <div className="pilot-home__support">
-        <StatusMessage title="Coach Marcus is available" meta="Until 4:00 PM">
-          Ask for support whenever you want it.
-        </StatusMessage>
-        <BreathingCard />
-      </div>
+      <section className="feature-grid" aria-label="Primary choices">
+        <article className="feature-card">
+          <div className="feature-top">
+            <FeatureSticker kind="passport" />
+            <div className="badge-row">
+              <span className="slate-badge">
+                <i />3 tasks today
+              </span>
+            </div>
+          </div>
+          <p className="eyebrow">Skill Passport</p>
+          <h2>Practice My Skills</h2>
+          <p>Today's schedule, step-by-step guides, and progress logs.</p>
+          <button className="primary-button" onClick={() => go("passport")}>
+            Open Skill Passport <span>→</span>
+          </button>
+        </article>
+        <article className="feature-card">
+          <div className="feature-top">
+            <FeatureSticker kind="point" />
+          </div>
+          <p className="eyebrow">Point & Ask</p>
+          <h2>Visual Help Anywhere</h2>
+          <p>
+            Point your camera at appliances, signs, labels, or counters for
+            instant guidance.
+          </p>
+          <button className="outline-button" onClick={() => go("point")}>
+            <Icon src={icons.camera} />
+            Open Point & Ask Camera <span>→</span>
+          </button>
+        </article>
+      </section>
+      <BreathingCard />
+      <section className="coach-card">
+        <span>
+          <b className="verified">✓</b> Coach Marcus on standby
+        </span>
+        <b className="time">
+          <i /> Until 4:00 PM
+        </b>
+      </section>
     </main>
   )
 }
@@ -596,100 +607,98 @@ function Guidance({ go }: { go: (page: Page) => void }) {
       current.map((value, itemIndex) => (index === itemIndex ? !value : value)),
     )
   return (
-    <div className="flow-screen pilot-guidance">
-      <FlowHeader
-        title="Laundry guidance"
-        onBack={() => go("passport")}
-        onClose={() => go("home")}
-        profileIcon={<Icon src={icons.profile} />}
+    <div className="flow-screen">
+      <FlowTopBar
+        title="Step Guidance"
+        back={() => go("passport")}
+        close={() => go("home")}
       />
-      <main className="flow-main pilot-guidance-main">
-        <div className="pilot-guidance__identity">
-          <strong>Washing Machine Laundry</strong>
-          <span>My apartment</span>
+      <main className="flow-main">
+        <div className="context-chips">
+          <span>Washing Machine Laundry</span>
+          <span>My Apartment</span>
         </div>
-        <ProgressPath
-          steps={["Load", "Add soap", "Turn dial", "Start"]}
-          current={1}
-        />
-        <StatusMessage title="No rush">
-          The washing machine will wait for you.
-        </StatusMessage>
-        <div className="pilot-guidance__layout">
-          <article className="pilot-instruction">
-            <div className="pilot-instruction__copy">
-              <span>Current step</span>
-              <h1>Add one cup of soap. Close the soap drawer.</h1>
-              <p>Pour detergent into compartment number 2.</p>
-              <ActionButton
-                variant="quiet"
-                leading={<Icon src={icons.sound} />}
-                onClick={() => speak(pageCopy.guidance)}
-              >
-                Read this step aloud
-              </ActionButton>
-            </div>
-            <figure className="pilot-instruction__visual">
-              <img
-                src={`${A}/69df6.png`}
-                alt="Washing machine soap drawer with compartment two open"
-              />
-              <figcaption>
-                <b>Soap compartment II</b>
-                <span>Fill only to the max line.</span>
-              </figcaption>
-            </figure>
-          </article>
-          <aside className="pilot-guidance__support">
-            <section className="pilot-checklist">
-              <header>
-                <h2>Items you need</h2>
-                <span>{items.filter(Boolean).length} of 2 ready</span>
-              </header>
-              {["Laundry detergent", "Measuring cap"].map((item, index) => (
-                <ChecklistItem
-                  checked={items[index]}
-                  key={item}
-                  onToggle={() => toggleItem(index)}
-                >
-                  {item}
-                </ChecklistItem>
-              ))}
+        <FlowProgress />
+        <aside className="reassurance">
+          <b>♥ No rush at all</b>
+          <p>The washing machine will wait for you.</p>
+        </aside>
+        <div className="guidance-layout">
+          <article className="instruction-card">
+            <p className="flow-label">Instruction</p>
+            <h1>Add one cup of soap. Close the soap drawer.</h1>
+            <p>Pour detergent into compartment number 2.</p>
+            <button
+              className="audio-pill"
+              onClick={() => speak(pageCopy.guidance)}
+            >
+              <Icon src={icons.sound} />
+              Read this step aloud
+            </button>
+            <section className="drawer-card">
+              <div className="drawer-heading">
+                <h2>Where the soap goes</h2>
+                <span>Compartment II</span>
+              </div>
+              <div className="drawer-photo">
+                <img
+                  src={`${A}/69df6.png`}
+                  alt="Washing machine soap drawer with compartment two open"
+                />
+                <div>
+                  <b>✓ Soap Compartment II</b>
+                  <span>Fill only to the max line.</span>
+                </div>
+              </div>
             </section>
-            <section className="pilot-coach">
-              <StatusMessage title="Coach Sarah is available">
-                Ask for support if you want it.
-              </StatusMessage>
-              <ActionButton
-                variant="secondary"
-                onClick={() => speak("Coach Sarah is ready to help.")}
-              >
-                Hear support options
-              </ActionButton>
+          </article>
+          <aside className="guidance-side">
+            <section className="items-card">
+              <div>
+                <h2>Items Needed</h2>
+                <span>{items.filter(Boolean).length} of 2 ready</span>
+              </div>
+              {["Laundry detergent liquid", "Measuring cap"].map(
+                (item, index) => (
+                  <button key={item} onClick={() => toggleItem(index)}>
+                    <i className={items[index] ? "checked" : ""}>
+                      {items[index] ? "✓" : ""}
+                    </i>
+                    {item}
+                  </button>
+                ),
+              )}
+            </section>
+            <section className="coach-support">
+              <span className="coach-initial">S</span>
+              <span>
+                <b>Coach Sarah</b>
+                <small>On standby for you</small>
+              </span>
+              <button onClick={() => speak("Coach Sarah is ready to help.")}>
+                Get audio support
+              </button>
             </section>
           </aside>
         </div>
       </main>
       {paused && (
-        <StatusMessage
-          className="pilot-pause-notice"
-          role="status"
-          title="Routine paused"
-        >
-          Continue whenever you are ready.
-        </StatusMessage>
+        <div className="pause-notice" role="status">
+          <b>Routine paused.</b>
+          <span>Continue whenever you are ready.</span>
+        </div>
       )}
-      <ActionDock>
-        <ActionButton variant="secondary" onClick={() => go("passport")}>
-          Previous step
-        </ActionButton>
-        <ActionButton variant="secondary" onClick={() => setPaused(!paused)}>
+      <nav className="flow-actions" aria-label="Step controls">
+        <button className="flow-secondary" onClick={() => go("passport")}>
+          ← Previous
+        </button>
+        <button className="flow-secondary" onClick={() => setPaused(!paused)}>
           {paused ? "Continue" : "Pause"}
-        </ActionButton>
-        <ActionButton variant="primary" onClick={() => go("logging")}>
-          Next: Turn dial to Normal
-        </ActionButton>
-      </ActionDock>
+        </button>
+        <button className="flow-primary" onClick={() => go("logging")}>
+          Next: Turn dial to Normal →
+        </button>
+      </nav>
     </div>
   )
 }
