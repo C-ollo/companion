@@ -455,7 +455,7 @@ const todaysPractices: {
   },
   {
     title: "Café Self-Order",
-    description: "Practice ordering a drink at a touchscreen.",
+    description: "",
     image: `${A}/83e74.png`,
     imageAlt: "A self-order touchscreen inside a café",
     duration: "10 min",
@@ -523,7 +523,7 @@ function Passport({ go }: { go: (page: Page) => void }) {
             {practiceIndex !== 0 && (
               <div className="level-card">
                 <span className="level-ring">
-                  <Icon src={icons.levelRing} />
+                  {practiceIndex !== 1 && <Icon src={icons.levelRing} />}
                 </span>
                 <b>Independence Level 2 of 3</b>
                 <strong>◉ Level 2</strong>
