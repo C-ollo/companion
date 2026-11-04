@@ -4856,7 +4856,7 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" })
   }
   return (
-    <div className="app-shell">
+    <div className={focusedFlow ? "app-shell" : "app-shell with-nav"}>
       {!focusedFlow && <AppHeader page={page} />}
       {page === "home" && <Home go={go} />}
       {page === "point" && <PointAsk go={go} />}
