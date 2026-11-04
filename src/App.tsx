@@ -171,30 +171,51 @@ function FeatureSticker({ kind }: { kind: "passport" | "point" }) {
 }
 function BreathingCard() {
   const [breathing, setBreathing] = useState(false)
+  const [breathPhase, setBreathPhase] = useState<"in" | "out">("in")
+
+  useEffect(() => {
+    if (!breathing) {
+      setBreathPhase("in")
+      return
+    }
+
+    const phaseTimer = window.setInterval(() => {
+      setBreathPhase((phase) => (phase === "in" ? "out" : "in"))
+    }, 4000)
+
+    return () => window.clearInterval(phaseTimer)
+  }, [breathing])
+
+  const toggleBreathing = () => setBreathing((value) => !value)
+
   return (
     <section
       className={`calm-card ${breathing ? "breathing" : ""}`}
-      aria-live="polite"
+      aria-labelledby="breathing-title"
     >
       <div className="calm-copy">
-        <div className="row-between">
-          <h3>
-            {breathing
-              ? "Breathe slowly with the circle"
-              : "Take a calm breath"}
-          </h3>
-        </div>
-        <p>
-          {breathing
-            ? "Continue for as long as you want."
-            : "You are doing great. Follow a gentle breath cycle anytime."}
-        </p>
-        {breathing && <div className="breath-orb" aria-hidden="true" />}
+        <h3 id="breathing-title">Take a calm breath</h3>
+        <p>Tap the circle and breathe along at your own pace.</p>
         <button
-          className="soft-button"
-          onClick={() => setBreathing((value) => !value)}
+          className="breath-control"
+          type="button"
+          onClick={toggleBreathing}
+          aria-pressed={breathing}
+          aria-label={
+            breathing ? "Stop breathing exercise" : "Start breathing exercise"
+          }
         >
-          {breathing ? "Stop breathing exercise" : "Start breathing"}
+          <span className="breath-ring" aria-hidden="true" />
+          <span className="breath-orb">
+            <strong aria-live="polite">
+              {breathing
+                ? breathPhase === "in"
+                  ? "Breathe in"
+                  : "Breathe out"
+                : "Tap to breathe"}
+            </strong>
+            <small>{breathing ? "Tap to stop" : "4 seconds in · 4 out"}</small>
+          </span>
         </button>
       </div>
     </section>
