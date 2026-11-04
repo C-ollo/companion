@@ -3691,10 +3691,7 @@ function SafetyBlock({ go }: { go: (page: Page) => void }) {
         </section>
         <header className="flow7-intro">
           <h1>Stovetop Burner Detected</h1>
-          <p>
-            We do not guide stoves or heaters for your safety. A coach can help
-            you in person.
-          </p>
+          <p>We do not guide stoves or heaters for your safety.</p>
         </header>
         <figure className="flow7-hero safety-photo">
           <Flow7Asset
