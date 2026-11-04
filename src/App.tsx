@@ -176,9 +176,6 @@ function BreathingCard() {
       className={`calm-card ${breathing ? "breathing" : ""}`}
       aria-live="polite"
     >
-      <div className="calm-leaf" aria-hidden="true">
-        ◆
-      </div>
       <div className="calm-copy">
         <div className="row-between">
           <h3>
