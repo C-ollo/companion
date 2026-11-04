@@ -487,9 +487,7 @@ function Passport({ go }: { go: (page: Page) => void }) {
   return (
     <main className="page passport-page">
       <section className="passport-banner">
-        <span className="book-badge">▣</span>
         <span>
-          <small>Skill Passport</small>
           <b>Today's Practice</b>
         </span>
       </section>
@@ -501,7 +499,6 @@ function Passport({ go }: { go: (page: Page) => void }) {
         <div className="routine-carousel-heading">
           <span>
             <h1>Choose a skill to practice</h1>
-            <p>You have {todaysPractices.length} options today.</p>
           </span>
           <strong>
             {practiceIndex + 1} of {todaysPractices.length}
