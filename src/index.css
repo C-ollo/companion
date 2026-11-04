@@ -1,5 +1,7 @@
 @import './styles/tokens.css';
 @import 'tailwindcss';
+@import './styles/primitives.css';
+@import './styles/pilot.css';
 
 @font-face{font-family:'Nova Square:Book';src:url('https://static.figma.com/font/NovaSquare_1') format('woff2');font-display:swap;font-style:normal;font-weight:400}
 @font-face{font-family:'Public Sans:Bold';src:url('./assets/fonts/public-sans-latin-wght-normal.woff2') format('woff2');font-display:swap;font-style:normal;font-weight:700}

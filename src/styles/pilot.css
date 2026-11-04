@@ -1,0 +1,289 @@
+.pilot-home {
+  display: grid;
+  gap: var(--space-6);
+  width: min(100%, var(--content-standard));
+  padding-top: var(--space-7);
+}
+
+.pilot-home__intro {
+  position: relative;
+  padding-left: var(--space-6);
+}
+
+.pilot-home__intro:before {
+  content: '';
+  position: absolute;
+  top: var(--space-2);
+  bottom: var(--space-2);
+  left: 0;
+  width: var(--space-2);
+  border-radius: var(--radius-pill);
+  background: linear-gradient(var(--color-brand), var(--color-mint));
+}
+
+.pilot-route {
+  position: relative;
+  display: grid;
+  gap: var(--space-4);
+}
+
+.pilot-route:before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: calc(var(--space-8) * 2);
+  bottom: var(--space-8);
+  left: calc(var(--space-5) + var(--space-6));
+  width: var(--space-1);
+  border-radius: var(--radius-pill);
+  background: var(--color-mint);
+}
+
+.pilot-route .ds-section-intro {
+  margin-bottom: var(--space-2);
+}
+
+.pilot-home__icon {
+  width: var(--space-6);
+  height: var(--space-6);
+  object-fit: contain;
+}
+
+.pilot-home__support {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr);
+  gap: var(--space-4);
+}
+
+.pilot-home .calm-card {
+  margin: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-medium);
+  background: var(--color-paper);
+  box-shadow: none;
+}
+
+.pilot-home .calm-card .ds-action {
+  width: auto;
+  justify-self: start;
+}
+
+.pilot-home .calm-leaf {
+  border-radius: var(--radius-round);
+  color: var(--color-brand);
+  border-color: var(--color-mint);
+  background: var(--color-mint-soft);
+}
+
+.pilot-guidance {
+  background: var(--color-canvas-flow);
+}
+
+.pilot-guidance-main {
+  display: grid;
+  gap: var(--space-5);
+  width: min(100%, var(--content-standard));
+  padding-top: var(--space-6);
+}
+
+.pilot-guidance__identity {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.pilot-guidance__identity strong {
+  color: var(--color-ink);
+  font: 700 var(--text-title) / var(--leading-title) var(--font-strong);
+}
+
+.pilot-guidance__identity span {
+  color: var(--color-ink-muted);
+  font: 600 var(--text-small) / var(--leading-small) var(--font-medium);
+}
+
+.pilot-guidance__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(var(--support-column-width), .75fr);
+  align-items: start;
+  gap: var(--space-5);
+}
+
+.pilot-instruction {
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-extra-large);
+  background: var(--color-paper);
+  box-shadow: var(--shadow-subtle);
+}
+
+.pilot-instruction__copy {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-3);
+  padding: var(--space-6);
+}
+
+.pilot-instruction__copy > span {
+  color: var(--color-brand);
+  font: 600 var(--text-small) / var(--leading-small) var(--font-medium);
+}
+
+.pilot-instruction h1 {
+  max-width: 20ch;
+  color: var(--color-ink);
+  font: 700 var(--text-display) / var(--leading-display) var(--font-strong);
+  letter-spacing: -.03em;
+}
+
+.pilot-instruction__copy > p {
+  color: var(--color-ink-muted);
+  font: 400 var(--text-body) / var(--leading-body) var(--font-body);
+}
+
+.pilot-instruction__visual {
+  position: relative;
+  min-height: calc(var(--space-8) * 5);
+  margin: 0;
+  background: var(--color-neutral-soft);
+}
+
+.pilot-instruction__visual > img {
+  width: 100%;
+  height: 100%;
+  min-height: calc(var(--space-8) * 5);
+  object-fit: cover;
+}
+
+.pilot-instruction__visual figcaption {
+  position: absolute;
+  right: var(--space-5);
+  bottom: var(--space-5);
+  left: var(--space-5);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border-left: var(--space-1) solid var(--color-mint);
+  border-radius: var(--radius-small);
+  color: var(--color-on-brand);
+  background: var(--color-brand);
+}
+
+.pilot-instruction__visual figcaption b {
+  font: 700 var(--text-body) / var(--leading-body) var(--font-strong);
+}
+
+.pilot-instruction__visual figcaption span {
+  color: var(--color-mint);
+  font: 400 var(--text-small) / var(--leading-small) var(--font-body);
+}
+
+.pilot-guidance__support {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.pilot-checklist {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  border-top: var(--space-1) solid var(--color-brand);
+  border-radius: var(--radius-small);
+  background: var(--color-paper);
+}
+
+.pilot-checklist header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.pilot-checklist h2 {
+  color: var(--color-ink);
+  font: 700 var(--text-body) / var(--leading-body) var(--font-strong);
+}
+
+.pilot-checklist header span {
+  color: var(--color-ink-muted);
+  font: 600 var(--text-small) / var(--leading-small) var(--font-medium);
+}
+
+.pilot-coach {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.pilot-coach .ds-action {
+  width: 100%;
+}
+
+.pilot-pause-notice {
+  position: fixed;
+  z-index: 70;
+  right: var(--space-5);
+  bottom: calc(var(--header-height) + var(--space-5));
+  left: var(--space-5);
+  max-width: var(--content-compact);
+  margin: auto;
+  box-shadow: var(--shadow-overlay);
+}
+
+@media (max-width: 760px) {
+  .pilot-home {
+    gap: var(--space-5);
+    padding-top: var(--space-5);
+  }
+
+  .pilot-home__support,
+  .pilot-guidance__layout {
+    grid-template-columns: 1fr;
+  }
+
+  .pilot-route:before {
+    left: calc(var(--space-4) + var(--space-5));
+  }
+
+  .pilot-guidance-main {
+    padding: var(--space-4) var(--space-3) calc(var(--space-8) * 3);
+  }
+
+  .pilot-guidance__identity {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .pilot-guidance__identity strong {
+    font-size: var(--text-body);
+    line-height: var(--leading-body);
+  }
+
+  .pilot-instruction__copy {
+    padding: var(--space-5);
+  }
+
+  .pilot-instruction h1 {
+    font-size: var(--text-title);
+    line-height: var(--leading-title);
+  }
+
+  .pilot-instruction__visual,
+  .pilot-instruction__visual > img {
+    min-height: calc(var(--space-8) * 4);
+  }
+
+  .pilot-instruction__visual figcaption {
+    align-items: flex-start;
+    flex-direction: column;
+    right: var(--space-3);
+    bottom: var(--space-3);
+    left: var(--space-3);
+    gap: var(--space-1);
+  }
+}
