@@ -232,13 +232,12 @@ function Home({ go }: { go: (page: Page) => void }) {
       </section>
       <section className="feature-grid" aria-label="Primary choices">
         <article className="feature-card">
-          <div
-            className="feature-image-placeholder"
-            role="img"
-            aria-label="Point and Ask image placeholder"
-          >
-            <span>Point &amp; Ask image</span>
-          </div>
+          <figure className="feature-cover">
+            <img
+              src={`${A}/dd509.png`}
+              alt="A kitchen counter with a toaster, kettle, and other appliances"
+            />
+          </figure>
           <p className="eyebrow feature-heading">Point & Ask</p>
           <h2 className="feature-tagline">Visual Help Anywhere</h2>
           <p>
