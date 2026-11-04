@@ -99,16 +99,6 @@ function speak(text: string) {
   window.speechSynthesis.speak(words)
 }
 function AppHeader({ page }: { page: Page }) {
-  const title =
-    page === "home"
-      ? "Home"
-      : page === "point"
-        ? "Point & Ask"
-        : page === "people"
-          ? "My People"
-          : page === "passport"
-            ? "Skill Passport"
-            : "Companion"
   return (
     <header className="app-header">
       <div className="brand">
@@ -123,7 +113,6 @@ function AppHeader({ page }: { page: Page }) {
         </span>
         <span>
           <b className="brand-wordmark">COMPANION</b>
-          <strong>{title}</strong>
         </span>
       </div>
       <div className="header-actions">
