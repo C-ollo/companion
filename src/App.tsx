@@ -540,7 +540,7 @@ function Passport({ go }: { go: (page: Page) => void }) {
         </article>
         <div className="carousel-controls">
           <button onClick={showPreviousPractice} aria-label="Previous skill">
-            ← <span>Previous</span>
+            <span>Previous</span>
           </button>
           <div className="carousel-dots" aria-label="Choose a skill">
             {todaysPractices.map((item, index) => (
@@ -554,7 +554,7 @@ function Passport({ go }: { go: (page: Page) => void }) {
             ))}
           </div>
           <button onClick={showNextPractice} aria-label="Next skill">
-            <span>Next</span> →
+            <span>Next</span>
           </button>
         </div>
       </section>
