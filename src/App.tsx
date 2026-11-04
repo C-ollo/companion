@@ -2157,13 +2157,11 @@ function SupportersHub({ go }: { go: (page: Page) => void }) {
           </span>
           <span>
             <h2>Have a support person with you?</h2>
-            <p>Coach or staff can tap in person.</p>
-            <p>They confirm a routine you did together.</p>
+            <p>
+              They can tap in person and confirm a routine you did together.
+            </p>
           </span>
-          <button onClick={() => go("confirmer")}>
-            Open Confirmer Tap
-            <Flow5Asset group="hub" file="d0c19.svg" />
-          </button>
+          <button onClick={() => go("confirmer")}>Open Confirmer Tap</button>
         </section>
         <aside className="flow5-privacy">
           <span className="flow5-round-icon">
