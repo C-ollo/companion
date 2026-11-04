@@ -134,8 +134,8 @@ function AppHeader({ page }: { page: Page }) {
     </header>
   )
 }
-function BottomNav({ page, go }: { page: Page; go: (page: Page) => void }) {
-  const items: { id: Page; label: string; icon: string }[] = [
+function BottomNav({ page, go }: { page: Page go: (page: Page) => void }) {
+  const items: { id: Page label: string icon: string }[] = [
     { id: "home", label: "Home", icon: icons.home },
     { id: "point", label: "Point & Ask", icon: icons.point },
     { id: "passport", label: "Skill Passport", icon: icons.passport },
@@ -176,9 +176,6 @@ function BreathingCard() {
       className={`calm-card ${breathing ? "breathing" : ""}`}
       aria-live="polite"
     >
-      <div className="calm-leaf" aria-hidden="true">
-        ◆
-      </div>
       <div className="calm-copy">
         <div className="row-between">
           <h3>
@@ -213,45 +210,38 @@ function Home({ go }: { go: (page: Page) => void }) {
       <section className="feature-grid" aria-label="Primary choices">
         <article className="feature-card">
           <div className="feature-top">
-            <FeatureSticker kind="passport" />
             <div className="badge-row">
               <span className="slate-badge">
                 <i />3 tasks today
               </span>
             </div>
           </div>
-          <p className="eyebrow">Skill Passport</p>
-          <h2>Practice My Skills</h2>
-          <p>Today's schedule, step-by-step guides, and progress logs.</p>
-          <button className="primary-button" onClick={() => go("passport")}>
-            Open Skill Passport <span>→</span>
+          <p className="eyebrow feature-heading">Skill Passport</p>
+          <h2 className="feature-tagline">Practice My Skills</h2>
+          <p>Skill tracker, step-by-step guides, and progress logs.</p>
+          <button
+            className="primary-button home-passport-action"
+            onClick={() => go("passport")}
+          >
+            Open Skill Passport
           </button>
         </article>
         <article className="feature-card">
-          <div className="feature-top">
-            <FeatureSticker kind="point" />
-          </div>
-          <p className="eyebrow">Point & Ask</p>
-          <h2>Visual Help Anywhere</h2>
+          <p className="eyebrow feature-heading">Point & Ask</p>
+          <h2 className="feature-tagline">Visual Help Anywhere</h2>
           <p>
             Point your camera at appliances, signs, labels, or counters for
             instant guidance.
           </p>
-          <button className="outline-button" onClick={() => go("point")}>
-            <Icon src={icons.camera} />
-            Open Point & Ask Camera <span>→</span>
+          <button
+            className="outline-button home-point-action"
+            onClick={() => go("point")}
+          >
+            Open Point & Ask Camera
           </button>
         </article>
       </section>
       <BreathingCard />
-      <section className="coach-card">
-        <span>
-          <b className="verified">✓</b> Coach Marcus on standby
-        </span>
-        <b className="time">
-          <i /> Until 4:00 PM
-        </b>
-      </section>
     </main>
   )
 }
