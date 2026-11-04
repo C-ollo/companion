@@ -1,0 +1,25 @@
+{
+  "name": "@skill-passport/api",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Lambda handlers for Skill Passport. Calls Claude on Amazon Bedrock.",
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@anthropic-ai/bedrock-sdk": "^1.1.1",
+    "@anthropic-ai/sdk": "^1.4.0",
+    "@aws-sdk/client-dynamodb": "^3.900.0",
+    "@aws-sdk/lib-dynamodb": "^3.900.0",
+    "@skill-passport/shared": "*",
+    "zod": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.150",
+    "@types/node": "^22.0.0",
+    "typescript": "~5.9.3",
+    "vitest": "^3.2.4"
+  }
+}
