@@ -4860,13 +4860,6 @@ function MyPeople({ go }: { go: (page: Page) => void }) {
       >
         Open Supporters & Cheers
       </button>
-      <section className="privacy-card">
-        <span className="shield">✓</span>
-        <span>
-          <h2>Your network is private</h2>
-          <p>Only people you approve can connect with you here.</p>
-        </span>
-      </section>
     </main>
   )
 }
