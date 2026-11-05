@@ -8,6 +8,7 @@ import {
 import { getSkill } from "@skill-passport/shared/src/skills"
 
 import { apiAvailable } from "./api"
+import { speak } from "./read-aloud"
 import {
   askMessage,
   markSent,
@@ -119,33 +120,6 @@ function Icon({
   className?: string
 }) {
   return <img className={`icon ${className}`} src={src} alt={alt} />
-}
-// Keep a reference to the current utterance: some browsers (iOS Safari) drop
-// speech that has no reference before it finishes.
-let currentWords: SpeechSynthesisUtterance | null = null
-function speak(text: string) {
-  if (!("speechSynthesis" in window)) return
-  const synth = window.speechSynthesis
-  const start = () => {
-    currentWords = new SpeechSynthesisUtterance(text)
-    currentWords.rate = 0.88
-    currentWords.lang = "en-US"
-    const voice = synth
-      .getVoices()
-      .find((v) => v.lang?.toLowerCase().startsWith("en"))
-    if (voice) currentWords.voice = voice
-    synth.resume()
-    synth.speak(currentWords)
-  }
-  // Chrome ignores speech started right after cancel(), so wait a moment
-  // when something is already playing. Otherwise speak straight away, inside
-  // the tap, which iOS requires.
-  if (synth.speaking || synth.pending) {
-    synth.cancel()
-    setTimeout(start, 80)
-  } else {
-    start()
-  }
 }
 function AppHeader({ page }: { page: Page }) {
   return (

@@ -82,6 +82,12 @@ export class SkillPassportStack extends Stack {
     });
     for (const f of Object.values(aiFunctions)) f.addToRolePolicy(mantleInference);
 
+    // Read aloud with Amazon Polly.
+    const speak = fn('Speak', 'speak.ts', 'handler', { timeout: Duration.seconds(15) });
+    speak.addToRolePolicy(
+      new PolicyStatement({ actions: ['polly:SynthesizeSpeech'], resources: ['*'] }),
+    );
+
     // Share-link functions only touch DynamoDB.
     const shareEnv = { environment: { SHARES_TABLE: shares.tableName } };
     const shareCreate = fn('ShareCreate', 'share.ts', 'create', shareEnv);
@@ -114,6 +120,7 @@ export class SkillPassportStack extends Stack {
     route('/point-ask/steps', HttpMethod.POST, aiFunctions.pointAskSteps);
     route('/check-step', HttpMethod.POST, aiFunctions.checkStep);
     route('/summary', HttpMethod.POST, aiFunctions.summary);
+    route('/speak', HttpMethod.POST, speak);
     route('/share', HttpMethod.POST, shareCreate);
     route('/share/{id}', HttpMethod.GET, shareGet);
     route('/share/{id}', HttpMethod.DELETE, shareRemove);
