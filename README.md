@@ -1,6 +1,7 @@
-# Skill Passport
+# Companion (Skill Passport + Point & Ask)
 
-An AI-powered tool that helps people with autism or intellectual and developmental
+**Help with anything new, anywhere, and proof of what you can do.** Companion is a calm,
+plain-language app that helps autistic adults and people with intellectual or developmental
 disabilities (IDD) build independent-living skills and carry them into new places.
 
 Built by **Spectrum & Waves** for the 2026 ASU Spark Center North American AI Challenge, with
@@ -29,7 +30,7 @@ carry over when the environment, tools, or context change. See
 
 | Path | What it is |
 |---|---|
-| `apps/mobile` | Expo (React Native) app: iOS, Android and web from one codebase (coming once the UI design is final) |
+| `apps/web` | The Companion app: React + Vite PWA, installable on phones and desktops. Imported from the designer's repo with history |
 | `packages/shared` | Shared TypeScript types, the starter skill library, and level/stamp rules |
 | `services/api` | AWS Lambda handlers that call Claude on Amazon Bedrock |
 | `infra` | AWS CDK stack: HTTP API, Lambda functions, DynamoDB for share links |
@@ -39,9 +40,9 @@ carry over when the environment, tools, or context change. See
 ## Architecture
 
 ```
-Phone or browser (Expo app)
+Phone or browser (Companion PWA, apps/web)
  ├─ Passport data stored on the device (the person owns it)
- ├─ Camera, text-to-speech, voice input
+ ├─ Camera, read aloud, voice or text logging
  └─ HTTPS ──► API Gateway (HTTP API)
                ├─ POST /log/parse      ─► Lambda ─► Bedrock: Claude Opus 5.5
                ├─ POST /point-ask      ─► Lambda ─► Bedrock: Claude Opus 5.5 (image + text)
@@ -63,6 +64,24 @@ cp .env.example .env   # fill in values
 npm test               # unit tests (no AWS calls)
 ```
 
+### App (apps/web)
+
+```bash
+cd apps/web
+npx vite                     # dev server on http://localhost:8443
+VITE_API_URL=https://<api-id>.execute-api.us-east-1.amazonaws.com npx vite build
+```
+
+Without `VITE_API_URL`, the app runs its built-in sample flows (no AI calls). With it set,
+Point & Ask and voice/text logging use the real API. The designer's screens and copy are kept;
+see `apps/web/README.md` for the product description.
+
+Design updates from the designer's repo come in with:
+
+```bash
+git subtree pull --prefix=apps/web https://github.com/skbosire-art/Companion.git main
+```
+
 ### Backend (AWS CDK)
 
 You need AWS credentials for the target account, with model access enabled in Bedrock for
@@ -72,7 +91,7 @@ Claude Opus 5.5 (`anthropic.claude-opus-5-5`) in `us-east-1`.
 cd infra
 npx cdk bootstrap      # once per account and region
 npx cdk diff           # see what will be created
-npx cdk deploy         # prints ApiUrl; put it in EXPO_PUBLIC_API_URL
+npx cdk deploy         # prints ApiUrl; put it in VITE_API_URL
 npx cdk destroy        # remove everything
 ```
 
@@ -106,8 +125,11 @@ Spectrum & Waves: Collins Kimutai, Ida Gachoki, Lucy Juma, Sandrah Bosire.
 
 ## Attribution
 
+- **UI design:** the Companion interface in `apps/web` was designed by our team's designer
+  (GitHub: skbosire-art) using Figma Make, Figma's AI-assisted app builder, and imported here
+  with its full commit history from https://github.com/skbosire-art/Companion.
 - **AI assistance:** we used Claude Code (Anthropic) as a coding assistant to help scaffold the
-  repository structure and draft parts of the code. Commits made with its help carry a
+  repository structure, the backend, and the code connecting the app to the API. Commits made with its help carry a
   `Co-Authored-By: Claude` trailer. Every change is reviewed, tested, and explainable by a
   team member.
 - **AI in the product:** Claude Opus 5.5 via Amazon Bedrock. All prompts are in

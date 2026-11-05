@@ -114,7 +114,7 @@ export class SkillPassportStack extends Stack {
 
     new CfnOutput(this, 'ApiUrl', {
       value: api.apiEndpoint,
-      description: 'Set EXPO_PUBLIC_API_URL to this value',
+      description: "Set VITE_API_URL in apps/web to this value",
     });
   }
 }
