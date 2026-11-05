@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { guardLogParse, guardPointAsk } from './guards';
 
 const step: Step = {
+  step_title: 'Choosing the cycle',
   action: 'Turn the big round dial to Normal.',
   where: 'Right side, next to the small screen.',
   box: { x: 0.6, y: 0.2, w: 0.2, h: 0.2 },
@@ -11,11 +12,13 @@ const step: Step = {
   compared: 'different',
   compared_note: 'Your old washer had the dial on the left.',
   more: null,
+  hint: null,
   caution: null,
 };
 
 const washer: PointAskResult = {
   appliance: 'washing_machine',
+  item_name: 'Front-Loading Washing Machine',
   confidence: 0.92,
   check_statement: 'This looks like a front-loading washer with a big round dial.',
   same_as_before: ['You add soap to the drawer.'],
@@ -29,17 +32,24 @@ describe('guardPointAsk', () => {
     expect(guardPointAsk(washer).steps).toHaveLength(1);
   });
 
-  it('never gives steps for a stove, even if the model does', () => {
-    const out = guardPointAsk({ ...washer, appliance: 'stove' });
-    expect(out.steps).toEqual([]);
-    expect(out.unsure_reason).toMatch(/keep you safe/);
-  });
+  it.each(['stove', 'gas_stove', 'electric_cooktop', 'space_heater', 'oven', 'medication_bottle'])(
+    'never gives steps for %s, even if the model does',
+    (appliance) => {
+      const out = guardPointAsk({ ...washer, appliance });
+      expect(out.steps).toEqual([]);
+      expect(out.safety_blocked).toBe(true);
+      expect(out.unsure_reason).toMatch(/keep you safe/);
+    },
+  );
 
-  it('never gives steps for unsupported appliances', () => {
-    const out = guardPointAsk({ ...washer, appliance: 'thermostat' });
-    expect(out.steps).toEqual([]);
-    expect(out.unsure_reason).toBeTruthy();
-  });
+  it.each(['microwave', 'microwave_oven', 'cafe_self_order_kiosk', 'thermostat'])(
+    'allows %s',
+    (appliance) => {
+      const out = guardPointAsk({ ...washer, appliance });
+      expect(out.steps).toHaveLength(1);
+      expect(out.safety_blocked).toBe(false);
+    },
+  );
 
   it('never gives steps below the confidence threshold', () => {
     const out = guardPointAsk({ ...washer, confidence: 0.5 });

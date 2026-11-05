@@ -1,9 +1,5 @@
-import {
-  BLOCKED_APPLIANCES,
-  getSkill,
-  SUPPORTED_APPLIANCES,
-} from '@skill-passport/shared';
-import type { LogParseResult, PointAskResult, Step } from '@skill-passport/shared';
+import { getSkill, isSafetyBlocked } from '@skill-passport/shared';
+import type { LogParseResult, PointAskResponse, PointAskResult, Step } from '@skill-passport/shared';
 
 /** Below this, Point & Ask shows no steps, whatever the model says. */
 export const POINT_ASK_MIN_CONFIDENCE = 0.7;
@@ -26,8 +22,6 @@ export function guardLogParse(result: LogParseResult): LogParseResult {
 const UNSURE_DEFAULT = "I'm not sure. I won't guess. Let's ask someone you trust.";
 const BLOCKED_REASON =
   "I don't give steps for this, to keep you safe. Let's ask someone you trust.";
-const UNSUPPORTED_REASON =
-  "I haven't learned this one yet, so I won't guess. Let's ask someone you trust.";
 
 function clampBox(step: Step): Step {
   if (!step.box) return step;
@@ -41,40 +35,45 @@ function clampBox(step: Step): Step {
 }
 
 /**
- * Enforce the "won't guess" rules in code: blocked appliances, unsupported
- * appliances and low confidence never get steps.
+ * Enforce the "won't guess" rules in code: safety-blocked items (stoves, heaters,
+ * medication) and low-confidence answers never get steps.
  */
-export function guardPointAsk(result: PointAskResult): PointAskResult {
-  const appliance = result.appliance.toLowerCase();
+export function guardPointAsk(result: PointAskResult): PointAskResponse {
   const confidence = clamp01(result.confidence);
-  const noSteps = (reason: string): PointAskResult => ({
+  const noSteps = (reason: string): PointAskResponse => ({
     ...result,
     confidence,
     steps: [],
     unsure_reason: reason,
+    safety_blocked: false,
   });
 
-  if ((BLOCKED_APPLIANCES as readonly string[]).includes(appliance)) {
-    return noSteps(BLOCKED_REASON);
-  }
-  if (!(SUPPORTED_APPLIANCES as readonly string[]).includes(appliance)) {
-    return noSteps(result.unsure_reason ?? UNSUPPORTED_REASON);
+  if (isSafetyBlocked(result.appliance)) {
+    return { ...noSteps(BLOCKED_REASON), safety_blocked: true };
   }
   if (confidence < POINT_ASK_MIN_CONFIDENCE || result.steps.length === 0) {
     return noSteps(result.unsure_reason ?? UNSURE_DEFAULT);
   }
-  return { ...result, confidence, unsure_reason: null, steps: result.steps.map(clampBox) };
+  return {
+    ...result,
+    confidence,
+    unsure_reason: null,
+    safety_blocked: false,
+    steps: result.steps.map(clampBox),
+  };
 }
 
 /** Safe reply when the model declines or fails, so the app can offer human help. */
-export function unsurePointAsk(reason = UNSURE_DEFAULT): PointAskResult {
+export function unsurePointAsk(reason = UNSURE_DEFAULT): PointAskResponse {
   return {
     appliance: 'unknown',
+    item_name: '',
     confidence: 0,
     check_statement: '',
     same_as_before: [],
     different: [],
     steps: [],
     unsure_reason: reason,
+    safety_blocked: false,
   };
 }

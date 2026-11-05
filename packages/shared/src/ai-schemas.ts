@@ -57,6 +57,8 @@ export const PointAskRequestSchema = z.object({
 export type PointAskRequest = z.infer<typeof PointAskRequestSchema>;
 
 export const StepSchema = z.object({
+  /** 2 to 4 words naming the step, e.g. "Choosing your item". */
+  step_title: z.string(),
   /** One instruction, verb first, 12 words or fewer. */
   action: z.string(),
   /** Where it is, using visible landmarks. */
@@ -71,13 +73,17 @@ export const StepSchema = z.object({
   compared_note: z.string().nullable(),
   /** Extra detail, shown only on "Tell me more". */
   more: z.string().nullable(),
+  /** A short extra clue, shown on "Show hint". */
+  hint: z.string().nullable(),
   caution: z.string().nullable(),
 });
 export type Step = z.infer<typeof StepSchema>;
 
 export const PointAskResultSchema = z.object({
-  /** e.g. "washing_machine", "stove", "unknown". */
+  /** e.g. "washing_machine", "cafe_self_order_kiosk", "stove", "unknown". */
   appliance: z.string(),
+  /** Plain-words name, e.g. "Café Self-Order Touchscreen Kiosk". */
+  item_name: z.string(),
   confidence: z.number(),
   /** What the AI thinks it sees, phrased for the person to confirm. */
   check_statement: z.string(),
@@ -88,6 +94,8 @@ export const PointAskResultSchema = z.object({
   /** Plain-language reason when the AI won't guide, otherwise null. */
   unsure_reason: z.string().nullable(),
 });
+/** What the API returns: the model's answer plus the code-enforced safety flag. */
+export type PointAskResponse = z.infer<typeof PointAskResultSchema> & { safety_blocked?: boolean };
 export type PointAskResult = z.infer<typeof PointAskResultSchema>;
 
 // POST /check-step

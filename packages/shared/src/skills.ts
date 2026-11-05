@@ -8,7 +8,7 @@ export const SKILLS: Skill[] = [
   // Cooking
   {
     id: "stovetop_cooking",
-    name: "Stovetop cooking",
+    name: "Stovetop Pasta",
     category: "cooking",
     description: "Cook a simple meal on the stove, like pasta or eggs.",
     nextSkillIds: ["simple_sauce", "cook_for_a_friend"],
@@ -22,9 +22,9 @@ export const SKILLS: Skill[] = [
   },
   {
     id: "microwave_meal",
-    name: "Heat food in the microwave",
+    name: "Warm Food Safely",
     category: "cooking",
-    description: "Heat a meal in the microwave for the right amount of time.",
+    description: "Warm food safely without the stove, like in the microwave.",
     nextSkillIds: ["stovetop_cooking"],
   },
   {
@@ -36,22 +36,29 @@ export const SKILLS: Skill[] = [
   },
   {
     id: "grocery_list",
-    name: "Write a grocery list",
+    name: "Grocery List",
     category: "cooking",
     description: "Check what food you need and write it down before shopping.",
     nextSkillIds: ["grocery_shopping"],
   },
   {
     id: "grocery_shopping",
-    name: "Go grocery shopping",
+    name: "Grocery Store & Touchscreen Kiosk",
     category: "cooking",
-    description: "Buy the food on your list at a store.",
+    description: "Buy the food on your list at a store, including the self-checkout.",
     nextSkillIds: [],
+  },
+  {
+    id: "cafe_self_order",
+    name: "Café Self-Order",
+    category: "cooking",
+    description: "Order food or a drink on a café touchscreen kiosk and pay.",
+    nextSkillIds: ["grocery_shopping"],
   },
   // Laundry
   {
     id: "laundry",
-    name: "Laundry",
+    name: "Washing Machine Laundry",
     category: "laundry",
     description: "Wash a load of clothes in a washing machine.",
     nextSkillIds: ["dryer", "fold_clothes"],
@@ -88,9 +95,9 @@ export const SKILLS: Skill[] = [
   // Getting around
   {
     id: "light_rail_to_work",
-    name: "Take the light rail to work",
+    name: "Light Rail Public Transit",
     category: "getting_around",
-    description: "Ride the light rail to work and back.",
+    description: "Ride the light rail to where you need to go and back.",
     nextSkillIds: ["new_bus_route"],
   },
   {
@@ -155,18 +162,16 @@ export function getSkill(id: string): Skill | undefined {
 }
 
 /**
- * Appliances Point & Ask must never give step-by-step guidance for.
- * The AI is told this too, but the API enforces it in code as well.
+ * Things Point & Ask must never give step-by-step guidance for: stoves, ovens,
+ * heaters, electrical work, and medication. The AI is told this too, but the API
+ * also enforces it in code. Microwaves are allowed (warming food safely).
  */
-export const BLOCKED_APPLIANCES = [
-  "stove",
-  "cooktop",
-  "oven",
-  "space_heater",
-  "fireplace",
-  "electrical_panel",
-  "medication",
-] as const;
+const BLOCKED_PATTERN = /stove|oven|cooktop|burner|range_top|heater|fireplace|electrical|medic|pill|drug/;
 
-/** Appliances we've tested Point & Ask against. Anything else takes the "not sure" path. */
-export const SUPPORTED_APPLIANCES = ["washing_machine"] as const;
+export const BLOCKED_ITEM_EXAMPLES = ["stoves", "ovens", "burners", "heaters", "fireplaces", "electrical panels", "medication"];
+
+export function isSafetyBlocked(item: string): boolean {
+  const name = item.toLowerCase();
+  if (name.includes("microwave")) return false;
+  return BLOCKED_PATTERN.test(name);
+}

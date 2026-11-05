@@ -1,9 +1,8 @@
 import {
-  BLOCKED_APPLIANCES,
+  BLOCKED_ITEM_EXAMPLES,
   getSkill,
   PointAskRequestSchema,
   PointAskResultSchema,
-  SUPPORTED_APPLIANCES,
 } from '@skill-passport/shared';
 
 import promptTemplate from '../../../../prompts/point-ask.md';
@@ -11,9 +10,7 @@ import { askClaude, jpegBlock, ModelRefusalError } from '../lib/bedrock';
 import { guardPointAsk, MAX_IMAGE_BASE64_LENGTH, unsurePointAsk } from '../lib/guards';
 import { BadRequestError, json, parseBody, withErrors } from '../lib/http';
 
-const SYSTEM = promptTemplate
-  .replace('{{SUPPORTED_APPLIANCES}}', SUPPORTED_APPLIANCES.join(', '))
-  .replace('{{BLOCKED_APPLIANCES}}', BLOCKED_APPLIANCES.join(', '));
+const SYSTEM = promptTemplate.replace('{{BLOCKED_ITEMS}}', BLOCKED_ITEM_EXAMPLES.join(', '));
 
 /**
  * POST /point-ask: look at the photo, say what it sees (the app asks the person to
