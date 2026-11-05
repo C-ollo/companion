@@ -410,12 +410,6 @@ function PointAsk({ go }: { go: (page: Page) => void }) {
             {message}
           </p>
         )}
-        <button
-          className="safety-demo-button"
-          onClick={() => go("safety-block")}
-        >
-          Check a stovetop safety example
-        </button>
       </section>
       <section className="examples">
         <h2>Examples of what we explain:</h2>
@@ -1202,7 +1196,15 @@ function CafeScan({ go }: { go: (page: Page) => void }) {
       <main className="flow-main cafe-main">
         <div className="cafe-landmark">
           <span>Step 1 of 4 · Take a photo</span>
-          <button onClick={() => speak(pageCopy.scan)}>
+          <button
+            onClick={() =>
+              speak(
+                apiAvailable
+                  ? "Point your camera at what you need help with. We help step by step."
+                  : pageCopy.scan,
+              )
+            }
+          >
             <Icon src={icons.sound} />
             Read aloud
           </button>
@@ -1231,6 +1233,11 @@ function CafeScan({ go }: { go: (page: Page) => void }) {
               muted
               aria-label="Live camera view"
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
+          ) : apiAvailable && !photo ? (
+            <div
+              aria-hidden="true"
+              style={{ width: "100%", height: "100%", background: "var(--color-primary)" }}
             />
           ) : (
             <img
@@ -1617,10 +1624,10 @@ function CafeSteps({ go }: { go: (page: Page) => void }) {
             <small
               style={{ whiteSpace: "normal", width: "90%", textAlign: "center" }}
             >
-              {pending ? "Your photo" : step?.box ? "Look inside the green box" : step?.where}
+              {pending ? "Your photo" : step?.box ? "Look inside the blue box" : step?.where}
             </small>
           ) : (
-            <small>Look inside the green box</small>
+            <small>Look inside the blue box</small>
           )}
         </section>
         <section className="cafe-instruction">
