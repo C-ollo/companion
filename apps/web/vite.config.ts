@@ -36,7 +36,7 @@ export default defineConfig(({ mode }) => {
         injectRegister: false,
         manifest: false, // public/manifest.webmanifest is the source of truth
         workbox: {
-          globPatterns: ["**/*.{js,css,html,svg,png,woff2,webmanifest,ico}"],
+          globPatterns: ["**/*.{js,css,html,svg,png,webp,jpg,jpeg,woff2,webmanifest,ico}"],
           navigateFallback: "index.html",
           cleanupOutdatedCaches: true,
           maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,

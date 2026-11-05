@@ -77,12 +77,16 @@ export function removeEntry(id: string) {
   write(read().filter((entry) => entry.id !== id))
 }
 
-/** How a saved entry describes the help used. Point & Ask is shown as its own kind of help. */
+/** The designer's names for the three levels of help. */
+export const HELP_LABELS: Record<SupportLevel, string> = {
+  with_help: "With someone",
+  with_prompt: "With AI help",
+  on_my_own: "By myself",
+}
+
+/** How a saved entry describes the help used. Point & Ask steps count as AI help. */
 export function helpLabel(entry: Pick<PassportEntry, "level" | "via">) {
-  if (entry.via === "point_ask") return "●●○ With Companion's steps"
-  return {
-    with_help: "●○○ With help",
-    with_prompt: "●●○ With a prompt",
-    on_my_own: "●●● On my own",
-  }[entry.level]
+  const level = entry.via === "point_ask" ? "with_prompt" : entry.level
+  const dots = { with_help: "●○○", with_prompt: "●●○", on_my_own: "●●●" }[level]
+  return `${dots} ${HELP_LABELS[level]}`
 }
