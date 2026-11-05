@@ -660,7 +660,7 @@ function Passport({ go }: { go: (page: Page) => void }) {
           <small>View and export your verified credential.</small>
         </button>
         <button onClick={() => go("data-backup")}>
-          <span>Local-first</span>
+          <span>On this phone</span>
           <b>Backup Your Passport</b>
           <small>Save your progress to an offline file.</small>
         </button>
@@ -1076,7 +1076,7 @@ function Celebration({ go }: { go: (page: Page) => void }) {
             </div>
             <div>
               <small>Time Spent</small>
-              <b>Self-paced. No timers.</b>
+              <b>Take your time</b>
             </div>
           </section>
         </article>
@@ -1207,7 +1207,7 @@ function CafeScan({ go }: { go: (page: Page) => void }) {
       />
       <main className="flow-main cafe-main">
         <div className="cafe-landmark">
-          <span>Step 1 of 4 · Memory-only scan</span>
+          <span>Step 1 of 4 · Take a photo</span>
           <button onClick={() => speak(pageCopy.scan)}>
             <Icon src={icons.sound} />
             Read aloud
@@ -1529,8 +1529,7 @@ function CafeSteps({ go }: { go: (page: Page) => void }) {
       />
       <main className="flow-main cafe-main">
         <div className="cafe-landmark">
-          <span>● Point & Ask guidance · Self-paced</span>
-          <b>Live AR</b>
+          <span>● One step at a time</span>
         </div>
         <section className="cafe-step-counter">
           <span>
@@ -1588,7 +1587,7 @@ function CafeSteps({ go }: { go: (page: Page) => void }) {
             />
           )}
           <span className="ar-status">
-            {live ? "● Your photo" : "● Camera locked on category button"}
+            {live ? "● Your photo" : "● Example photo"}
           </span>
           {!live && (
             <div className="target-box">
@@ -1603,7 +1602,7 @@ function CafeSteps({ go }: { go: (page: Page) => void }) {
               {step?.box ? "Look inside the green box" : step?.where}
             </small>
           ) : (
-            <small>Screen detects button in view</small>
+            <small>Look inside the green box</small>
           )}
         </section>
         <section className="cafe-instruction">
@@ -1696,7 +1695,7 @@ function CafeComplete({ go }: { go: (page: Page) => void }) {
       />
       <main className="flow-main cafe-main">
         <div className="cafe-landmark">
-          <span>Task completed · Passport expansion · Safe storage</span>
+          <span>Task complete</span>
           <button onClick={() => speak(pageCopy.cafecomplete)}>
             <Icon src={icons.sound} />
             Read aloud
@@ -1770,15 +1769,14 @@ function CafeComplete({ go }: { go: (page: Page) => void }) {
         </section>
         )}
         <section className="kiosk-profile">
-          <h2>Kiosk Profile Stored (Text Only)</h2>
+          <h2>{result ? "Good to remember" : "Kiosk Profile Stored (Text Only)"}</h2>
           <div>
-            <small>Saved details</small>
+            <small>{result ? "About this one" : "Saved details"}</small>
             {profile.map((line) => (
               <p key={line}>{line}</p>
             ))}
           </div>
-          <p>✓ Photo discarded immediately.</p>
-          <p>Zero images or personal data stored.</p>
+          <p>✓ Your photo was not saved.</p>
         </section>
       </main>
       <nav className="cafe-bottom dual">
@@ -4121,8 +4119,8 @@ function SafetyBlock({ go }: { go: (page: Page) => void }) {
             <Flow7Asset group="block" file="0b19f.svg" />
           </span>
           <span>
-            <b>Safety guardrail</b>
-            <small>Automatic safety rule active</small>
+            <b>Safety first</b>
+            <small>We don't guide this one</small>
           </span>
           <button
             onClick={() => speak(copy)}
@@ -5282,7 +5280,7 @@ function VoiceLogConfirmed({ go }: { go: (page: Page) => void }) {
               </div>
               <p>
                 <Flow8Asset group="confirmed" file="ca64c.svg" />
-                Logged by Voice · Verified in Memory
+                Logged by voice or text
               </p>
               <p>
                 <Flow8Asset group="confirmed" file="63a43.svg" />
