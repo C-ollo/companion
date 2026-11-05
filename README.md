@@ -96,7 +96,15 @@ npx cdk destroy        # remove everything
 ```
 
 The stack creates an HTTP API (rate-limited, since there's no sign-in yet), seven Lambda
-functions, and one DynamoDB table for share links.
+functions, one DynamoDB table for share links, and the web app on S3 + CloudFront (HTTPS,
+which the phone camera needs).
+
+**Deploying the web app:** build it with the API URL first, then deploy. CDK uploads
+`apps/web/dist` if it exists and prints the public `WebUrl`:
+
+```bash
+cd apps/web && VITE_API_URL=<ApiUrl> npx vite build && cd ../../infra && npx cdk deploy
+```
 
 **Live model test** (costs a fraction of a cent):
 

@@ -1326,6 +1326,7 @@ function CafeIdentify({ go }: { go: (page: Page) => void }) {
 function CafeSteps({ go }: { go: (page: Page) => void }) {
   const [paused, setPaused] = useState(false)
   const [hint, setHint] = useState(false)
+  const [photoRatio, setPhotoRatio] = useState(4 / 3)
   const session = usePointAskSession()
   const steps = session.result?.steps ?? []
   const live = steps.length > 0
@@ -1372,10 +1373,50 @@ function CafeSteps({ go }: { go: (page: Page) => void }) {
           <p>Take your time. There is no time limit.</p>
         </section>
         <section className="ar-viewfinder">
-          <img
-            src={session.photoUrl ?? `${A}/83e74.png`}
-            alt={live ? "Your photo" : "Close-up of café kiosk menu"}
-          />
+          {live ? (
+            // Show the whole photo at its real shape so the highlight lines up.
+            <div
+              style={{
+                position: "relative",
+                height: "100%",
+                maxWidth: "100%",
+                aspectRatio: String(photoRatio),
+                margin: "0 auto",
+              }}
+            >
+              <img
+                src={session.photoUrl ?? ""}
+                alt="Your photo"
+                onLoad={(event) =>
+                  setPhotoRatio(
+                    event.currentTarget.naturalWidth /
+                      event.currentTarget.naturalHeight,
+                  )
+                }
+                style={{ width: "100%", height: "100%", objectFit: "fill" }}
+              />
+              {step?.box && (
+                <div
+                  aria-hidden="true"
+                  style={{
+                    position: "absolute",
+                    left: `${step.box.x * 100}%`,
+                    top: `${step.box.y * 100}%`,
+                    width: `${step.box.w * 100}%`,
+                    height: `${step.box.h * 100}%`,
+                    border: "4px solid var(--color-brand)",
+                    borderRadius: "var(--radius-medium)",
+                    boxShadow: "0 0 0 3px #ffffffcc, 0 0 20px #13332673",
+                  }}
+                />
+              )}
+            </div>
+          ) : (
+            <img
+              src={`${A}/83e74.png`}
+              alt="Close-up of café kiosk menu"
+            />
+          )}
           <span className="ar-status">
             {live ? "● Your photo" : "● Camera locked on category button"}
           </span>
@@ -1385,26 +1426,20 @@ function CafeSteps({ go }: { go: (page: Page) => void }) {
               <span>Iced Drinks & Teas</span>
             </div>
           )}
-          {live && step?.box && (
-            <div
-              className="target-box"
-              style={{
-                position: "absolute",
-                left: `${step.box.x * 100}%`,
-                top: `${step.box.y * 100}%`,
-                width: `${step.box.w * 100}%`,
-                height: `${step.box.h * 100}%`,
-                transform: "none",
-              }}
+          {live ? (
+            <small
+              style={{ whiteSpace: "normal", width: "90%", textAlign: "center" }}
             >
-              <b>{step.step_title}</b>
-            </div>
+              {step?.box ? "Look inside the green box" : step?.where}
+            </small>
+          ) : (
+            <small>Screen detects button in view</small>
           )}
-          <small>{live ? step?.done_when : "Screen detects button in view"}</small>
         </section>
         <section className="cafe-instruction">
           <h1>{instruction}</h1>
           <p>{where}</p>
+          {step?.done_when && <p>✓ You'll know it worked: {step.done_when}</p>}
           {step?.caution && <p>{step.caution}</p>}
           <button
             className="audio-pill"

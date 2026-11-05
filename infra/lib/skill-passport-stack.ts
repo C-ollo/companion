@@ -1,8 +1,11 @@
+import * as fs from 'node:fs';
 import * as path from 'node:path';
 
 import { CfnOutput, Duration, RemovalPolicy, Stack } from 'aws-cdk-lib';
 import type { StackProps } from 'aws-cdk-lib';
 import { CfnStage, CorsHttpMethod, HttpApi, HttpMethod } from 'aws-cdk-lib/aws-apigatewayv2';
+import { Distribution, ViewerProtocolPolicy } from 'aws-cdk-lib/aws-cloudfront';
+import { S3BucketOrigin } from 'aws-cdk-lib/aws-cloudfront-origins';
 import { HttpLambdaIntegration } from 'aws-cdk-lib/aws-apigatewayv2-integrations';
 import { AttributeType, Billing, TableV2 } from 'aws-cdk-lib/aws-dynamodb';
 import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
@@ -10,10 +13,13 @@ import { Architecture, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { NodejsFunction, OutputFormat } from 'aws-cdk-lib/aws-lambda-nodejs';
 import type { NodejsFunctionProps } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
+import { BlockPublicAccess, Bucket, BucketEncryption } from 'aws-cdk-lib/aws-s3';
+import { BucketDeployment, CacheControl, Source } from 'aws-cdk-lib/aws-s3-deployment';
 import type { Construct } from 'constructs';
 
 const REPO_ROOT = path.join(__dirname, '..', '..');
 const HANDLERS = path.join(REPO_ROOT, 'services', 'api', 'src', 'handlers');
+const WEB_DIST = path.join(REPO_ROOT, 'apps', 'web', 'dist');
 
 const MODEL_ID = 'anthropic.claude-opus-5-5';
 
@@ -114,7 +120,46 @@ export class SkillPassportStack extends Stack {
 
     new CfnOutput(this, 'ApiUrl', {
       value: api.apiEndpoint,
-      description: "Set VITE_API_URL in apps/web to this value",
+      description: 'Set VITE_API_URL in apps/web to this value',
+    });
+
+    // The Companion web app: a private bucket served over HTTPS by CloudFront.
+    // HTTPS is required for the phone camera and for installing the app.
+    const webBucket = new Bucket(this, 'WebBucket', {
+      blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
+      encryption: BucketEncryption.S3_MANAGED,
+      enforceSSL: true,
+      removalPolicy: RemovalPolicy.DESTROY,
+      autoDeleteObjects: true,
+    });
+    const web = new Distribution(this, 'Web', {
+      comment: 'Companion web app',
+      defaultRootObject: 'index.html',
+      defaultBehavior: {
+        origin: S3BucketOrigin.withOriginAccessControl(webBucket),
+        viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+      },
+      errorResponses: [
+        { httpStatus: 403, responseHttpStatus: 200, responsePagePath: '/index.html' },
+        { httpStatus: 404, responseHttpStatus: 200, responsePagePath: '/index.html' },
+      ],
+    });
+
+    // Upload the built app if it exists (build apps/web first; see README).
+    // no-cache makes browsers re-check files, so design updates always reach people.
+    if (fs.existsSync(path.join(WEB_DIST, 'index.html'))) {
+      new BucketDeployment(this, 'WebDeploy', {
+        sources: [Source.asset(WEB_DIST)],
+        destinationBucket: webBucket,
+        cacheControl: [CacheControl.fromString('no-cache')],
+        distribution: web,
+        distributionPaths: ['/*'],
+      });
+    }
+
+    new CfnOutput(this, 'WebUrl', {
+      value: `https://${web.distributionDomainName}`,
+      description: 'Public link to the Companion app',
     });
   }
 }
