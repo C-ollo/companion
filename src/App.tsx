@@ -259,7 +259,7 @@ function Home({ go }: { go: (page: Page) => void }) {
           <figure className="feature-cover skill-passport-cover">
             <img
               src={`${A}/skill-passport-cover.webp`}
-              alt="An illustrated skills book showing laundry, transit, grocery, community, and cooking skills"
+              alt="An illustrated skills book showing everyday skills"
             />
           </figure>
           <p className="eyebrow feature-heading">My Skills</p>
@@ -532,15 +532,15 @@ function Passport({ go }: { go: (page: Page) => void }) {
       <section className="ring-legend" aria-label="Independence level legend">
         <span>
           <i className="rings one" />
-          Level 1
+          With someone
         </span>
         <span className="selected">
           <i className="rings two" />
-          Level 2
+          With AI help
         </span>
         <span>
           <i className="rings three" />
-          Level 3
+          By myself
         </span>
       </section>
       <section className="recent-section">
@@ -762,17 +762,17 @@ function Guidance({ go }: { go: (page: Page) => void }) {
 const observations = [
   {
     title: "I needed help",
-    level: "●○○ With help",
+    level: "●○○ With someone",
     copy: "A supporter did the steps with me.",
   },
   {
     title: "I needed a reminder",
-    level: "●●○ With a little help",
+    level: "●●○ With AI help",
     copy: "I used visual cards or a quick reminder.",
   },
   {
-    title: "I did it on my own",
-    level: "●●● On my own",
+    title: "I did it by myself",
+    level: "●●● By myself",
     copy: "I completed every step without reminders.",
   },
 ]
@@ -967,8 +967,8 @@ function Celebration({ go }: { go: (page: Page) => void }) {
               </span>
             </div>
             <div>
-              <h2>Level 2 of 3 · With a little help</h2>
-              <span className="level-pill">●●○ A little help</span>
+              <h2>Level 2 of 3 · With AI help</h2>
+              <span className="level-pill">●●○ AI help</span>
               <p>My Apartment upgraded to Level 2.</p>
               <p>One routine by yourself earns the next skill level.</p>
             </div>
@@ -1178,7 +1178,7 @@ function CafeIdentify({ go }: { go: (page: Page) => void }) {
             </button>
           </div>
           <p>Does this look right to you?</p>
-          <span className="level-pill">●●○ With a little help</span>
+          <span className="level-pill">●●○ With AI help</span>
           <button className="flow-primary" onClick={() => go("cafesteps")}>
             ✓ Yes, that's right
           </button>
@@ -1329,7 +1329,7 @@ function CafeComplete({ go }: { go: (page: Page) => void }) {
           <article>
             <Icon src={`${A}/71212.svg`} />
             <span>
-              <b>●●○ Level 2: With a little help</b>
+              <b>●●○ Level 2: With AI help</b>
               <p>Great consistency. You ordered independently!</p>
             </span>
           </article>
@@ -1372,7 +1372,7 @@ const summarySections = [
   {
     title: "Getting stronger",
     items: [
-      "You did 3 routines with a little help.",
+      "You did 3 routines with AI help.",
       "You used the Point & Ask camera smoothly.",
     ],
   },
@@ -1479,7 +1479,7 @@ function MonthlySummary({ go }: { go: (page: Page) => void }) {
                     <i />
                     <i />
                     <i />
-                    With a little help
+                    With AI help
                   </span>
                 </div>
               )}
@@ -1776,7 +1776,7 @@ function PrivateSharing({ go }: { go: (page: Page) => void }) {
                 <i />
                 <i />
                 <i />
-                On my own
+                By myself
               </span>
             </article>
             <article>
@@ -2521,7 +2521,7 @@ function ConfirmerTap({ go }: { go: (page: Page) => void }) {
               <i />
               <i />
               <i />
-              With a little help
+              With AI help
             </span>
           </div>
         </section>
@@ -2981,7 +2981,7 @@ function CredentialPreview({ go }: { go: (page: Page) => void }) {
                   <b className="credential-level">
                     <i />
                     <i />
-                    <i /> Level 3 · On My Own
+                    <i /> Level 3 · By Myself
                   </b>
                 </span>
                 <span className="credential-skill-icon">
@@ -4033,7 +4033,7 @@ const safeOptions = [
   {
     title: "Microwave Reheat",
     subtitle: "Supported Routine",
-    level: "●●● On my own",
+    level: "●●● By myself",
     copy: "Press 1 minute. Safe door latch with zero open flame.",
     action: "Open Microwave Guide",
     icon: "8262e.svg",
@@ -4043,7 +4043,7 @@ const safeOptions = [
   {
     title: "Electric Kettle",
     subtitle: "Warm Water Routine",
-    level: "●●○ With a little help",
+    level: "●●○ With AI help",
     copy: "Auto-shutoff switch turns off automatically when boiled.",
     action: "Open Kettle Guide",
     icon: "9a512.svg",
@@ -4471,14 +4471,14 @@ function SkillMapping({
         <section className="detected-level">
           <h2>
             <Flow8Asset group="mapping" file="2ee68.svg" />
-            Level 3 Detected: On My Own
+            Level 3 Detected: By Myself
           </h2>
           <div>
             <b>Help Level:</b>
             <span>
               <i />
               <i />
-              <i /> On my own
+              <i /> By myself
             </span>
           </div>
           <p>
@@ -4521,9 +4521,9 @@ function SkillMapping({
   )
 }
 const supportLevels = [
-  ["With help", 1],
-  ["With a little help", 2],
-  ["On my own", 3],
+  ["With someone", 1],
+  ["With AI help", 2],
+  ["By myself", 3],
 ] as const
 function SkillClarification({ go }: { go: (page: Page) => void }) {
   const [match, setMatch] = useState(true)
@@ -4740,7 +4740,7 @@ function VoiceLogConfirmed({ go }: { go: (page: Page) => void }) {
                   <i />
                   <i />
                   <i />
-                  On my own
+                  By myself
                 </b>
               </div>
               <p>
