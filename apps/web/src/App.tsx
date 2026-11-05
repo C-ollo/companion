@@ -8,6 +8,13 @@ import {
 import { getSkill } from "@skill-passport/shared/src/skills"
 
 import { apiAvailable } from "./api"
+import {
+  askMessage,
+  markSent,
+  shareByText,
+  startAsk,
+  useAskRequest,
+} from "./ask-friend"
 import { matchLog, saveLog, useLogSession } from "./log-session"
 import {
   addEntry,
@@ -112,12 +119,32 @@ function Icon({
 }) {
   return <img className={`icon ${className}`} src={src} alt={alt} />
 }
+// Keep a reference to the current utterance: some browsers (iOS Safari) drop
+// speech that has no reference before it finishes.
+let currentWords: SpeechSynthesisUtterance | null = null
 function speak(text: string) {
   if (!("speechSynthesis" in window)) return
-  window.speechSynthesis.cancel()
-  const words = new SpeechSynthesisUtterance(text)
-  words.rate = 0.88
-  window.speechSynthesis.speak(words)
+  const synth = window.speechSynthesis
+  const start = () => {
+    currentWords = new SpeechSynthesisUtterance(text)
+    currentWords.rate = 0.88
+    currentWords.lang = "en-US"
+    const voice = synth
+      .getVoices()
+      .find((v) => v.lang?.toLowerCase().startsWith("en"))
+    if (voice) currentWords.voice = voice
+    synth.resume()
+    synth.speak(currentWords)
+  }
+  // Chrome ignores speech started right after cancel(), so wait a moment
+  // when something is already playing. Otherwise speak straight away, inside
+  // the tap, which iOS requires.
+  if (synth.speaking || synth.pending) {
+    synth.cancel()
+    setTimeout(start, 80)
+  } else {
+    start()
+  }
 }
 function AppHeader({ page }: { page: Page }) {
   return (
@@ -1439,7 +1466,10 @@ function CafeIdentify({ go }: { go: (page: Page) => void }) {
           {(unsure || session.status === "error") && (
             <button
               className="flow-primary"
-              onClick={() => go("photo-confirmation")}
+              onClick={() => {
+                startAsk({ reason: "unsure", itemName: result?.item_name ?? "" })
+                go("photo-confirmation")
+              }}
             >
               Ask someone you trust
             </button>
@@ -1509,6 +1539,15 @@ function CafeSteps({ go }: { go: (page: Page) => void }) {
   const where = step?.where ?? "Touch the cold drinks picture in the top row."
   const hintText =
     step?.hint ?? step?.done_when ?? "Look at the first row. Find the cold drink cup."
+  const askSarah = () => {
+    startAsk({
+      reason: "stuck",
+      itemName: session.result?.item_name ?? "Café Self-Order Touchscreen Kiosk",
+      stepNumber: current,
+      stepText: instruction,
+    })
+    go("photo-confirmation")
+  }
   const showStep = (next: number) => {
     setHint(false)
     setStepIndex(next)
@@ -1620,9 +1659,7 @@ function CafeSteps({ go }: { go: (page: Page) => void }) {
         </section>
         <div className="assist-row">
           <button onClick={() => setHint(!hint)}>Show hint</button>
-          <button onClick={() => speak("You can ask Sarah for help.")}>
-            Not sure
-          </button>
+          <button onClick={askSarah}>Not sure</button>
         </div>
         {hint && (
           <p className="hint-card" role="status">
@@ -1635,9 +1672,7 @@ function CafeSteps({ go }: { go: (page: Page) => void }) {
             <b>Sarah</b>
             <small>Family friend in My People</small>
           </span>
-          <button onClick={() => speak("Sarah is ready to help.")}>
-            Ask Sarah
-          </button>
+          <button onClick={askSarah}>Ask Sarah</button>
         </section>
       </main>
       {paused && (
@@ -4171,6 +4206,18 @@ function SafetyBlock({ go }: { go: (page: Page) => void }) {
           </p>
         </aside>
         <Flow7Actions>
+          <button
+            className="flow7-primary"
+            onClick={() => {
+              startAsk({
+                reason: "safety",
+                itemName: blocked?.item_name ?? "Electric Coil Stovetop",
+              })
+              go("photo-confirmation")
+            }}
+          >
+            Ask someone you trust
+          </button>
           <button onClick={() => go("point")}>
             <Flow7Asset group="block" file="85b76.svg" />
             Cancel & Return to Camera
@@ -4185,6 +4232,22 @@ function PhotoConfirmation({ go }: { go: (page: Page) => void }) {
   const [consent, setConsent] = useState(false)
   const [photo, setPhoto] = useState<string | null>(null)
   const [error, setError] = useState("")
+  const ask = useAskRequest()
+  const session = usePointAskSession()
+  const shownPhoto = photo ?? (ask ? session.photoUrl : null)
+  const note = !ask
+    ? "I want to warm up pasta safely."
+    : ask.reason === "safety"
+      ? "I want help using this safely."
+      : ask.reason === "stuck"
+        ? "I'm stuck on this step."
+        : "I don't know how to use this."
+  const backTo: Page =
+    ask?.reason === "stuck"
+      ? "cafesteps"
+      : ask?.reason === "unsure"
+        ? "identify"
+        : "safety-block"
   useEffect(
     () => () => {
       if (photo) URL.revokeObjectURL(photo)
@@ -4209,10 +4272,26 @@ function PhotoConfirmation({ go }: { go: (page: Page) => void }) {
   }
   const send = () => {
     if (!consent) return
+    markSent("app")
     if (photo) URL.revokeObjectURL(photo)
     setPhoto(null)
     setConsent(false)
     go("coach-standby")
+  }
+  // Real send for the prototype: the phone's share menu (text, WhatsApp...).
+  const sendByText = async () => {
+    if (!consent || !ask) return
+    try {
+      await shareByText(ask, shownPhoto)
+      markSent("text")
+      setConsent(false)
+      go("coach-standby")
+    } catch (err) {
+      // Closing the share menu is not an error.
+      if ((err as Error)?.name !== "AbortError") {
+        setError("I couldn't open your messages. Try again.")
+      }
+    }
   }
   return (
     <div className="flow-screen flow7-screen">
@@ -4220,7 +4299,7 @@ function PhotoConfirmation({ go }: { go: (page: Page) => void }) {
         group="consent"
         title="Sensory & Regulation Needs"
         copy={pageCopy["photo-confirmation"]}
-        back={() => go("safety-block")}
+        back={() => go(backTo)}
         close={cancel}
       />
       <main className="flow7-main">
@@ -4240,8 +4319,8 @@ function PhotoConfirmation({ go }: { go: (page: Page) => void }) {
         <section className="photo-check-card">
           <div className="photo-check-preview">
             <img
-              src={photo || `${A}/flow7-consent/ea664.png`}
-              alt="Photo of the detected electric stovetop"
+              src={shownPhoto || `${A}/flow7-consent/ea664.png`}
+              alt={ask ? "Your photo" : "Photo of the detected electric stovetop"}
             />
             <span className="safe-photo-badge">
               <Flow7Asset group="consent" file="e72a1.svg" />
@@ -4267,14 +4346,11 @@ function PhotoConfirmation({ go }: { go: (page: Page) => void }) {
             </h2>
             {[
               [
-                "No faces or personal items detected",
-                "Verified clean frame (R28.6)",
+                "Check your photo first",
+                "Make sure no faces or personal things are in it",
               ],
-              ["Photo is sent only to Sarah", "Encrypted direct share"],
-              [
-                "Photo is erased immediately after help",
-                "Never stored permanently (R28.2)",
-              ],
+              ["Only Sarah will see it", "It is not posted anywhere"],
+              ["Your photo is not saved", "Companion does not keep it"],
             ].map(([title, detail]) => (
               <div key={title}>
                 <span>
@@ -4311,18 +4387,23 @@ function PhotoConfirmation({ go }: { go: (page: Page) => void }) {
           </div>
           <blockquote>
             <b>System Message:</b>
-            “Maya needs in-person help with the stovetop burner at Transition
-            Kitchen.”
+            “
+            {ask
+              ? askMessage(ask)
+              : "Maya needs in-person help with the stovetop burner at Transition Kitchen."}
+            ”
           </blockquote>
           <p className="resident-note">
             <Flow7Asset group="consent" file="5e7a5.svg" />
             <span>
-              <b>Your note:</b> “I want to warm up pasta safely.”
+              <b>Your note:</b> “{note}”
             </span>
           </p>
           <p className="static-eta">
             <Flow7Asset group="consent" file="7f536.svg" />
-            Estimated arrival: within 3 minutes
+            {ask
+              ? "Sarah will get your message right away."
+              : "Estimated arrival: within 3 minutes"}
           </p>
         </section>
         <label className="consent-control">
@@ -4343,6 +4424,11 @@ function PhotoConfirmation({ go }: { go: (page: Page) => void }) {
             Confirm & Send to Sarah
             <Flow7Asset group="consent" file="2ac9b.svg" />
           </button>
+          {ask && (
+            <button disabled={!consent} onClick={sendByText}>
+              Send by text message instead
+            </button>
+          )}
           <button onClick={cancel}>
             <Flow7Asset group="consent" file="15ad5.svg" />
             Keep Photo Private & Cancel
@@ -4355,6 +4441,16 @@ function PhotoConfirmation({ go }: { go: (page: Page) => void }) {
 function CoachStandby({ go }: { go: (page: Page) => void }) {
   const [inhale, setInhale] = useState(true)
   const [callStatus, setCallStatus] = useState("")
+  const ask = useAskRequest()
+  const helping = ask && ask.reason !== "safety"
+  const byText = ask?.sentBy === "text"
+  const reply = !ask
+    ? "Hi Maya! I see your stove photo. Don’t touch the dials yet, I’m walking over right now!"
+    : ask.reason === "safety"
+      ? "Hi Maya! I got your photo. Please don't touch it yet. I'm coming to help."
+      : ask.reason === "stuck"
+        ? "Hi Maya! I can see your photo. Give me a minute and I'll help you with this step."
+        : "Hi Maya! I can see your photo. Let me take a look and tell you what it is."
   return (
     <div className="flow-screen flow7-screen">
       <Flow7TopBar
@@ -4367,16 +4463,18 @@ function CoachStandby({ go }: { go: (page: Page) => void }) {
       <main className="flow7-main">
         <div className="flow7-live">
           <span>
-            <i /> Live support · Sarah notified
+            <i /> {byText ? "Sent by text message" : "Live support · Sarah notified"}
           </span>
           <button onClick={() => speak(pageCopy["coach-standby"])}>
             <Flow7Asset group="standby" file="dc99e.svg" /> Listen
           </button>
         </div>
         <header className="flow7-intro">
-          <h1>Sarah Is On Her Way</h1>
+          <h1>{helping ? "Sarah Got Your Message" : "Sarah Is On Her Way"}</h1>
           <p>
-            Sarah received your photo. Take a seat and relax while you wait.
+            {helping
+              ? "Sarah is looking at your photo. Take a breath while you wait."
+              : "Sarah received your photo. Take a seat and relax while you wait."}
           </p>
         </header>
         <section className="coach-status-card">
@@ -4392,21 +4490,31 @@ function CoachStandby({ go }: { go: (page: Page) => void }) {
             <span>
               <h2>Sarah</h2>
               <b className="active-pill">
-                <i /> Active · Arriving in ~2 min
+                <i /> {helping ? "Active · Replying" : "Active · Arriving in ~2 min"}
               </b>
               <strong>Family Friend · My People</strong>
               <small>
                 <Flow7Asset group="standby" file="1dc61.svg" />
-                Nearby and on the way
+                {helping ? "Reading your message" : "Nearby and on the way"}
               </small>
             </span>
           </header>
           <blockquote>
             <Flow7Asset group="standby" file="48b70.svg" />
             <span>
-              <b>Sarah wrote just now:</b>
-              “Hi Maya! I see your stove photo. Don’t touch the dials yet, I’m
-              walking over right now!”
+              {byText ? (
+                <>
+                  <b>Your text was sent.</b>
+                  Sarah will reply in your messages.
+                </>
+              ) : (
+                <>
+                  <b>Sarah wrote just now:</b>“{reply}”
+                  {ask && (
+                    <small>In this prototype, Sarah's reply is an example.</small>
+                  )}
+                </>
+              )}
             </span>
           </blockquote>
           <p className="route-status">
@@ -4414,7 +4522,7 @@ function CoachStandby({ go }: { go: (page: Page) => void }) {
             <span>
               <i />
               <i />
-              <i /> Assigned & En Route
+              <i /> {helping ? "Message delivered" : "Assigned & En Route"}
             </span>
           </p>
         </section>
@@ -4466,13 +4574,23 @@ function CoachStandby({ go }: { go: (page: Page) => void }) {
           </p>
         </aside>
         <Flow7Actions>
-          <button
-            className="flow7-primary"
-            onClick={() => go("safe-alternatives")}
-          >
-            View Safe Stovetop Alternatives
-            <Flow7Asset group="standby" file="d3302.svg" />
-          </button>
+          {helping ? (
+            <button
+              className="flow7-primary"
+              onClick={() => go(ask?.reason === "stuck" ? "cafesteps" : "scan")}
+            >
+              {ask?.reason === "stuck" ? "Back to my steps" : "Try another photo"}
+              <Flow7Asset group="standby" file="d3302.svg" />
+            </button>
+          ) : (
+            <button
+              className="flow7-primary"
+              onClick={() => go("safe-alternatives")}
+            >
+              View Safe Stovetop Alternatives
+              <Flow7Asset group="standby" file="d3302.svg" />
+            </button>
+          )}
           <button onClick={() => go("home")}>
             <Flow7Asset group="standby" file="fb28f.svg" />
             Cancel Support Request (I’m okay now)
