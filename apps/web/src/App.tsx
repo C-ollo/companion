@@ -1712,7 +1712,6 @@ function CafeComplete({ go }: { go: (page: Page) => void }) {
               ? `You finished every step with the ${result.item_name}.`
               : "Café order completed at Uptown Coffee."}
           </p>
-          <small>Gentle celebration · No flashing animations</small>
         </section>
         {result && (
           <section className="cafe-passport-update" aria-live="polite">
