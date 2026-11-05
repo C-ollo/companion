@@ -1654,15 +1654,15 @@ function CafeSteps({ go }: { go: (page: Page) => void }) {
             />
           )}
           <span className="ar-status">
-            {live ? "● Your photo" : "● Example photo"}
+            {live || pending ? "● Your photo" : "● Example photo"}
           </span>
-          {!live && (
+          {!live && !pending && (
             <div className="target-box">
               <b>Tap “Iced Drinks”</b>
               <span>Iced Drinks & Teas</span>
             </div>
           )}
-          {live ? (
+          {live || pending ? (
             <small
               style={{ whiteSpace: "normal", width: "90%", textAlign: "center" }}
             >
