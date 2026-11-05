@@ -1,6 +1,19 @@
 import { useEffect, useRef, useState } from "react"
 
+import {
+  CATEGORY_LABELS,
+  SUPPORT_LEVEL_LABELS,
+  SUPPORT_LEVELS,
+} from "@skill-passport/shared/src/types"
+import { getSkill } from "@skill-passport/shared/src/skills"
+
 import { apiAvailable } from "./api"
+import {
+  matchLog,
+  removeLastLog,
+  saveLog,
+  useLogSession,
+} from "./log-session"
 import {
   resetPointAsk,
   setStepIndex,
@@ -4450,12 +4463,27 @@ function VoiceLogInput({
   setDraft: (value: string) => void
 }) {
   const [listening, setListening] = useState(true)
+  const [checking, setChecking] = useState(false)
+  const [error, setError] = useState("")
   const wordCount = draft.trim() ? draft.trim().split(/\s+/).length : 0
-  const review = () => {
+  const review = async () => {
     const text = draft.toLowerCase()
     const hazardous = hazardousVoiceTopics.some((topic) => text.includes(topic))
     if (hazardous) {
       go("safety-block")
+      return
+    }
+    if (apiAvailable) {
+      setChecking(true)
+      setError("")
+      try {
+        const outcome = await matchLog(draft)
+        go(outcome === "matched" ? "skill-mapping" : "skill-clarification")
+      } catch {
+        setError("I couldn't check this right now. Please try again.")
+      } finally {
+        setChecking(false)
+      }
       return
     }
     const unclear =
@@ -4547,19 +4575,32 @@ function VoiceLogInput({
         </section>
         <aside className="voice-privacy">
           <Flow8Asset group="input" file="f2703.svg" />
-          <p>
-            <b>Private on-device voice processing</b>
-            Audio recordings are never saved or sent to any server. Your words
-            stay on your phone.
-          </p>
+          {apiAvailable ? (
+            <p>
+              <b>Private voice processing</b>
+              Audio recordings stay on your phone and are never saved. Your
+              words are sent securely to find your skill, and are not stored.
+            </p>
+          ) : (
+            <p>
+              <b>Private on-device voice processing</b>
+              Audio recordings are never saved or sent to any server. Your words
+              stay on your phone.
+            </p>
+          )}
         </aside>
         <Flow8Buttons>
+          {error && (
+            <p className="guidance-message" role="status">
+              {error}
+            </p>
+          )}
           <button
             className="flow8-primary"
             onClick={review}
-            disabled={!draft.trim()}
+            disabled={!draft.trim() || checking}
           >
-            Find My Skill & Review
+            {checking ? "Finding your skill..." : "Find My Skill & Review"}
             <Flow8Asset group="input" file="2ac9b.svg" />
           </button>
           <button onClick={() => go("home")}>Cancel & Return to Home</button>
@@ -4575,7 +4616,15 @@ function SkillMapping({
   go: (page: Page) => void
   draft: string
 }) {
-  const transcript = draft || defaultVoiceDraft
+  const log = useLogSession()
+  const result = log.result
+  const skill = result ? getSkill(result.skill_id) : undefined
+  const live = Boolean(result && skill)
+  const transcript = live ? log.text : draft || defaultVoiceDraft
+  const levelNumber = result ? SUPPORT_LEVELS.indexOf(result.support_level) + 1 : 3
+  const levelLabel = result
+    ? SUPPORT_LEVEL_LABELS[result.support_level]
+    : "On my own"
   return (
     <div className="flow-screen flow8-screen">
       <Flow8TopBar
@@ -4612,10 +4661,14 @@ function SkillMapping({
         </section>
         <section className="matched-skill">
           <header>
-            <span>Mobility · Community transit</span>
+            <span>
+              {skill ? CATEGORY_LABELS[skill.category] : "Mobility · Community transit"}
+            </span>
             <b>
               <i />
-              96% Verified Match
+              {result && live
+                ? `${Math.round(result.confidence * 100)}% Match`
+                : "96% Verified Match"}
             </b>
           </header>
           <div className="matched-title">
@@ -4623,13 +4676,18 @@ function SkillMapping({
               <Flow8Asset group="mapping" file="28637.svg" />
             </span>
             <div>
-              <h2>Light Rail Public Transit</h2>
-              <p>
-                <Flow8Asset group="mapping" file="48aa6.svg" />
-                Central Station → 8th Street
-              </p>
+              <h2>{skill ? skill.name : "Light Rail Public Transit"}</h2>
+              {live ? (
+                <p>{skill?.description}</p>
+              ) : (
+                <p>
+                  <Flow8Asset group="mapping" file="48aa6.svg" />
+                  Central Station → 8th Street
+                </p>
+              )}
             </div>
           </div>
+          {!live && (
           <div className="route-line">
             <span>
               <i />
@@ -4641,25 +4699,32 @@ function SkillMapping({
               8th Street Station
             </span>
           </div>
+          )}
         </section>
         <section className="detected-level">
           <h2>
             <Flow8Asset group="mapping" file="2ee68.svg" />
-            Level 3 Detected: On My Own
+            Level {levelNumber} Detected: {live ? levelLabel : "On My Own"}
           </h2>
           <div>
             <b>Help Level:</b>
             <span>
-              <i />
-              <i />
-              <i /> On my own
+              {Array.from({ length: levelNumber }, (_, i) => (
+                <i key={i} />
+              ))}{" "}
+              {levelLabel}
             </span>
           </div>
-          <p>
-            You stated <b>“all by myself.”</b> We automatically logged full
-            independence with no extra questions needed.
-          </p>
+          {live && result ? (
+            <p>{result.reply}</p>
+          ) : (
+            <p>
+              You stated <b>“all by myself.”</b> We automatically logged full
+              independence with no extra questions needed.
+            </p>
+          )}
         </section>
+        {!live && (
         <aside className="reward-preview">
           <span className="coffee-symbol" aria-hidden="true">
             ☕
@@ -4670,6 +4735,7 @@ function SkillMapping({
             You will unlock your Coffee with Jordan reward goal.
           </p>
         </aside>
+        )}
         <button
           className="change-match"
           onClick={() => go("skill-clarification")}
@@ -4834,6 +4900,16 @@ function SkillClarification({ go }: { go: (page: Page) => void }) {
 function VoiceLogConfirmed({ go }: { go: (page: Page) => void }) {
   const [saved, setSaved] = useState(true)
   const [rewardShown, setRewardShown] = useState(false)
+  const log = useLogSession()
+  const result = log.result
+  const skill = result ? getSkill(result.skill_id) : undefined
+  const live = Boolean(result && skill)
+  useEffect(() => {
+    if (live && result) saveLog(log.text, result)
+  }, [live, log.text, result])
+  useEffect(() => {
+    if (live && !saved) removeLastLog()
+  }, [live, saved])
   return (
     <div className="flow-screen flow8-screen confirmed-screen">
       <Flow8TopBar
@@ -4851,6 +4927,8 @@ function VoiceLogConfirmed({ go }: { go: (page: Page) => void }) {
         />
         {saved ? (
           <>
+            {!live && (
+            <>
             <section className="stamp-milestone">
               <span className="milestone-crest">
                 <Flow8Asset group="confirmed" file="47883.svg" />
@@ -4891,6 +4969,8 @@ function VoiceLogConfirmed({ go }: { go: (page: Page) => void }) {
                   : "Show Jordan My Unlocked Reward"}
               </button>
             </section>
+            </>
+            )}
             <section className="saved-entry">
               <header>
                 <b>Saved entry details</b>
@@ -4904,17 +4984,28 @@ function VoiceLogConfirmed({ go }: { go: (page: Page) => void }) {
                   <Flow8Asset group="confirmed" file="053ac.svg" />
                 </span>
                 <p>
-                  <b>Light Rail Public Transit</b>
-                  <small>Central Station to 8th Street</small>
+                  <b>{skill ? skill.name : "Light Rail Public Transit"}</b>
+                  <small>
+                    {live ? `“${log.text}”` : "Central Station to 8th Street"}
+                  </small>
                 </p>
               </div>
               <div className="saved-level">
                 <span>Skill Level:</span>
                 <b>
-                  <i />
-                  <i />
-                  <i />
-                  On my own
+                  {Array.from(
+                    {
+                      length: result
+                        ? SUPPORT_LEVELS.indexOf(result.support_level) + 1
+                        : 3,
+                    },
+                    (_, n) => (
+                      <i key={n} />
+                    ),
+                  )}
+                  {result && live
+                    ? SUPPORT_LEVEL_LABELS[result.support_level]
+                    : "On my own"}
                 </b>
               </div>
               <p>
@@ -4923,7 +5014,7 @@ function VoiceLogConfirmed({ go }: { go: (page: Page) => void }) {
               </p>
               <p>
                 <Flow8Asset group="confirmed" file="63a43.svg" />
-                Today at 3:30 PM
+                {live ? `Today at ${new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}` : "Today at 3:30 PM"}
               </p>
               <aside>
                 <Flow8Asset group="confirmed" file="fb8be.svg" />
