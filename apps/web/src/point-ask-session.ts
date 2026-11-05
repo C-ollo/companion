@@ -41,6 +41,13 @@ const empty: PointAskSession = {
 let session = empty
 // The scan in progress; answers from an older scan are ignored.
 let currentScan: symbol | null = null
+// The latest steps request; older steps answers are ignored.
+let currentSteps: symbol | null = null
+// This scan's photo and known skills, kept in memory to ask for steps again.
+let lastImage: string | null = null
+
+/** The goal sent with the photo, before the person says what they want. */
+export const BASIC_GOAL = "Show me how to use this, step by step."
 const listeners = new Set<() => void>()
 
 function set(next: Partial<PointAskSession>) {
@@ -107,10 +114,13 @@ function sameItem(a: { appliance: string; item_name: string }, b: { appliance: s
  * reads "Does this look right?". If the two disagree on the item, the steps are
  * asked for again using the item the person was shown.
  */
-export async function startPointAsk(file: File, goal: string) {
+export async function startPointAsk(file: File, goal = BASIC_GOAL) {
   if (session.photoUrl) URL.revokeObjectURL(session.photoUrl)
   const scan = Symbol("scan")
   currentScan = scan
+  const stepsRequest = Symbol("steps")
+  currentSteps = stepsRequest
+  lastImage = null
   const knownSkills = knownSkillsNow()
   set({
     known: knownSkills,
@@ -128,7 +138,9 @@ export async function startPointAsk(file: File, goal: string) {
     set({ status: "error", stepsStatus: "error" })
     return
   }
+  lastImage = image
   const stillCurrent = () => currentScan === scan
+  const stepsCurrent = () => stillCurrent() && currentSteps === stepsRequest
 
   const identifying = identifyPhoto(image, goal, knownSkills)
   const stepping = stepsForPhoto(image, goal, knownSkills)
@@ -155,10 +167,10 @@ export async function startPointAsk(file: File, goal: string) {
   }
   try {
     let steps = await stepping
-    if (steps && !sameItem(identified, steps)) {
+    if (steps && !sameItem(identified, steps) && stepsCurrent()) {
       steps = await stepsForPhoto(image, goal, knownSkills, identified.item_name)
     }
-    if (!stillCurrent()) return
+    if (!stepsCurrent()) return
     if (!steps || steps.steps.length === 0) {
       set({ stepsStatus: "error" })
       return
@@ -168,7 +180,38 @@ export async function startPointAsk(file: File, goal: string) {
       result: { ...identified, steps: steps.steps },
     })
   } catch {
-    if (stillCurrent()) set({ stepsStatus: "error" })
+    if (stepsCurrent()) set({ stepsStatus: "error" })
+  }
+}
+
+/**
+ * Ask for steps again with what the person typed or said they want to do,
+ * for the item they confirmed. Replaces the basic steps loaded with the photo.
+ */
+export async function askStepsFor(goal: string) {
+  const identified = session.result
+  const image = lastImage
+  const scan = currentScan
+  if (!identified || !image || !scan) return
+  const stepsRequest = Symbol("steps")
+  currentSteps = stepsRequest
+  set({
+    goal,
+    stepsStatus: "loading",
+    stepIndex: 0,
+    result: { ...identified, steps: [] },
+  })
+  const stepsCurrent = () => currentScan === scan && currentSteps === stepsRequest
+  try {
+    const steps = await stepsForPhoto(image, goal, session.known, identified.item_name)
+    if (!stepsCurrent()) return
+    if (!steps || steps.steps.length === 0) {
+      set({ stepsStatus: "error" })
+      return
+    }
+    set({ stepsStatus: "ready", result: { ...identified, steps: steps.steps } })
+  } catch {
+    if (stepsCurrent()) set({ stepsStatus: "error" })
   }
 }
 
@@ -179,6 +222,8 @@ export function setStepIndex(stepIndex: number) {
 /** Forget the photo and answer, e.g. when starting over or leaving the flow. */
 export function resetPointAsk() {
   currentScan = null
+  currentSteps = null
+  lastImage = null
   if (session.photoUrl) URL.revokeObjectURL(session.photoUrl)
   session = empty
   listeners.forEach((listener) => listener())

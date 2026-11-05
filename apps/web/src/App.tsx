@@ -4,7 +4,11 @@ import {
   CATEGORY_LABELS,
   SUPPORT_LEVELS,
 } from "@skill-passport/shared/src/types"
-import { getSkill, safetyCategory } from "@skill-passport/shared/src/skills"
+import {
+  getSkill,
+  isSafetyBlocked,
+  safetyCategory,
+} from "@skill-passport/shared/src/skills"
 import type { SafetyCategory } from "@skill-passport/shared/src/skills"
 
 import { apiAvailable } from "./api"
@@ -26,6 +30,7 @@ import {
   usePassportEntries,
 } from "./passport-store"
 import {
+  askStepsFor,
   resetPointAsk,
   setStepIndex,
   startPointAsk,
@@ -343,7 +348,7 @@ function PointAsk({ go }: { go: (page: Page) => void }) {
   }
   const getGuidance = () => {
     if (apiAvailable && fileRef.current) {
-      void startPointAsk(fileRef.current, "Help me use this")
+      void startPointAsk(fileRef.current)
       go("identify")
       return
     }
@@ -1123,8 +1128,7 @@ function CafeScan({ go }: { go: (page: Page) => void }) {
     if (photo) URL.revokeObjectURL(photo)
     setPhoto(URL.createObjectURL(file))
     if (apiAvailable) {
-      const [title, copy] = cafeGoals[goal] ?? cafeGoals[0]
-      void startPointAsk(file, `${title}: ${copy}`)
+      void startPointAsk(file)
       go("identify")
     }
   }
@@ -1323,6 +1327,7 @@ function CafeScan({ go }: { go: (page: Page) => void }) {
             <p>It checks and deletes it immediately.</p>
           </span>
         </section>
+        {!apiAvailable && (
         <section className="goal-section">
           <div>
             <h2>What do you want to do?</h2>
@@ -1346,6 +1351,7 @@ function CafeScan({ go }: { go: (page: Page) => void }) {
             ))}
           </div>
         </section>
+        )}
       </main>
       <nav className="cafe-bottom">
         <button className="flow-primary" onClick={scan}>
@@ -1355,10 +1361,58 @@ function CafeScan({ go }: { go: (page: Page) => void }) {
     </div>
   )
 }
+// Ideas to tap on "What do you want to do with it?", by skill.
+const GOAL_IDEAS: Record<string, string[]> = {
+  laundry: ["Wash my clothes", "Wash my bedsheets", "Pick the right setting"],
+  dryer: ["Dry my clothes", "Pick the right setting"],
+  cafe_self_order: ["Order a drink", "Order food", "Pay"],
+  microwave_meal: ["Warm up my food", "Set the time"],
+  dishes: ["Wash the dishes", "Start the dishwasher"],
+  light_rail_to_work: ["Buy a ticket", "Find my train"],
+  new_bus_route: ["Buy a ticket", "Find my bus"],
+  grocery_shopping: ["Find the price", "Pay"],
+}
+const DEFAULT_GOAL_IDEAS = ["Turn it on", "Read the labels", "Pick the right setting"]
+
 function CafeIdentify({ go }: { go: (page: Page) => void }) {
   const session = usePointAskSession()
   const result = session.result
   const live = session.status !== "idle"
+  // After "Yes", the person says what they want to do before the steps.
+  const [asking, setAsking] = useState(false)
+  const [goalText, setGoalText] = useState("")
+  const [goalError, setGoalError] = useState("")
+  const askRef = useRef<HTMLElement>(null)
+  const voice = useVoiceTyping(goalText, setGoalText)
+  const goalIdeas = (result && GOAL_IDEAS[result.skill_id]) || DEFAULT_GOAL_IDEAS
+  const confirm = () => {
+    if (!live) {
+      go("cafesteps")
+      return
+    }
+    setAsking(true)
+    setTimeout(
+      () => askRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }),
+      50,
+    )
+  }
+  const startSteps = () => {
+    const words = goalText.trim()
+    if (voice.listening) voice.toggle()
+    if (!words) {
+      // The basic steps were loaded with the photo.
+      go("cafesteps")
+      return
+    }
+    if (isSafetyBlocked(words)) {
+      setGoalError(
+        "I don't give steps for stoves, heaters, electrical work or medication. Let's ask someone you trust.",
+      )
+      return
+    }
+    void askStepsFor(words)
+    go("cafesteps")
+  }
   const unsure = session.status === "ready" && Boolean(result?.unsure_reason)
   useEffect(() => {
     if (result?.safety_blocked) go("safety-block")
@@ -1453,8 +1507,8 @@ function CafeIdentify({ go }: { go: (page: Page) => void }) {
           </div>
           <p>{question}</p>
           {!live && <span className="level-pill">●●○ With AI help</span>}
-          {canStart && (
-            <button className="flow-primary" onClick={() => go("cafesteps")}>
+          {canStart && !asking && (
+            <button className="flow-primary" onClick={confirm}>
               ✓ Yes, that's right
             </button>
           )}
@@ -1469,10 +1523,96 @@ function CafeIdentify({ go }: { go: (page: Page) => void }) {
               Ask someone you trust
             </button>
           )}
-          <button className="flow-secondary" onClick={() => go("scan")}>
-            Try again / Retake
-          </button>
+          {!asking && (
+            <button className="flow-secondary" onClick={() => go("scan")}>
+              Try again / Retake
+            </button>
+          )}
         </section>
+        {asking && (
+          <section ref={askRef} className="text-alternative" aria-live="polite">
+            <header>
+              <label htmlFor="point-goal">What do you want to do with it?</label>
+              <button
+                className="icon-audio"
+                onClick={() => speak("What do you want to do with it? Type or say it. Or tap an idea.")}
+                aria-label="Read aloud"
+                style={{ color: "var(--color-brand)" }}
+              >
+                <Icon src={icons.sound} />
+              </button>
+            </header>
+            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+              <textarea
+                id="point-goal"
+                value={goalText}
+                onChange={(event) => {
+                  setGoalText(event.target.value)
+                  setGoalError("")
+                }}
+                rows={2}
+                maxLength={250}
+                placeholder="For example: wash my bedsheets"
+                style={{ minHeight: 80 }}
+              />
+              <button
+                className={`voice-mic ${voice.listening ? "active" : ""}`}
+                onClick={voice.toggle}
+                aria-pressed={voice.listening}
+                aria-label={voice.listening ? "Stop listening" : "Say it instead"}
+                style={{ width: 64, height: 64, flex: "none" }}
+              >
+                <Flow8Asset group="input" file="1e757.svg" />
+              </button>
+            </div>
+            <small>
+              {voice.listening
+                ? "Listening... tap the microphone to stop."
+                : "Type it, or tap the microphone and say it."}
+            </small>
+            {voice.message && (
+              <p className="guidance-message" role="status">
+                {voice.message}
+              </p>
+            )}
+            <div className="quick-prompts">
+              <h2>Or tap an idea:</h2>
+              <div>
+                {goalIdeas.map((idea) => (
+                  <button
+                    key={idea}
+                    onClick={() => {
+                      setGoalText(idea)
+                      setGoalError("")
+                    }}
+                  >
+                    {idea}
+                  </button>
+                ))}
+              </div>
+            </div>
+            {goalError && (
+              <p className="guidance-message" role="alert">
+                {goalError}
+              </p>
+            )}
+            {goalError ? (
+              <button
+                className="flow-primary"
+                onClick={() => {
+                  startAsk({ reason: "unsure", itemName: result?.item_name ?? "" })
+                  go("photo-confirmation")
+                }}
+              >
+                Ask someone you trust
+              </button>
+            ) : (
+              <button className="flow-primary" onClick={startSteps}>
+                {goalText.trim() ? "Get my steps →" : "Just show me the basics →"}
+              </button>
+            )}
+          </section>
+        )}
         {knownText && (
           <section className="comparison-card" aria-live="polite">
             <p className="flow-label">You already know this</p>
@@ -1529,10 +1669,14 @@ function CafeIdentify({ go }: { go: (page: Page) => void }) {
       <nav className="cafe-bottom with-note">
         <button
           className="flow-primary"
-          onClick={() => go("cafesteps")}
-          disabled={!canStart}
+          onClick={asking ? startSteps : confirm}
+          disabled={!canStart || Boolean(goalError)}
         >
-          Start Step-by-Step Guidance →
+          {asking
+            ? goalText.trim()
+              ? "Get my steps →"
+              : "Just show me the basics →"
+            : "Start Step-by-Step Guidance →"}
         </button>
         <small>Take your time. Ask for help anytime.</small>
       </nav>
