@@ -1120,6 +1120,7 @@ const cafeGoals = [
 ]
 function CafeScan({ go }: { go: (page: Page) => void }) {
   const inputRef = useRef<HTMLInputElement>(null)
+  const uploadRef = useRef<HTMLInputElement>(null)
   const [photo, setPhoto] = useState<string | null>(null)
   const [goal, setGoal] = useState(0)
   const [flash, setFlash] = useState(false)
@@ -1139,10 +1140,59 @@ function CafeScan({ go }: { go: (page: Page) => void }) {
       go("identify")
     }
   }
-  // With the API on, scanning opens the camera; without it, the sample flow runs.
+  // With the API on, the viewfinder shows the live camera. If the browser
+  // can't open it (no permission, no camera), tapping opens the phone camera.
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const [camera, setCamera] = useState<"starting" | "on" | "off">(
+    apiAvailable ? "starting" : "off",
+  )
+  useEffect(() => {
+    if (!apiAvailable) return
+    let stream: MediaStream | null = null
+    let cancelled = false
+    navigator.mediaDevices
+      ?.getUserMedia({
+        video: { facingMode: { ideal: "environment" } },
+        audio: false,
+      })
+      .then((s) => {
+        if (cancelled) {
+          s.getTracks().forEach((track) => track.stop())
+          return
+        }
+        stream = s
+        if (videoRef.current) videoRef.current.srcObject = s
+        setCamera("on")
+      })
+      .catch(() => setCamera("off")) ?? setCamera("off")
+    return () => {
+      cancelled = true
+      stream?.getTracks().forEach((track) => track.stop())
+    }
+  }, [])
+  const captureFrame = () => {
+    const video = videoRef.current
+    if (!video || !video.videoWidth) return
+    const canvas = document.createElement("canvas")
+    canvas.width = video.videoWidth
+    canvas.height = video.videoHeight
+    canvas.getContext("2d")?.drawImage(video, 0, 0)
+    canvas.toBlob(
+      (blob) => {
+        if (blob) {
+          choosePhoto(new File([blob], "photo.jpg", { type: "image/jpeg" }))
+        }
+      },
+      "image/jpeg",
+      0.9,
+    )
+  }
+  // With the API on, Capture uses the live camera (or opens the phone camera);
+  // without it, the designer's sample flow runs.
   const scan = () => {
     if (apiAvailable) {
-      inputRef.current?.click()
+      if (camera === "on") captureFrame()
+      else inputRef.current?.click()
       return
     }
     resetPointAsk()
@@ -1164,14 +1214,43 @@ function CafeScan({ go }: { go: (page: Page) => void }) {
           </button>
         </div>
         <p className="cafe-intro">
-          Point your camera at the café screen. We help step by step.
+          {apiAvailable
+            ? "Point your camera at what you need help with. We help step by step."
+            : "Point your camera at the café screen. We help step by step."}
         </p>
-        <section className="cafe-viewfinder">
-          <img
-            src={photo || `${A}/502a5.png`}
-            alt="Café self-order touchscreen kiosk"
-          />
-          <span className="camera-status">● Camera active</span>
+        <section
+          className="cafe-viewfinder"
+          onClick={
+            apiAvailable && camera === "off"
+              ? () => inputRef.current?.click()
+              : undefined
+          }
+          style={
+            apiAvailable && camera === "off" ? { cursor: "pointer" } : undefined
+          }
+        >
+          {apiAvailable && camera !== "off" ? (
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              muted
+              aria-label="Live camera view"
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
+          ) : (
+            <img
+              src={photo || `${A}/502a5.png`}
+              alt="Café self-order touchscreen kiosk"
+            />
+          )}
+          <span className="camera-status">
+            {!apiAvailable || camera === "on"
+              ? "● Camera active"
+              : camera === "starting"
+                ? "● Starting camera..."
+                : "● Camera off"}
+          </span>
           <button
             className={flash ? "flash active" : "flash"}
             onClick={() => setFlash(!flash)}
@@ -1184,10 +1263,25 @@ function CafeScan({ go }: { go: (page: Page) => void }) {
           <i className="corner tr" />
           <i className="corner bl" />
           <i className="corner br" />
-          <div className="aim-prompt">
-            <b>Aim at the order screen</b>
-            <span>Keep screen inside the frame</span>
-          </div>
+          {!apiAvailable ? (
+            <div className="aim-prompt">
+              <b>Aim at the order screen</b>
+              <span>Keep screen inside the frame</span>
+            </div>
+          ) : camera === "off" ? (
+            <div className="aim-prompt">
+              <b>Tap here to open your camera</b>
+              <span>Then take a photo of what you need help with</span>
+            </div>
+          ) : (
+            <div
+              className="aim-prompt"
+              style={{ top: "auto", bottom: 14, transform: "translateX(-50%)" }}
+            >
+              <b>Aim at what you need help with</b>
+              <span>Then tap Capture Photo</span>
+            </div>
+          )}
         </section>
         <input
           ref={inputRef}
@@ -1197,6 +1291,14 @@ function CafeScan({ go }: { go: (page: Page) => void }) {
           capture="environment"
           onChange={(event) => choosePhoto(event.target.files?.[0])}
         />
+        {/* No capture attribute, so phones open the photo library. */}
+        <input
+          ref={uploadRef}
+          className="file-input"
+          type="file"
+          accept="image/*"
+          onChange={(event) => choosePhoto(event.target.files?.[0])}
+        />
         <div className="capture-actions">
           <button className="flow-primary" onClick={scan}>
             <Icon src={icons.camera} />
@@ -1204,7 +1306,9 @@ function CafeScan({ go }: { go: (page: Page) => void }) {
           </button>
           <button
             className="flow-secondary"
-            onClick={() => inputRef.current?.click()}
+            onClick={() =>
+              (apiAvailable ? uploadRef : inputRef).current?.click()
+            }
           >
             <Icon src={icons.upload} />
             Upload photo instead
@@ -1244,7 +1348,7 @@ function CafeScan({ go }: { go: (page: Page) => void }) {
       </main>
       <nav className="cafe-bottom">
         <button className="flow-primary" onClick={scan}>
-          Scan Kiosk Screen →
+          {apiAvailable ? "Take Photo & Get Help →" : "Scan Kiosk Screen →"}
         </button>
       </nav>
     </div>
