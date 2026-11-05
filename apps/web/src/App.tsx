@@ -270,7 +270,6 @@ function Home({ go }: { go: (page: Page) => void }) {
             <i className="corner tr" aria-hidden="true" />
             <i className="corner bl" aria-hidden="true" />
             <i className="corner br" aria-hidden="true" />
-            <figcaption>Aim camera at any confusing item</figcaption>
           </figure>
           <p className="eyebrow feature-heading">Point & Ask</p>
           <h2 className="feature-tagline">Visual Help Anywhere</h2>
@@ -380,11 +379,7 @@ function PointAsk({ go }: { go: (page: Page) => void }) {
           <span className="camera-orb">
             <Icon src={icons.camera} />
           </span>
-          <b>
-            {photo
-              ? "Photo ready for guidance"
-              : "Aim camera at any confusing item"}
-          </b>
+          {photo && <b>Photo ready for guidance</b>}
         </div>
         <input
           ref={inputRef}
