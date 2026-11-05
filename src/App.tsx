@@ -249,7 +249,7 @@ function Home({ go }: { go: (page: Page) => void }) {
             instant guidance.
           </p>
           <button
-            className="outline-button home-point-action"
+            className="primary-button home-point-action"
             onClick={() => go("point")}
           >
             Open Point & Ask Camera
@@ -273,7 +273,7 @@ function Home({ go }: { go: (page: Page) => void }) {
             </div>
           </div>
           <button
-            className="primary-button home-passport-action"
+            className="outline-button home-passport-action"
             onClick={() => go("passport")}
           >
             Open Skill Passport
