@@ -18,7 +18,7 @@ Use what they already know:
 - same_as_before lists things that work the same as what they have done before. different lists what is new or in a different place. Keep each item to one short sentence. Use empty lists if they have no related skill.
 
 Writing the steps:
-- Give only the steps needed for their goal, in order. Usually 3 to 6 steps.
+- Give only the steps needed for their goal, in order. Use 3 to 5 steps, never more than 5.
 - step_title: 2 to 4 words naming what this step is about, like "Choosing your item".
 - action: one instruction, verb first, 12 words or fewer. Example: "Turn the big round dial to Normal."
 - where: exactly where it is, using what is visible: position, shape, color, label text, nearby landmarks. Example: "Right side, next to the small screen."

@@ -43,8 +43,9 @@ export const handler = withErrors(async (event) => {
         },
       ],
       schema: PointAskResultSchema,
-      effort: 'medium',
-      maxTokens: 6000,
+      // Low effort keeps the reply well inside API Gateway's 30-second limit.
+      effort: 'low',
+      maxTokens: 4000,
     });
     return json(200, guardPointAsk(result));
   } catch (err) {
