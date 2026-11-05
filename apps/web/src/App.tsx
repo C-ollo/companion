@@ -8,12 +8,13 @@ import {
 import { getSkill } from "@skill-passport/shared/src/skills"
 
 import { apiAvailable } from "./api"
+import { matchLog, saveLog, useLogSession } from "./log-session"
 import {
-  matchLog,
-  removeLastLog,
-  saveLog,
-  useLogSession,
-} from "./log-session"
+  addEntry,
+  helpLabel,
+  removeEntry,
+  usePassportEntries,
+} from "./passport-store"
 import {
   resetPointAsk,
   setStepIndex,
@@ -485,8 +486,28 @@ const todaysPractices: {
     page: "safe-alternatives",
   },
 ]
+// Short day label for saved entries: "Today", "Yesterday", or the weekday.
+function dayLabel(iso: string) {
+  const day = new Date(iso)
+  const today = new Date()
+  const days = Math.round(
+    (new Date(today.toDateString()).getTime() -
+      new Date(day.toDateString()).getTime()) /
+      86_400_000,
+  )
+  if (days === 0) return "Today"
+  if (days === 1) return "Yesterday"
+  return day.toLocaleDateString(undefined, { weekday: "long" })
+}
+function stickerFor(skillId: string) {
+  const category = getSkill(skillId)?.category
+  if (category === "getting_around") return "rail"
+  if (skillId === "stovetop_cooking" || skillId === "microwave_meal") return "pot"
+  return "list"
+}
 function Passport({ go }: { go: (page: Page) => void }) {
   const [highFive, setHighFive] = useState(false)
+  const saved = [...usePassportEntries()].reverse()
   const [practiceIndex, setPracticeIndex] = useState(0)
   const practice = todaysPractices[practiceIndex]
   const showPreviousPractice = () =>
@@ -572,9 +593,42 @@ function Passport({ go }: { go: (page: Page) => void }) {
       <section className="recent-section">
         <div className="section-heading">
           <h2>Recent Practice</h2>
-          <span>3 Completed</span>
+          <span>{saved.length + practices.length} Completed</span>
         </div>
         <div className="practice-list">
+          {saved.slice(0, 5).map((entry) => {
+            const skill = getSkill(entry.skillId)
+            const label = helpLabel(entry)
+            return (
+              <article className="practice-card" key={entry.id}>
+                <span className={`mini-sticker ${stickerFor(entry.skillId)}`} />
+                <span className="practice-name">
+                  <b>{skill?.name ?? entry.skillId}</b>
+                  <small>
+                    {entry.place ||
+                      (skill ? CATEGORY_LABELS[skill.category] : "")}
+                  </small>
+                </span>
+                <MasteryRing />
+                <span
+                  className="mastered"
+                  style={{ maxWidth: "40%", textAlign: "right" }}
+                >
+                  <b>
+                    {entry.via === "point_ask"
+                      ? "Companion's steps"
+                      : label.replace(/^[●○]+\s*/, "")}
+                  </b>
+                  <small>
+                    {dayLabel(entry.at)}
+                    {entry.source === "confirmed" && entry.confirmedBy
+                      ? ` · with ${entry.confirmedBy}`
+                      : ""}
+                  </small>
+                </span>
+              </article>
+            )
+          })}
           {practices.map(([title, type, day, sticker]) => (
             <article className="practice-card" key={title}>
               <span className={`mini-sticker ${sticker}`} />
@@ -805,6 +859,18 @@ const observations = [
 function Logging({ go }: { go: (page: Page) => void }) {
   const [choice, setChoice] = useState(1)
   const [confirmed, setConfirmed] = useState(true)
+  // Save what the person chose, on this device, then celebrate.
+  const saveAndContinue = () => {
+    addEntry({
+      skillId: "laundry",
+      level: SUPPORT_LEVELS[choice] ?? "with_prompt",
+      place: "My Apartment",
+      via: "practice",
+      source: confirmed ? "confirmed" : "self",
+      confirmedBy: confirmed ? "Sarah" : undefined,
+    })
+    go("celebration")
+  }
   return (
     <div className="flow-screen">
       <FlowTopBar
@@ -930,7 +996,7 @@ function Logging({ go }: { go: (page: Page) => void }) {
         <button className="flow-secondary" onClick={() => go("guidance")}>
           ← Edit previous steps
         </button>
-        <button className="flow-primary" onClick={() => go("celebration")}>
+        <button className="flow-primary" onClick={saveAndContinue}>
           Save to My Passport & Continue →
         </button>
       </nav>
@@ -1493,6 +1559,24 @@ function CafeSteps({ go }: { go: (page: Page) => void }) {
 function CafeComplete({ go }: { go: (page: Page) => void }) {
   const session = usePointAskSession()
   const result = session.result
+  const skill = result ? getSkill(result.skill_id) : undefined
+  const [savedId, setSavedId] = useState<string | null>(null)
+  const save = () => {
+    if (!result || !skill) return
+    setSavedId(
+      addEntry({
+        skillId: skill.id,
+        level: "with_prompt",
+        place: result.item_name,
+        via: "point_ask",
+        source: "self",
+      }),
+    )
+  }
+  const undo = () => {
+    if (savedId) removeEntry(savedId)
+    setSavedId(null)
+  }
   const profile = result
     ? [...result.different, ...result.same_as_before].slice(0, 3)
     : [
@@ -1526,7 +1610,43 @@ function CafeComplete({ go }: { go: (page: Page) => void }) {
           </p>
           <small>Gentle celebration · No flashing animations</small>
         </section>
-        {/* Real scans are not saved to the Passport yet, so only the sample shows this. */}
+        {result && (
+          <section className="cafe-passport-update" aria-live="polite">
+            <div>
+              <h2>{savedId ? "Skill Passport Updated" : "Add to Skill Passport"}</h2>
+              <span>{savedId ? "Saved" : "Check first"}</span>
+            </div>
+            {skill ? (
+              <>
+                <article>
+                  <Icon src={`${A}/71212.svg`} />
+                  <span>
+                    <b>{skill.name}</b>
+                    <p>{helpLabel({ level: "with_prompt", via: "point_ask" })}</p>
+                  </span>
+                </article>
+                <p>
+                  <b>New place:</b> {result.item_name}
+                </p>
+                {savedId ? (
+                  <p>
+                    Saved on this phone.{" "}
+                    <button className="audio-pill" onClick={undo}>
+                      Undo
+                    </button>
+                  </p>
+                ) : (
+                  <p>Does this look right? Save it when you are ready.</p>
+                )}
+              </>
+            ) : (
+              <p>
+                I couldn't match this to a skill. You can tell me what you did
+                instead.
+              </p>
+            )}
+          </section>
+        )}
         {!result && (
           <section className="cafe-passport-update">
           <div>
@@ -1559,9 +1679,19 @@ function CafeComplete({ go }: { go: (page: Page) => void }) {
         </section>
       </main>
       <nav className="cafe-bottom dual">
-        <button className="flow-primary" onClick={() => go("passport")}>
-          View Updated Skill Passport →
-        </button>
+        {result && skill && !savedId ? (
+          <button className="flow-primary" onClick={save}>
+            ✓ Save to My Passport
+          </button>
+        ) : result && !skill ? (
+          <button className="flow-primary" onClick={() => go("voice-log")}>
+            Tell me what you did →
+          </button>
+        ) : (
+          <button className="flow-primary" onClick={() => go("passport")}>
+            View Updated Skill Passport →
+          </button>
+        )}
         <button className="flow-secondary" onClick={() => go("home")}>
           Return to Home
         </button>
@@ -4939,12 +5069,16 @@ function VoiceLogConfirmed({ go }: { go: (page: Page) => void }) {
   const result = log.result
   const skill = result ? getSkill(result.skill_id) : undefined
   const live = Boolean(result && skill)
+  const savedId = useRef<string | null>(null)
   useEffect(() => {
-    if (live && result) saveLog(log.text, result)
-  }, [live, log.text, result])
-  useEffect(() => {
-    if (live && !saved) removeLastLog()
-  }, [live, saved])
+    if (live && result && saved && !savedId.current) {
+      savedId.current = saveLog(log.text, result)
+    }
+    if (live && !saved && savedId.current) {
+      removeEntry(savedId.current)
+      savedId.current = null
+    }
+  }, [live, log.text, result, saved])
   return (
     <div className="flow-screen flow8-screen confirmed-screen">
       <Flow8TopBar

@@ -19,6 +19,7 @@ const step: Step = {
 const washer: PointAskResult = {
   appliance: 'washing_machine',
   item_name: 'Front-Loading Washing Machine',
+  skill_id: 'laundry',
   confidence: 0.92,
   check_statement: 'This looks like a front-loading washer with a big round dial.',
   same_as_before: ['You add soap to the drawer.'],
@@ -50,6 +51,11 @@ describe('guardPointAsk', () => {
       expect(out.safety_blocked).toBe(false);
     },
   );
+
+  it('keeps a known skill id and drops an unknown one', () => {
+    expect(guardPointAsk(washer).skill_id).toBe('laundry');
+    expect(guardPointAsk({ ...washer, skill_id: 'juggling' }).skill_id).toBe('none');
+  });
 
   it('never gives steps below the confidence threshold', () => {
     const out = guardPointAsk({ ...washer, confidence: 0.5 });

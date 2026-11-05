@@ -56,6 +56,7 @@ export function guardPointAsk(result: PointAskResult): PointAskResponse {
   }
   return {
     ...result,
+    skill_id: getSkill(result.skill_id) ? result.skill_id : 'none',
     confidence,
     unsure_reason: null,
     safety_blocked: false,
@@ -68,6 +69,7 @@ export function unsurePointAsk(reason = UNSURE_DEFAULT): PointAskResponse {
   return {
     appliance: 'unknown',
     item_name: '',
+    skill_id: 'none',
     confidence: 0,
     check_statement: '',
     same_as_before: [],

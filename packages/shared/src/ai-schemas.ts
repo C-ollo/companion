@@ -84,6 +84,8 @@ export const PointAskResultSchema = z.object({
   appliance: z.string(),
   /** Plain-words name, e.g. "Café Self-Order Touchscreen Kiosk". */
   item_name: z.string(),
+  /** The passport skill this task belongs to, from the skill library, or "none". */
+  skill_id: z.string(),
   confidence: z.number(),
   /** What the AI thinks it sees, phrased for the person to confirm. */
   check_statement: z.string(),

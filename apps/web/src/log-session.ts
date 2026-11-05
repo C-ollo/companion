@@ -5,6 +5,7 @@ import type { LogParseResult, SupportLevel } from "@skill-passport/shared"
 import { getSkill } from "@skill-passport/shared/src/skills"
 
 import { matchLogToSkill } from "./api"
+import { addEntry } from "./passport-store"
 
 export interface LogSession {
   text: string
@@ -51,47 +52,14 @@ export async function matchLog(text: string) {
     : "unclear"
 }
 
-const LOGS_KEY = "skill-passport/logs"
-
-export interface SavedLog {
-  at: string
-  text: string
-  skillId: string
-  level: SupportLevel
-  via: "voice_or_text"
-}
-
-/** Keep the confirmed log on this device. Nothing is sent anywhere. */
+/** Keep the confirmed log on this device. Returns the entry id, for undo. */
 export function saveLog(text: string, result: LogParseResult) {
-  const logs = loadLogs()
-  const last = logs[logs.length - 1]
-  // React may run effects twice in development; don't save the same log twice.
-  const justSaved =
-    last &&
-    last.text === text &&
-    Date.now() - new Date(last.at).getTime() < 10_000
-  if (justSaved) return
-  logs.push({
-    at: new Date().toISOString(),
-    text,
+  return addEntry({
     skillId: result.skill_id,
     level: result.support_level,
+    place: "",
     via: "voice_or_text",
+    source: "self",
+    text,
   })
-  localStorage.setItem(LOGS_KEY, JSON.stringify(logs))
-}
-
-/** Undo: remove the most recent log. */
-export function removeLastLog() {
-  const logs = loadLogs()
-  logs.pop()
-  localStorage.setItem(LOGS_KEY, JSON.stringify(logs))
-}
-
-export function loadLogs(): SavedLog[] {
-  try {
-    return JSON.parse(localStorage.getItem(LOGS_KEY) ?? "[]") as SavedLog[]
-  } catch {
-    return []
-  }
 }
