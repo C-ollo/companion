@@ -1,6 +1,6 @@
 # Prompts
 
-Every system prompt Skill Passport sends to the model lives here. These files are bundled into
+Every system prompt Companion sends to the model lives here. These files are bundled into
 the Lambda functions as-is, so what you read here is exactly what the model receives. This
 folder is also the source for our AI-prompts PDF deliverable.
 

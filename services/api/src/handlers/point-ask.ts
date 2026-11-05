@@ -50,7 +50,7 @@ function photoContent(req: PointAskRequest, extra: string[] = []) {
       text: [
         ...extra,
         `What the person wants to do: ${JSON.stringify(req.goal)}`,
-        `Skills already in their passport: ${JSON.stringify(known)}`,
+        `Skills already in their My Skills record: ${JSON.stringify(known)}`,
       ].join('\n'),
     },
   ];

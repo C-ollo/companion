@@ -15,5 +15,5 @@ Rules:
 - confidence is a number from 0 to 1 for how sure you are about the skill and the level together. Use 0.9 or higher only when both are clear.
 - confirm_question is one short yes-or-no question naming the skill, for example "Did you mean Laundry?". Always write one, even when you are sure.
 - reply is 1 to 2 short sentences. Name what they did and notice their progress. If you are not sure what they did, say so kindly and ask.
-- next_skill_id is one skill from the library that builds on this one and is not already "on_my_own" in their passport, or "none".
-- Use the person's current passport to notice progress, for example when this is more independent than their current level.
+- next_skill_id is one skill from the library that builds on this one and is not already "on_my_own" in their My Skills record, or "none".
+- Use the person's current My Skills record to notice progress, for example when this is more independent than their current level.

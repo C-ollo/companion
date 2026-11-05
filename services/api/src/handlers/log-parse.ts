@@ -19,7 +19,7 @@ export const handler = withErrors(async (event) => {
   const content = [
     `What the person said: ${JSON.stringify(req.text)}`,
     req.level ? `Level they chose: ${req.level}` : 'They did not choose a level.',
-    `Their current passport: ${JSON.stringify(req.passport)}`,
+    `Their current My Skills record: ${JSON.stringify(req.passport)}`,
   ].join('\n');
 
   try {
