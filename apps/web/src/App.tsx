@@ -16,6 +16,7 @@ import {
   useAskRequest,
 } from "./ask-friend"
 import { matchLog, saveLog, useLogSession } from "./log-session"
+import { useVoiceTyping } from "./voice-typing"
 import {
   addEntry,
   helpLabel,
@@ -4846,7 +4847,11 @@ function VoiceLogInput({
   draft: string
   setDraft: (value: string) => void
 }) {
-  const [listening, setListening] = useState(true)
+  // If the sample sentence is still there, voice replaces it instead of adding to it.
+  const { listening, toggle, message } = useVoiceTyping(
+    draft === defaultVoiceDraft ? "" : draft,
+    setDraft,
+  )
   const [checking, setChecking] = useState(false)
   const [error, setError] = useState("")
   const wordCount = draft.trim() ? draft.trim().split(/\s+/).length : 0
@@ -4899,8 +4904,9 @@ function VoiceLogInput({
         <section className="voice-card" aria-live="polite">
           <button
             className={`voice-mic ${listening ? "active" : ""}`}
-            onClick={() => setListening((value) => !value)}
+            onClick={toggle}
             aria-pressed={listening}
+            aria-label={listening ? "Stop listening" : "Start speaking"}
           >
             <Flow8Asset group="input" file="1e757.svg" />
           </button>
@@ -4914,6 +4920,11 @@ function VoiceLogInput({
             </span>
             {listening ? "Listening to your voice..." : "Voice input paused"}
           </p>
+          {message && (
+            <p className="guidance-message" role="status">
+              {message}
+            </p>
+          )}
           <article className="transcript-tile">
             <header>
               <b>Transcribed Words</b>
@@ -4925,7 +4936,9 @@ function VoiceLogInput({
             <blockquote>“{draft || "Your words will appear here."}”</blockquote>
             <footer>
               <span>{wordCount} words spoken</span>
-              <b>{draft ? "Clear speech detected" : "Waiting for words"}</b>
+              <b>
+                {listening ? "Listening..." : draft ? "Words ready" : "Waiting for words"}
+              </b>
             </footer>
           </article>
         </section>
@@ -4959,19 +4972,13 @@ function VoiceLogInput({
         </section>
         <aside className="voice-privacy">
           <Flow8Asset group="input" file="f2703.svg" />
-          {apiAvailable ? (
-            <p>
-              <b>Private voice processing</b>
-              Audio recordings stay on your phone and are never saved. Your
-              words are sent securely to find your skill, and are not stored.
-            </p>
-          ) : (
-            <p>
-              <b>Private on-device voice processing</b>
-              Audio recordings are never saved or sent to any server. Your words
-              stay on your phone.
-            </p>
-          )}
+          <p>
+            <b>Private voice typing</b>
+            Your phone's voice typing turns your speech into words. Companion
+            never records or saves your audio.
+            {apiAvailable &&
+              " Your words are sent securely to find your skill, and are not stored."}
+          </p>
         </aside>
         <Flow8Buttons>
           {error && (
