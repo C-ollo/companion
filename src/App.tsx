@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react"
 type Page = "home" | "point" | "passport" | "people" | "guidance" | "logging" | "celebration" | "scan" | "identify" | "cafesteps" | "cafecomplete" | "summary" | "summary-editor" | "summary-sharing" | "summary-shares" | "supporters" | "add-supporter" | "cheer-detail" | "confirmer" | "credential" | "credential-export" | "data-backup" | "storage-control" | "safety-block" | "photo-confirmation" | "coach-standby" | "safe-alternatives" | "voice-log" | "skill-mapping" | "skill-clarification" | "voice-confirmed"
 const A = "/assets"
 const icons = {
-  logo: `${A}/f23a6.svg`,
+  logo: `${A}/e2f39.svg`,
   sound: `${A}/8b506.svg`,
   profile: `${A}/59e02.svg`,
   home: `${A}/f6436.svg`,
@@ -111,7 +111,7 @@ function AppHeader({ page }: { page: Page }) {
           />
         </span>
         <span>
-          <b className="brand-wordmark">Companion</b>
+          <b className="brand-wordmark">COMPANION</b>
         </span>
       </div>
       <div className="header-actions">
