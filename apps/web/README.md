@@ -6,7 +6,7 @@ Companion is a calm, plain-language app that helps autistic adults and people wi
 
 Built by Team Spectrum & Waves, with feedback from First Place AZ and our advisor.
 
-> **Status: prototype.** Companion is a working, installable web app with sample data. AI guidance is simulated, and there is no backend or account system yet.
+> **Status: prototype.** Companion is a working, installable web app. Point & Ask, voice and text logging, and read aloud use real AI through our AWS backend (see the [main README](../../README.md)); some screens, like stamp totals and My People, still show sample data. There is no account system yet.
 
 ---
 

@@ -28,12 +28,12 @@ This document lists every prompt Companion sends to the AI, exactly as the model
 ## 2. Workflow (how the prompts chain together)
 
 **Point & Ask**
-1. The person takes or uploads a photo and picks a goal (order or buy something, use this machine, read text or labels, something else).
-2. The app sends **two requests at the same time**, with the same photo: **identify** and **steps**. Identify is short, so "Does this look right?" appears in about 4 seconds while the steps are still being written.
+1. The person takes or uploads a photo.
+2. The app sends **two requests at the same time**, with the same photo and the goal *"Show me how to use this, step by step."*: **identify** and **steps**. Identify is short, so "Does this look right?" appears in about 4 seconds while the basic steps are still being written.
 3. **Code checks** the identify answer: safety-blocked items go to the safety screen; confidence below 0.7 shows "I'm not sure. I won't guess."
-4. The person confirms. The steps are shown one at a time.
-5. If the identify and steps answers **disagree on the item**, the app asks for the steps again, adding *"The person confirmed this is: [item]. Write steps for it."*
-6. After the last step, the identify answer's `skill_id` and `item_name` pre-fill a My Skills entry, which the person reviews and saves.
+4. The person confirms, then says what they want to do (typed, spoken, or a tapped idea). If they choose "Just show me the basics", the steps already loaded are used. Otherwise the app asks for the **steps again with their words** as the goal, adding *"The person confirmed this is: [item]. Write steps for it."*
+5. If the identify and basic steps answers **disagree on the item**, the app also asks for the steps again with the confirmed item.
+6. The steps are shown one at a time. After the last step, the identify answer's `skill_id` and `item_name` pre-fill a My Skills entry, which the person reviews and saves.
 
 **Logging:** the person speaks or types what they did. The words go to **log matching**. If `skill_id` is `none` or confidence is below 0.6, the app asks the person to choose the skill. Otherwise it shows the match for the person to confirm and save.
 
@@ -127,7 +127,7 @@ An image block (the photo) followed by:
 ```text
 This is the identify part.        <- or: This is the steps part.
 [steps only, when re-asking] The person confirmed this is: "<item_name>". Write steps for it.
-What the person wants to do: "<goal, e.g. Use this machine: Step buttons, dials and knobs>"
+What the person wants to do: "<goal, e.g. Show me how to use this, step by step. / Wash my bedsheets>"
 Skills already in their My Skills record: [{"skill":"Washing Machine Laundry","level":"on_my_own","learnedOn":"Top-loading washer at the teaching apartment"}, ...]
 ```
 
