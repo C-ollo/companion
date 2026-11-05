@@ -28,7 +28,7 @@
   --color-danger: #9a3535;
 
   /* Type */
-  --font-brand: 'Nova Square:Book';
+  --font-brand: 'Public Sans:Bold', 'Public Sans', Arial, sans-serif;
   --font-body: 'Public Sans:Regular', 'Public Sans', Arial, sans-serif;
   --font-medium: 'Public Sans:SemiBold', 'Public Sans', Arial, sans-serif;
   --font-strong: 'Public Sans:Bold', 'Public Sans', Arial, sans-serif;
