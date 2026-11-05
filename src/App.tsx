@@ -24,7 +24,7 @@ const pageCopy: Record<Page, string> = {
   point:
     "Point and Ask. Show me what you need help with. Point at any appliance, transit sign, menu, button, or label. Photos are never saved.",
   passport:
-    "My Skills. You have three practice choices today: Washing Machine Laundry, Café Self-Order, and Warm Food Safely. Choose the skill you want to practice.",
+    "My Skills. You have two practice choices today: Washing Machine Laundry and Warm Food Safely. Choose the skill you want to practice.",
   people:
     "My People. Your private support network. Sarah and Jordan are trusted people you added.",
   guidance:
@@ -443,13 +443,6 @@ const todaysPractices: {
     imageAlt: "A calm residential laundry room with front-loading machines",
     duration: "15 min",
     page: "guidance",
-  },
-  {
-    title: "Café Self-Order",
-    image: `${A}/83e74.png`,
-    imageAlt: "A self-order touchscreen inside a café",
-    duration: "10 min",
-    page: "scan",
   },
   {
     title: "Warm Food Safely",
