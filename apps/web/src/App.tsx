@@ -1,5 +1,13 @@
 import { useEffect, useRef, useState } from "react"
 
+import { apiAvailable } from "./api"
+import {
+  resetPointAsk,
+  setStepIndex,
+  startPointAsk,
+  usePointAskSession,
+} from "./point-ask-session"
+
 type Page = "home" | "point" | "passport" | "people" | "guidance" | "logging" | "celebration" | "scan" | "identify" | "cafesteps" | "cafecomplete" | "summary" | "summary-editor" | "summary-sharing" | "summary-shares" | "supporters" | "add-supporter" | "cheer-detail" | "confirmer" | "credential" | "credential-export" | "data-backup" | "storage-control" | "safety-block" | "photo-confirmation" | "coach-standby" | "safe-alternatives" | "voice-log" | "skill-mapping" | "skill-clarification" | "voice-confirmed"
 const A = "/assets"
 const icons = {
@@ -300,6 +308,7 @@ const categories = [
 ]
 function PointAsk({ go }: { go: (page: Page) => void }) {
   const inputRef = useRef<HTMLInputElement>(null)
+  const fileRef = useRef<File | null>(null)
   const [photo, setPhoto] = useState<string | null>(null)
   const [message, setMessage] = useState("")
   useEffect(
@@ -311,8 +320,19 @@ function PointAsk({ go }: { go: (page: Page) => void }) {
   const onFile = (file?: File) => {
     if (!file) return
     if (photo) URL.revokeObjectURL(photo)
+    fileRef.current = file
     setPhoto(URL.createObjectURL(file))
     setMessage("Photo ready. Tap Get simple guidance.")
+  }
+  const getGuidance = () => {
+    if (apiAvailable && fileRef.current) {
+      void startPointAsk(fileRef.current, "Help me use this")
+      go("identify")
+      return
+    }
+    setMessage(
+      "This looks like a control panel. Start by finding the large round power button. Take your time.",
+    )
   }
   return (
     <main className="page point-page">
@@ -364,14 +384,7 @@ function PointAsk({ go }: { go: (page: Page) => void }) {
           Or upload a photo from your phone
         </button>
         {photo && (
-          <button
-            className="guidance-button"
-            onClick={() =>
-              setMessage(
-                "This looks like a control panel. Start by finding the large round power button. Take your time.",
-              )
-            }
-          >
+          <button className="guidance-button" onClick={getGuidance}>
             Get simple guidance
           </button>
         )}
@@ -1041,6 +1054,20 @@ function CafeScan({ go }: { go: (page: Page) => void }) {
     if (!file) return
     if (photo) URL.revokeObjectURL(photo)
     setPhoto(URL.createObjectURL(file))
+    if (apiAvailable) {
+      const [title, copy] = cafeGoals[goal] ?? cafeGoals[0]
+      void startPointAsk(file, `${title}: ${copy}`)
+      go("identify")
+    }
+  }
+  // With the API on, scanning opens the camera; without it, the sample flow runs.
+  const scan = () => {
+    if (apiAvailable) {
+      inputRef.current?.click()
+      return
+    }
+    resetPointAsk()
+    go("identify")
   }
   return (
     <div className="flow-screen cafe-flow">
@@ -1092,7 +1119,7 @@ function CafeScan({ go }: { go: (page: Page) => void }) {
           onChange={(event) => choosePhoto(event.target.files?.[0])}
         />
         <div className="capture-actions">
-          <button className="flow-primary" onClick={() => go("identify")}>
+          <button className="flow-primary" onClick={scan}>
             <Icon src={icons.camera} />
             Capture Photo
           </button>
@@ -1137,7 +1164,7 @@ function CafeScan({ go }: { go: (page: Page) => void }) {
         </section>
       </main>
       <nav className="cafe-bottom">
-        <button className="flow-primary" onClick={() => go("identify")}>
+        <button className="flow-primary" onClick={scan}>
           Scan Kiosk Screen →
         </button>
       </nav>
@@ -1145,8 +1172,47 @@ function CafeScan({ go }: { go: (page: Page) => void }) {
   )
 }
 function CafeIdentify({ go }: { go: (page: Page) => void }) {
-  const comparison =
-    "The categories are across the top. The card reader is below the screen."
+  const session = usePointAskSession()
+  const result = session.result
+  const live = session.status !== "idle"
+  const unsure = session.status === "ready" && (result?.steps.length ?? 0) === 0
+  useEffect(() => {
+    if (result?.safety_blocked) go("safety-block")
+  }, [result, go])
+
+  const badge =
+    session.status === "loading"
+      ? "● Checking your photo"
+      : session.status === "error"
+        ? "● Could not check"
+        : unsure
+          ? "● Check first · Not sure"
+          : result
+            ? `● Check first · ${Math.round(result.confidence * 100)}% match`
+            : "● Check first · 96% match"
+  const heading =
+    session.status === "loading"
+      ? "Looking at your photo..."
+      : session.status === "error"
+        ? "I couldn't check this photo right now."
+        : unsure
+          ? "I'm not sure. I won't guess."
+          : result
+            ? result.check_statement
+            : "I think this is a Café Self-Order Touchscreen Kiosk."
+  const question =
+    session.status === "loading"
+      ? "This takes a few seconds."
+      : session.status === "error"
+        ? "Try another photo, or ask someone you trust."
+        : unsure
+          ? (result?.unsure_reason ?? "Try another photo, or ask someone you trust.")
+          : "Does this look right to you?"
+  const same = result ? result.same_as_before : ["Food and drink categories are across the top."]
+  const different = result ? result.different : ["The card reader is below the screen."]
+  const comparison = [...same, ...different].join(" ")
+  const canStart = !live || (session.status === "ready" && !unsure)
+
   return (
     <div className="flow-screen cafe-flow">
       <FlowTopBar
@@ -1156,58 +1222,87 @@ function CafeIdentify({ go }: { go: (page: Page) => void }) {
       />
       <main className="flow-main cafe-main">
         <div className="cafe-landmark">
-          <span>● Check first · 96% match</span>
-          <button onClick={() => speak(pageCopy.identify)}>
+          <span>{badge}</span>
+          <button onClick={() => speak(`${heading} ${question}`)}>
             <Icon src={icons.sound} />
             Read to me
           </button>
         </div>
         <figure className="scan-preview">
-          <img src={`${A}/96e44.png`} alt="Scanned café ordering kiosk" />
-          <b>✓ Scanned</b>
+          <img
+            src={session.photoUrl ?? `${A}/96e44.png`}
+            alt={live ? "Your photo" : "Scanned café ordering kiosk"}
+          />
+          <b>{session.status === "loading" ? "Checking..." : "✓ Scanned"}</b>
         </figure>
-        <section className="recognition-card">
+        <section className="recognition-card" aria-live="polite">
           <div>
-            <h1>I think this is a Café Self-Order Touchscreen Kiosk.</h1>
+            <h1>{heading}</h1>
             <button
               className="icon-audio"
-              onClick={() => speak(pageCopy.identify)}
+              onClick={() => speak(`${heading} ${question}`)}
               aria-label="Read recognition aloud"
             >
               <Icon src={icons.sound} />
             </button>
           </div>
-          <p>Does this look right to you?</p>
-          <span className="level-pill">●●○ With a prompt</span>
-          <button className="flow-primary" onClick={() => go("cafesteps")}>
-            ✓ Yes, that's right
-          </button>
+          <p>{question}</p>
+          {!live && <span className="level-pill">●●○ With a prompt</span>}
+          {canStart && (
+            <button className="flow-primary" onClick={() => go("cafesteps")}>
+              ✓ Yes, that's right
+            </button>
+          )}
+          {(unsure || session.status === "error") && (
+            <button
+              className="flow-primary"
+              onClick={() => go("photo-confirmation")}
+            >
+              Ask someone you trust
+            </button>
+          )}
           <button className="flow-secondary" onClick={() => go("scan")}>
             Try again / Retake
           </button>
         </section>
-        <section className="comparison-card">
-          <p className="flow-label">Familiar match</p>
-          <div className="comparison-title">
-            <h2>Comparing to your saved setup</h2>
-            <span>Campus Café</span>
-          </div>
-          <article className="same-block">
-            <h3>✓ Same as familiar ordering</h3>
-            <p>Food and drink categories are across the top.</p>
-          </article>
-          <article className="different-block">
-            <h3>What is different</h3>
-            <p>The card reader is below the screen.</p>
-          </article>
-          <button className="audio-pill" onClick={() => speak(comparison)}>
-            <Icon src={icons.sound} />
-            Read comparison aloud
-          </button>
-        </section>
+        {(same.length > 0 || different.length > 0) && (
+          <section className="comparison-card">
+            <p className="flow-label">Familiar match</p>
+            <div className="comparison-title">
+              <h2>Comparing to your saved setup</h2>
+              <span>{live ? "Your Passport" : "Campus Café"}</span>
+            </div>
+            {same.length > 0 && (
+              <article className="same-block">
+                <h3>
+                  {live ? "✓ Same as what you know" : "✓ Same as familiar ordering"}
+                </h3>
+                {same.map((item) => (
+                  <p key={item}>{item}</p>
+                ))}
+              </article>
+            )}
+            {different.length > 0 && (
+              <article className="different-block">
+                <h3>What is different</h3>
+                {different.map((item) => (
+                  <p key={item}>{item}</p>
+                ))}
+              </article>
+            )}
+            <button className="audio-pill" onClick={() => speak(comparison)}>
+              <Icon src={icons.sound} />
+              Read comparison aloud
+            </button>
+          </section>
+        )}
       </main>
       <nav className="cafe-bottom with-note">
-        <button className="flow-primary" onClick={() => go("cafesteps")}>
+        <button
+          className="flow-primary"
+          onClick={() => go("cafesteps")}
+          disabled={!canStart}
+        >
           Start Step-by-Step Guidance →
         </button>
         <small>Take your time. Ask for help anytime.</small>
@@ -1218,6 +1313,29 @@ function CafeIdentify({ go }: { go: (page: Page) => void }) {
 function CafeSteps({ go }: { go: (page: Page) => void }) {
   const [paused, setPaused] = useState(false)
   const [hint, setHint] = useState(false)
+  const session = usePointAskSession()
+  const steps = session.result?.steps ?? []
+  const live = steps.length > 0
+  const index = Math.min(session.stepIndex, Math.max(steps.length - 1, 0))
+  const step = steps[index]
+  const total = live ? steps.length : 3
+  const current = live ? index + 1 : 1
+  const dots = Array.from({ length: total }, (_, i) => (i < current ? "●" : "○")).join("")
+  const instruction = step?.action ?? "Tap the Iced Drinks button on the screen."
+  const where = step?.where ?? "Touch the cold drinks picture in the top row."
+  const hintText =
+    step?.hint ?? step?.done_when ?? "Look at the first row. Find the cold drink cup."
+  const showStep = (next: number) => {
+    setHint(false)
+    setStepIndex(next)
+  }
+  const next = () => {
+    if (live && index < steps.length - 1) {
+      showStep(index + 1)
+      return
+    }
+    go("cafecomplete")
+  }
   return (
     <div className="flow-screen cafe-flow">
       <FlowTopBar
@@ -1232,27 +1350,52 @@ function CafeSteps({ go }: { go: (page: Page) => void }) {
         </div>
         <section className="cafe-step-counter">
           <span>
-            <b>Step 1 of 3</b>
-            <small>Choosing your item</small>
+            <b>
+              Step {current} of {total}
+            </b>
+            <small>{step?.step_title ?? "Choosing your item"}</small>
           </span>
-          <em>●○○</em>
+          <em>{dots}</em>
           <p>Take your time. There is no time limit.</p>
         </section>
         <section className="ar-viewfinder">
-          <img src={`${A}/83e74.png`} alt="Close-up of café kiosk menu" />
-          <span className="ar-status">● Camera locked on category button</span>
-          <div className="target-box">
-            <b>Tap “Iced Drinks”</b>
-            <span>Iced Drinks & Teas</span>
-          </div>
-          <small>Screen detects button in view</small>
+          <img
+            src={session.photoUrl ?? `${A}/83e74.png`}
+            alt={live ? "Your photo" : "Close-up of café kiosk menu"}
+          />
+          <span className="ar-status">
+            {live ? "● Your photo" : "● Camera locked on category button"}
+          </span>
+          {!live && (
+            <div className="target-box">
+              <b>Tap “Iced Drinks”</b>
+              <span>Iced Drinks & Teas</span>
+            </div>
+          )}
+          {live && step?.box && (
+            <div
+              className="target-box"
+              style={{
+                position: "absolute",
+                left: `${step.box.x * 100}%`,
+                top: `${step.box.y * 100}%`,
+                width: `${step.box.w * 100}%`,
+                height: `${step.box.h * 100}%`,
+                transform: "none",
+              }}
+            >
+              <b>{step.step_title}</b>
+            </div>
+          )}
+          <small>{live ? step?.done_when : "Screen detects button in view"}</small>
         </section>
         <section className="cafe-instruction">
-          <h1>Tap the Iced Drinks button on the screen.</h1>
-          <p>Touch the cold drinks picture in the top row.</p>
+          <h1>{instruction}</h1>
+          <p>{where}</p>
+          {step?.caution && <p>{step.caution}</p>}
           <button
             className="audio-pill"
-            onClick={() => speak(pageCopy.cafesteps)}
+            onClick={() => speak(`${instruction} ${where}`)}
           >
             <Icon src={icons.sound} />
             Read this step aloud
@@ -1266,7 +1409,7 @@ function CafeSteps({ go }: { go: (page: Page) => void }) {
         </div>
         {hint && (
           <p className="hint-card" role="status">
-            Look at the first row. Find the cold drink cup.
+            {hintText}
           </p>
         )}
         <section className="cafe-coach">
@@ -1287,17 +1430,27 @@ function CafeSteps({ go }: { go: (page: Page) => void }) {
         </div>
       )}
       <nav className="cafe-step-actions">
-        <button disabled>← Back</button>
+        <button disabled={!live || index === 0} onClick={() => showStep(index - 1)}>
+          ← Back
+        </button>
         <button onClick={() => setPaused(!paused)}>
           {paused ? "Continue" : "Pause"}
         </button>
-        <button onClick={() => go("cafecomplete")}>Next →</button>
+        <button onClick={next}>Next →</button>
         <button onClick={() => go("scan")}>Ask something else</button>
       </nav>
     </div>
   )
 }
 function CafeComplete({ go }: { go: (page: Page) => void }) {
+  const session = usePointAskSession()
+  const result = session.result
+  const profile = result
+    ? [...result.different, ...result.same_as_before].slice(0, 3)
+    : [
+        "Touchscreen kiosk. Categories are along the top.",
+        "The card reader is at the bottom center.",
+      ]
   return (
     <div className="flow-screen cafe-flow">
       <FlowTopBar
@@ -1318,10 +1471,16 @@ function CafeComplete({ go }: { go: (page: Page) => void }) {
             ✓<b>Done</b>
           </span>
           <h1>You did it, Maya!</h1>
-          <p>Café order completed at Uptown Coffee.</p>
+          <p>
+            {result
+              ? `You finished every step with the ${result.item_name}.`
+              : "Café order completed at Uptown Coffee."}
+          </p>
           <small>Gentle celebration · No flashing animations</small>
         </section>
-        <section className="cafe-passport-update">
+        {/* Real scans are not saved to the Passport yet, so only the sample shows this. */}
+        {!result && (
+          <section className="cafe-passport-update">
           <div>
             <h2>Skill Passport Updated</h2>
             <span>Step 2 of 3</span>
@@ -1338,12 +1497,14 @@ function CafeComplete({ go }: { go: (page: Page) => void }) {
           </p>
           <p>One more routine earns the On-My-Own stamp.</p>
         </section>
+        )}
         <section className="kiosk-profile">
           <h2>Kiosk Profile Stored (Text Only)</h2>
           <div>
             <small>Saved details</small>
-            <p>Touchscreen kiosk. Categories are along the top.</p>
-            <p>The card reader is at the bottom center.</p>
+            {profile.map((line) => (
+              <p key={line}>{line}</p>
+            ))}
           </div>
           <p>✓ Photo discarded immediately.</p>
           <p>Zero images or personal data stored.</p>
@@ -3662,6 +3823,8 @@ function Flow7Actions({ children }: { children: React.ReactNode }) {
 }
 function SafetyBlock({ go }: { go: (page: Page) => void }) {
   const copy = pageCopy["safety-block"]
+  const session = usePointAskSession()
+  const blocked = session.result?.safety_blocked ? session.result : null
   return (
     <div className="flow-screen flow7-screen">
       <Flow7TopBar
@@ -3688,15 +3851,23 @@ function SafetyBlock({ go }: { go: (page: Page) => void }) {
           </button>
         </section>
         <header className="flow7-intro">
-          <h1>Stovetop Burner Detected</h1>
+          <h1>
+            {blocked
+              ? `${blocked.item_name} Detected`
+              : "Stovetop Burner Detected"}
+          </h1>
           <p>We do not guide stoves or heaters for your safety.</p>
         </header>
         <figure className="flow7-hero safety-photo">
-          <Flow7Asset
-            group="block"
-            file="65988.png"
-            alt="Electric coil stovetop detected by the camera"
-          />
+          {blocked && session.photoUrl ? (
+            <img src={session.photoUrl} alt="Your photo" />
+          ) : (
+            <Flow7Asset
+              group="block"
+              file="65988.png"
+              alt="Electric coil stovetop detected by the camera"
+            />
+          )}
           <figcaption className="blocked-badge">
             <Flow7Asset group="block" file="d132b.svg" />
             Blocked for your safety
@@ -3706,7 +3877,9 @@ function SafetyBlock({ go }: { go: (page: Page) => void }) {
               <Flow7Asset group="block" file="5d004.svg" />
             </span>
             <span>
-              <b>Object: Electric Coil Stovetop</b>
+              <b>
+                Object: {blocked ? blocked.item_name : "Electric Coil Stovetop"}
+              </b>
               <small>Hazard: High heat & burn risk</small>
             </span>
           </span>
