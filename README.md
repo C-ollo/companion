@@ -17,7 +17,7 @@ Our visit to First Place showed us two gaps.
 1. **Skills are hard to track.** There is no simple record of what someone can do and how much help they needed.
 2. **Skills do not always travel.** In the teaching kitchen, the stove is the exact same model as the one in the apartment. That helps. But after someone moves, the washer is different, the stove is gas instead of electric, or the buttons are a touchscreen. A skill learned in one place is hard to use in another.
 
-Companion answers both. **Point & Ask** helps in the moment when something is new. The **Skill Passport** keeps a record that belongs to the person and goes with them.
+Companion answers both. **Point & Ask** helps in the moment when something is new. **My Skills** keeps a record that belongs to the person and goes with them.
 
 ## Who it is for
 
@@ -36,12 +36,12 @@ The people around her matter too. Supporters can be a parent, a coach, a therapi
 - **Safety block:** stoves, heaters, and medication are never guided. The app suggests asking a support person and offers safer alternatives.
 - Photos stay in memory only and are never saved
 
-### Skill Passport
+### My Skills
 - Today's practice, with step-by-step guidance you can pause and resume (example: washing machine laundry)
-- Log how it went, with levels of help, and a celebration when you finish
+- Log how it went with three levels of help (**With someone**, **With AI help**, **By myself**), and a celebration when you finish
 - Voice or text logging that matches what you did to your skills
 - Monthly summary you can edit and share privately with links you control
-- Official Skill Passport credential, with print / save as PDF
+- My Skills record, with print / save as PDF
 - Data backup and per-item storage control, so your data stays on your device
 
 ### My People
@@ -75,10 +75,10 @@ These came directly from First Place and our advisor.
 **Plain language**
 - Write at an 8th-grade reading level or lower, in short, direct sentences.
 - Offer a choice of plain or more detailed wording, so each person gets the level that fits.
-- No therapy words. "Prompt" becomes "a little help". "Mastered" becomes "Learned" or "I did it by myself".
+- No therapy words. "With a prompt" becomes "With AI help". "Mastered" becomes "Learned" or "By myself".
 
 **Levels of help, never failure**
-- Doing a task with a person, with Companion's steps, or with a little help all count as progress.
+- Every level counts as progress: **With someone**, **With AI help**, and **By myself**.
 - Doing it with AI guidance is shown as different from doing it by yourself.
 - No "failed", "incomplete", or "not yet" anywhere.
 
@@ -105,16 +105,16 @@ These came directly from First Place and our advisor.
 
 ## Coming next (roadmap)
 
-Based on feedback from First Place and our advisor. Our advisor suggested one initial focus, so we are building Point & Ask first and the Skill Passport depth after.
+Based on feedback from First Place and our advisor. Our advisor suggested one initial focus, so we are building Point & Ask first and the My Skills depth after.
 
 ### First: Point & Ask for everyone
-1. **No setup needed.** Point & Ask works without a Skill Passport or sign-up, so it helps people living with family or with occasional support. After a task, an optional "Save this to my Passport".
+1. **No setup needed.** Point & Ask works without My Skills or sign-up, so it helps people living with family or with occasional support. After a task, an optional "Save this to My Skills".
 2. **Knowing when it does not know.** An "I'm not sure" screen with: take another photo, describe it, or ask someone you trust.
 3. **Plain language pass.** Every screen, at an 8th-grade level or lower.
 4. **Learn your way.** Pictures, read aloud, shorter steps, or more detail. Each person chooses how they like help.
 
 ### Next: lighter logging and clearer levels
-5. **Clearer levels of help:** with a person, with Companion's steps, with a little help, by myself. We are checking with users that the order feels natural before we roll it out everywhere.
+5. **Clearer levels of help.** The app now uses three: With someone, With AI help, and By myself. Next, we are checking with users that the names and order feel natural.
 6. **Light-touch logging.** One tap to log after a guided task. Supporters can suggest or confirm entries, and the user approves.
 7. **Your own photos and videos.** Steps show *your* washer or stove, placed above the instruction. Video helps people remember and practice better than a photo. One skill can cover more than one place, like the teaching kitchen and your apartment. A "Watch me do it" video can be shared with your people.
 
@@ -122,7 +122,7 @@ Based on feedback from First Place and our advisor. Our advisor suggested one in
 8. **Personal goals at setup.** Pick what matters to you. Companion links small skills to those goals.
 9. **What this makes possible.** After each skill, show how it connects to the life you want: hosting friends, cooking a meal you love, living in your own place.
 10. **Progress across places.** Each skill shows times done, level of help, places practiced, and whether it was logged by you or confirmed together. Doing something once is different from doing it in many places.
-11. **Your record goes with you.** A clear "Take my Passport with me" option for when you change providers or homes.
+11. **Your record goes with you.** A clear "Take My Skills with me" option for when you change providers or homes.
 
 ### Later: real AI guidance
 12. **Connect a vision AI model** for Point & Ask.
@@ -132,9 +132,9 @@ Based on feedback from First Place and our advisor. Our advisor suggested one in
 
 ## Questions we are still testing
 
-- Is the order of the four levels of help obvious to the people using them?
+- Are the three levels of help, and their order, obvious to the people using them?
 - Can supporter reminders help without becoming nagging?
-- How should the Passport tell the difference between doing a task once and doing it in different places?
+- How should My Skills tell the difference between doing a task once and doing it in different places?
 - How can people with different reading levels each get wording that fits?
 
 ---
@@ -145,14 +145,16 @@ Requirements: Node 22 or newer, **git-lfs** (the repo stores images and fonts in
 
 ```bash
 git lfs install
-git clone https://github.com/skbosire-art/BuildAlongsidePWAHub.git
-cd BuildAlongsidePWAHub
+git clone https://github.com/skbosire-art/Companion.git
+cd Companion
 corepack pnpm@10.34.3 install
 corepack pnpm@10.34.3 run dev        # http://localhost:8443 by default
 corepack pnpm@10.34.3 run build      # production build, including the offline service worker
 ```
 
-The service worker only runs in production builds, so use `vite preview` after a build to test install and offline behavior.
+If you cloned before installing git-lfs, images and fonts will be small placeholder files. Run `git lfs pull` inside the folder to download the real ones.
+
+The service worker only runs in production builds. To test install and offline behavior, run `corepack pnpm@10.34.3 exec vite preview` after a build.
 
 ## Tech stack
 
