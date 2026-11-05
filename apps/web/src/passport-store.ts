@@ -56,6 +56,9 @@ export function usePassportEntries() {
   )
 }
 
+/** The saved entries, outside React (oldest first). */
+export const getEntries = read
+
 /** Save an entry and return its id (for undo). */
 export function addEntry(entry: Omit<PassportEntry, "id" | "at">) {
   const entries = read()

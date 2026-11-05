@@ -10,6 +10,7 @@ import {
   stepsForPhoto,
   type KnownSkill,
 } from "./api"
+import { getEntries } from "./passport-store"
 
 export type PointAskStatus = "idle" | "loading" | "ready" | "error"
 
@@ -23,6 +24,8 @@ export interface PointAskSession {
   /** Identify answer plus steps (empty until stepsStatus is "ready"). */
   result: PointAskResponse | null
   stepIndex: number
+  /** The skills sent with this scan, so screens can say "you already know this". */
+  known: KnownSkill[]
 }
 
 const empty: PointAskSession = {
@@ -32,6 +35,7 @@ const empty: PointAskSession = {
   goal: "",
   result: null,
   stepIndex: 0,
+  known: [],
 }
 
 let session = empty
@@ -54,8 +58,8 @@ export function usePointAskSession() {
   )
 }
 
-/** Skills Maya already knows, so the AI can say what's the same and different. */
-const knownSkills: KnownSkill[] = [
+/** Skills Maya learned before using the app (sample data). */
+const SAMPLE_KNOWN: KnownSkill[] = [
   {
     skillId: "cafe_self_order",
     level: "with_prompt",
@@ -72,6 +76,23 @@ const knownSkills: KnownSkill[] = [
     learnedOn: "Central Station ticket machine",
   },
 ]
+
+/**
+ * What the person already knows, so the AI can say what's the same and different:
+ * the sample skills, plus each skill saved in My Skills (where it was first done).
+ */
+function knownSkillsNow(): KnownSkill[] {
+  const known = [...SAMPLE_KNOWN]
+  for (const entry of getEntries()) {
+    if (known.some((k) => k.skillId === entry.skillId)) continue
+    known.push({
+      skillId: entry.skillId,
+      level: entry.level,
+      learnedOn: entry.place || undefined,
+    })
+  }
+  return known.slice(0, 50)
+}
 
 // Do the identify and steps answers describe the same item?
 function sameItem(a: { appliance: string; item_name: string }, b: { appliance: string; item_name: string }) {
@@ -90,7 +111,9 @@ export async function startPointAsk(file: File, goal: string) {
   if (session.photoUrl) URL.revokeObjectURL(session.photoUrl)
   const scan = Symbol("scan")
   currentScan = scan
+  const knownSkills = knownSkillsNow()
   set({
+    known: knownSkills,
     status: "loading",
     stepsStatus: "loading",
     photoUrl: URL.createObjectURL(file),

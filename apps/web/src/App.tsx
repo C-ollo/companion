@@ -1396,6 +1396,27 @@ function CafeIdentify({ go }: { go: (page: Page) => void }) {
   const different = result ? result.different : ["The card reader is below the screen."]
   const comparison = [...same, ...different].join(" ")
   const canStart = !live || (session.status === "ready" && !unsure)
+  // A skill they already have, on a different type of item.
+  const knownSkill =
+    session.status === "ready" && !unsure && result
+      ? session.known.find((k) => k.skillId === result.skill_id)
+      : undefined
+  const knownName = knownSkill ? getSkill(knownSkill.skillId)?.name : undefined
+  const words = (v = "") => v.toLowerCase().replace(/[^a-z]+/g, " ").trim()
+  const sameAsBefore =
+    Boolean(knownSkill?.learnedOn && result) &&
+    words(knownSkill?.learnedOn) === words(result?.item_name)
+  const typeLine = sameAsBefore
+    ? "You've used this one before."
+    : `This one is a different type: ${result?.item_name}.`
+  const knownText =
+    knownSkill && knownName && result
+      ? `You already know this: ${knownName}. ${
+          knownSkill.learnedOn && !sameAsBefore
+            ? `You learned it on: ${knownSkill.learnedOn}. `
+            : ""
+        }${typeLine}${different.length > 0 && !sameAsBefore ? " Below is what's different." : ""}`
+      : ""
 
   return (
     <div className="flow-screen cafe-flow">
@@ -1452,6 +1473,27 @@ function CafeIdentify({ go }: { go: (page: Page) => void }) {
             Try again / Retake
           </button>
         </section>
+        {knownText && (
+          <section className="comparison-card" aria-live="polite">
+            <p className="flow-label">You already know this</p>
+            <div className="comparison-title">
+              <h2>{knownName}</h2>
+              <button
+                className="icon-audio"
+                onClick={() => speak(knownText)}
+                aria-label="Read aloud"
+              >
+                <Icon src={icons.sound} />
+              </button>
+            </div>
+            <article className="same-block">
+              {knownSkill?.learnedOn && !sameAsBefore && (
+                <p>You learned it on: {knownSkill.learnedOn}</p>
+              )}
+              <p>{typeLine}</p>
+            </article>
+          </section>
+        )}
         {(same.length > 0 || different.length > 0) && (
           <section className="comparison-card">
             <p className="flow-label">Familiar match</p>
@@ -1751,7 +1793,12 @@ function CafeComplete({ go }: { go: (page: Page) => void }) {
                   </span>
                 </article>
                 <p>
-                  <b>New place:</b> {result.item_name}
+                  <b>
+                    {session.known.some((k) => k.skillId === skill.id)
+                      ? "New place for a skill you know:"
+                      : "New place:"}
+                  </b>{" "}
+                  {result.item_name}
                 </p>
                 {savedId ? (
                   <p>
