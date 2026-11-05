@@ -1,29 +1,33 @@
 :root {
   /* Brand and actions */
-  --color-brand: #133326;
-  --color-brand-deep: #0c412d;
-  --color-brand-hover: #1b4332;
-  --color-mint: #b9eed1;
-  --color-mint-soft: #eefdf3;
+  --color-primary: #0f2d59;
+  --color-secondary: #334e68;
+  --color-tertiary: #0284c7;
+  --color-neutral: #101d2d;
+  --color-brand: var(--color-primary);
+  --color-brand-deep: var(--color-primary);
+  --color-brand-hover: var(--color-secondary);
+  --color-mint: #cfe2fa;
+  --color-mint-soft: #e8f1ff;
 
   /* Text */
-  --color-ink: #0f172a;
-  --color-ink-muted: #334155;
-  --color-ink-subtle: #475569;
+  --color-ink: var(--color-neutral);
+  --color-ink-muted: var(--color-secondary);
+  --color-ink-subtle: #526b84;
 
   /* Surfaces */
-  --color-canvas: #f6f9ff;
-  --color-canvas-flow: #f8f9ff;
-  --color-paper: #ffffff;
-  --color-neutral-soft: #e7eff8;
-  --color-blue-soft: #eff4fe;
-  --color-blue-mist: #ecf4fe;
+  --color-canvas: #e0e8f8;
+  --color-canvas-flow: #e8effb;
+  --color-paper: #f8faff;
+  --color-neutral-soft: #d6e3f5;
+  --color-blue-soft: #e3ebfa;
+  --color-blue-mist: #dce7f7;
 
   /* Structure and feedback */
-  --color-border: #d3dbe4;
-  --color-border-soft: #cedfd4;
-  --color-focus: #f5bd43;
-  --color-info: #245c78;
+  --color-border: #b9cbe3;
+  --color-border-soft: #c5d6ec;
+  --color-focus: var(--color-tertiary);
+  --color-info: var(--color-tertiary);
   --color-warning: #9a611f;
   --color-danger: #9a3535;
 
@@ -52,13 +56,13 @@
   /* Elevation */
   --shadow-subtle: 0 1px 2px #0000000d;
   --shadow-raised: 0 4px 12px #0000001a;
-  --shadow-overlay: 0 8px 24px #0f172a1f;
+  --shadow-overlay: 0 8px 24px #101d2d1f;
 
   /* Layout */
   --content-compact: 620px;
   --content-standard: 920px;
   --content-wide: 1120px;
-  --control-min-height: 48px;
+  --control-min-height: 56px;
 
   /* User-triggered feedback */
   --duration-feedback: 140ms;
