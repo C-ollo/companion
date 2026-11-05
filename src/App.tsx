@@ -20,11 +20,11 @@ const icons = {
   breathe: `${A}/4f2bd.svg`,
 }
 const pageCopy: Record<Page, string> = {
-  home: "Good morning, Maya. How can I help you today? Choose Skill Passport to practice your skills, or Point and Ask for visual help.",
+  home: "Good morning, Maya. How can I help you today? Choose My Skills to practice your skills, or Point and Ask for visual help.",
   point:
     "Point and Ask. Show me what you need help with. Point at any appliance, transit sign, menu, button, or label. Photos are never saved.",
   passport:
-    "Skill Passport. You have three practice choices today: Washing Machine Laundry, Café Self-Order, and Warm Food Safely. Choose the skill you want to practice.",
+    "My Skills. You have three practice choices today: Washing Machine Laundry, Café Self-Order, and Warm Food Safely. Choose the skill you want to practice.",
   people:
     "My People. Your private support network. Sarah and Jordan are trusted people you added.",
   guidance:
@@ -32,7 +32,7 @@ const pageCopy: Record<Page, string> = {
   logging:
     "You finished Washing Machine Laundry. How did it go today? There is no wrong answer.",
   celebration:
-    "Great work, Maya. Your progress is recorded. Your Passport now has fourteen stamps.",
+    "Great work, Maya. Your progress is recorded. My Skills now has fourteen stamps.",
   scan: "Point your camera at the café screen. Keep the screen inside the frame.",
   identify:
     "I think this is a café self-order touchscreen kiosk. Does this look right?",
@@ -55,11 +55,11 @@ const pageCopy: Record<Page, string> = {
   confirmer:
     "In-person confirmation. Hand the phone to a trusted friend or family member. They tap to verify you did this together.",
   credential:
-    "Official Skill Passport. A record of everyday skills Maya has learned.",
+    "My Skills record. A record of everyday skills Maya has learned.",
   "credential-export":
     "Print or save a copy. Choose how to keep or share your official skill record.",
   "data-backup":
-    "Backup your Passport. Your data stays on your phone. Create an offline backup file.",
+    "Back up My Skills. Your data stays on your phone. Create an offline backup file.",
   "storage-control":
     "Storage and data control. You own every piece of your data.",
   "safety-block":
@@ -72,7 +72,7 @@ const pageCopy: Record<Page, string> = {
   "voice-log":
     "Tell me what you did. Speak or type in your own words. You can always type instead.",
   "skill-mapping":
-    "Here is what we found. We matched your words to a routine in your passport.",
+    "Here is what we found. We matched your words to a routine in My Skills.",
   "skill-clarification":
     "Did you mean this skill? We ask one question when we are unsure. You decide.",
   "voice-confirmed":
@@ -137,7 +137,7 @@ function BottomNav({ page, go }: { page: Page; go: (page: Page) => void }) {
   const items: { id: Page; label: string; icon: string }[] = [
     { id: "home", label: "Home", icon: icons.home },
     { id: "point", label: "Point & Ask", icon: icons.point },
-    { id: "passport", label: "Skill Passport", icon: icons.passport },
+    { id: "passport", label: "My Skills", icon: icons.passport },
     { id: "people", label: "My People", icon: icons.people },
   ]
   return (
@@ -259,10 +259,10 @@ function Home({ go }: { go: (page: Page) => void }) {
           <figure className="feature-cover skill-passport-cover">
             <img
               src={`${A}/skill-passport-cover.webp`}
-              alt="An illustrated Skill Passport showing laundry, transit, grocery, community, and cooking skills"
+              alt="An illustrated skills book showing laundry, transit, grocery, community, and cooking skills"
             />
           </figure>
-          <p className="eyebrow feature-heading">Skill Passport</p>
+          <p className="eyebrow feature-heading">My Skills</p>
           <h2 className="feature-tagline">Practice My Skills</h2>
           <p>Skill tracker, step-by-step guides, and progress logs.</p>
           <div className="feature-top">
@@ -276,7 +276,7 @@ function Home({ go }: { go: (page: Page) => void }) {
             className="outline-button home-passport-action"
             onClick={() => go("passport")}
           >
-            Open Skill Passport
+            Open My Skills
           </button>
         </article>
       </section>
@@ -576,12 +576,12 @@ function Passport({ go }: { go: (page: Page) => void }) {
       <section className="credential-entry-grid">
         <button onClick={() => go("credential")}>
           <span>Official document</span>
-          <b>Official Skill Passport</b>
+          <b>My Skills record</b>
           <small>View and save your official skill record.</small>
         </button>
         <button onClick={() => go("data-backup")}>
           <span>Local-first</span>
-          <b>Backup Your Passport</b>
+          <b>Back Up My Skills</b>
           <small>Save your progress to an offline file.</small>
         </button>
       </section>
@@ -810,7 +810,7 @@ function Logging({ go }: { go: (page: Page) => void }) {
         <div className="logging-layout">
           <section className="decision-card">
             <h2>How did it go today?</h2>
-            <p>Every level builds your passport.</p>
+            <p>Every level adds to My Skills.</p>
             <p>There is no wrong answer.</p>
             <div className="radio-list" role="radiogroup">
               {observations.map((option, index) => (
@@ -832,7 +832,7 @@ function Logging({ go }: { go: (page: Page) => void }) {
             </div>
           </section>
           <aside className="passport-preview">
-            <p className="flow-label">Passport entry preview</p>
+            <p className="flow-label">My Skills entry preview</p>
             <div className="stamp-preview">
               <strong>
                 Level {choice + 1}
@@ -905,7 +905,7 @@ function Logging({ go }: { go: (page: Page) => void }) {
           ← Edit previous steps
         </button>
         <button className="flow-primary" onClick={() => go("celebration")}>
-          Save to My Passport & Continue →
+          Save to My Skills & Continue →
         </button>
       </nav>
     </div>
@@ -916,7 +916,7 @@ function Celebration({ go }: { go: (page: Page) => void }) {
   return (
     <div className="flow-screen">
       <FlowTopBar
-        title="Passport Updated"
+        title="My Skills Updated"
         back={() => go("logging")}
         close={() => go("home")}
       />
@@ -939,11 +939,11 @@ function Celebration({ go }: { go: (page: Page) => void }) {
           </section>
         )}
         <article className="celebration-card">
-          <span className="sage-badge">Passport Updated</span>
+          <span className="sage-badge">My Skills Updated</span>
           <div className="celebration-heading">
             <span>
               <h1>Great work, Maya!</h1>
-              <p>Your laundry log is now in your Passport.</p>
+              <p>Your laundry log is now in My Skills.</p>
             </span>
             <button
               className="audio-pill"
@@ -991,7 +991,7 @@ function Celebration({ go }: { go: (page: Page) => void }) {
         <section className="celebration-grid">
           <article>
             <span>
-              <p className="flow-label">Skill Passport balance</p>
+              <p className="flow-label">My Skills balance</p>
               <h2>14 Stamps</h2>
             </span>
             <img src={`${A}/6d93e.png`} alt="Laundry stamp preview" />
@@ -1014,7 +1014,7 @@ function Celebration({ go }: { go: (page: Page) => void }) {
           Return to Daily Home
         </button>
         <button className="flow-primary" onClick={() => go("passport")}>
-          View Updated Skill Passport →
+          View My Skills →
         </button>
       </nav>
     </div>
@@ -1307,7 +1307,7 @@ function CafeComplete({ go }: { go: (page: Page) => void }) {
       />
       <main className="flow-main cafe-main">
         <div className="cafe-landmark">
-          <span>Task completed · Passport expansion · Safe storage</span>
+          <span>Task completed · My Skills updated · Safe storage</span>
           <button onClick={() => speak(pageCopy.cafecomplete)}>
             <Icon src={icons.sound} />
             Read aloud
@@ -1323,7 +1323,7 @@ function CafeComplete({ go }: { go: (page: Page) => void }) {
         </section>
         <section className="cafe-passport-update">
           <div>
-            <h2>Skill Passport Updated</h2>
+            <h2>My Skills Updated</h2>
             <span>Step 2 of 3</span>
           </div>
           <article>
@@ -1351,7 +1351,7 @@ function CafeComplete({ go }: { go: (page: Page) => void }) {
       </main>
       <nav className="cafe-bottom dual">
         <button className="flow-primary" onClick={() => go("passport")}>
-          View Updated Skill Passport →
+          View My Skills →
         </button>
         <button className="flow-secondary" onClick={() => go("home")}>
           Return to Home
@@ -1447,7 +1447,7 @@ function MonthlySummary({ go }: { go: (page: Page) => void }) {
               <span>4 more this month</span>
             </article>
             <article>
-              <small>Passport stamps</small>
+              <small>My Skills stamps</small>
               <strong>14 stamps earned</strong>
               <span>New record</span>
             </article>
@@ -1785,7 +1785,7 @@ function PrivateSharing({ go }: { go: (page: Page) => void }) {
             </article>
             <article>
               <b>Read-only view</b>
-              <p>Nobody can edit or change your passport.</p>
+              <p>Nobody can edit or change your skills.</p>
             </article>
           </div>
         </section>
@@ -1893,7 +1893,7 @@ function ActiveShares({ go }: { go: (page: Page) => void }) {
             <li>
               The viewer sees this message: This summary is no longer shared.
             </li>
-            <li>Your on-device passport and logs are untouched.</li>
+            <li>Your skills and logs on this device are untouched.</li>
           </ul>
         </section>
         <button className="summary-primary" onClick={() => go("summary")}>
@@ -2178,7 +2178,7 @@ function SupportersHub({ go }: { go: (page: Page) => void }) {
           </button>
           <button onClick={() => go("passport")}>
             <Flow5ButtonIcon group="hub" file="9867c.svg" />
-            Return to Skill Passport
+            Return to My Skills
           </button>
         </div>
       </main>
@@ -2404,7 +2404,7 @@ function CheerDetail({ go }: { go: (page: Page) => void }) {
         </section>
         <section className="passport-control">
           <header>
-            <h2>You control your Passport</h2>
+            <h2>You control My Skills</h2>
             <span>{visible ? "Visible on Stamp" : "Hidden from Stamp"}</span>
           </header>
           <p>You decide what stays on your record.</p>
@@ -2412,8 +2412,8 @@ function CheerDetail({ go }: { go: (page: Page) => void }) {
           <button onClick={() => setVisible(!visible)}>
             <Flow5ButtonIcon group="cheer" file="b8eab.svg" />
             {visible
-              ? "Hide this cheer from my Passport"
-              : "Show this cheer on my Passport"}
+              ? "Hide this cheer from My Skills"
+              : "Show this cheer in My Skills"}
           </button>
         </section>
         <section className="preset-explainer">
@@ -2446,7 +2446,7 @@ function CheerDetail({ go }: { go: (page: Page) => void }) {
         <div className="flow5-actions">
           <button className="flow5-primary" onClick={() => go("supporters")}>
             <Flow5ButtonIcon group="cheer" file="1af07.svg" />
-            Done · Keep on Passport
+            Done · Keep in My Skills
           </button>
           <button onClick={() => go("supporters")}>Return to My People</button>
         </div>
@@ -2721,7 +2721,7 @@ function makeCredentialPdf(
   includePrivateNotes = false,
 ) {
   const lines = [
-    "Companion - Official Skill Passport",
+    "Companion - My Skills record",
     "Maya Lin - Member ID CP-2024-884",
     "Issued by Companion - November 2024",
     "14 skill stamps - 4 life areas - all current skills learned",
@@ -2868,7 +2868,7 @@ function CredentialPreview({ go }: { go: (page: Page) => void }) {
   const [shareStatus, setShareStatus] = useState("")
   const shareCredential = async () => {
     const shareData = {
-      title: "Maya Lin’s Official Skill Passport",
+      title: "My Skills record for Maya Lin",
       text: "View Maya Lin’s Companion skill record.",
       url: window.location.href,
     }
@@ -2903,11 +2903,11 @@ function CredentialPreview({ go }: { go: (page: Page) => void }) {
         <Flow6Landmark
           group="credential"
           icon="43bc6.svg"
-          label="Your official Skill Passport"
+          label="My Skills record"
           copy={pageCopy.credential}
         />
         <header className="flow6-intro">
-          <h1>Official Skill Passport</h1>
+          <h1>My Skills record</h1>
           <p>A record of everyday skills you have learned.</p>
           <p>Earned by Maya Lin.</p>
         </header>
@@ -2918,7 +2918,7 @@ function CredentialPreview({ go }: { go: (page: Page) => void }) {
             </span>
             <span>
               <small>Companion · Skill Record</small>
-              <b>Independent Living Passport</b>
+              <b>Independent Living Skills</b>
             </span>
             <strong>
               <Flow6Asset group="credential" file="463eb.svg" />
@@ -2945,7 +2945,7 @@ function CredentialPreview({ go }: { go: (page: Page) => void }) {
             <div>
               <dt>Issued By</dt>
               <dd>Companion</dd>
-              <dd>Personal Skill Passport</dd>
+              <dd>My Skills record</dd>
             </div>
             <div>
               <dt>Certification Date</dt>
@@ -3001,7 +3001,7 @@ function CredentialPreview({ go }: { go: (page: Page) => void }) {
             </span>
             <strong>
               <Flow6Asset group="credential" file="4caf8.svg" />
-              Passport confirmed
+              Record confirmed
             </strong>
           </footer>
         </article>
@@ -3071,7 +3071,7 @@ function CredentialExport({ go }: { go: (page: Page) => void }) {
     )
     if (destination === "email") {
       window.location.href =
-        "mailto:?subject=Maya%20Lin%20Official%20Skill%20Passport&body=The%20skill%20record%20was%20saved%20to%20your%20device.%20Attach%20it%20to%20this%20email."
+        "mailto:?subject=Maya%20Lin%20My%20Skills%20record&body=The%20skill%20record%20was%20saved%20to%20your%20device.%20Attach%20it%20to%20this%20email."
       setStatus("The document was saved. Attach it to your email.")
     } else {
       setStatus("Official skill record saved.")
@@ -3230,7 +3230,7 @@ function DataBackup({ go }: { go: (page: Page) => void }) {
           copy={pageCopy["data-backup"]}
         />
         <header className="flow6-intro">
-          <h1>Backup Your Passport</h1>
+          <h1>Back Up My Skills</h1>
           <p>Your data stays on your phone.</p>
           <p>Create an offline file to protect your progress.</p>
         </header>
@@ -3605,7 +3605,7 @@ function StorageControl({ go }: { go: (page: Page) => void }) {
           </button>
           <button onClick={() => go("passport")}>
             <Flow6Asset group="storage" file="a9063.svg" />
-            Return to Passport
+            Return to My Skills
           </button>
         </div>
       </main>
@@ -4198,7 +4198,7 @@ function Flow8TopBar({
           Back
         </button>
       ) : (
-        <strong>Skills Passport</strong>
+        <strong>My Skills</strong>
       )}
       {!home && <strong title={title}>{title}</strong>}
       <span>
@@ -4419,7 +4419,7 @@ function SkillMapping({
         <header className="flow8-intro">
           <h1>Here Is What We Found</h1>
           <p>
-            We mapped your words to an independent routine in your passport.
+            We mapped your words to an independent routine in My Skills.
           </p>
         </header>
         <section className="spoken-reference">
@@ -4508,7 +4508,7 @@ function SkillMapping({
             className="flow8-primary"
             onClick={() => go("voice-confirmed")}
           >
-            Confirm & Log to Passport
+            Confirm & Log to My Skills
             <Flow8Asset group="mapping" file="d3302.svg" />
           </button>
           <button onClick={() => go("voice-log")}>
@@ -4664,7 +4664,7 @@ function VoiceLogConfirmed({ go }: { go: (page: Page) => void }) {
     <div className="flow-screen flow8-screen confirmed-screen">
       <Flow8TopBar
         group="confirmed"
-        title="Skills Passport"
+        title="My Skills"
         copy={pageCopy["voice-confirmed"]}
         home
       />
@@ -4684,11 +4684,11 @@ function VoiceLogConfirmed({ go }: { go: (page: Page) => void }) {
               <div>
                 <small>Stamp 15 of 15</small>
                 <h1>🎉 15th Stamp Earned!</h1>
-                <p>Your voice log was added to your official Skill Passport.</p>
+                <p>Your voice log was added to My Skills.</p>
               </div>
               <footer>
                 <span>
-                  <b>Passport Milestone</b>
+                  <b>My Skills Milestone</b>
                   <strong>100% Complete</strong>
                 </span>
                 <i>
@@ -4753,7 +4753,7 @@ function VoiceLogConfirmed({ go }: { go: (page: Page) => void }) {
               </p>
               <aside>
                 <Flow8Asset group="confirmed" file="fb8be.svg" />
-                Self-reported log counts toward all passport rules.
+                Self-reported logs count toward My Skills.
               </aside>
             </section>
             <aside className="undo-voice-log">
@@ -4764,7 +4764,7 @@ function VoiceLogConfirmed({ go }: { go: (page: Page) => void }) {
                 </b>
                 <span>Available now</span>
               </header>
-              <p>Added to your passport just now. You can undo this action.</p>
+              <p>Added to My Skills just now. You can undo this action.</p>
               <button onClick={() => setSaved(false)}>
                 <Flow8Asset group="confirmed" file="1cc3e.svg" />
                 Undo Log
@@ -4774,7 +4774,7 @@ function VoiceLogConfirmed({ go }: { go: (page: Page) => void }) {
         ) : (
           <section className="voice-log-removed" role="status">
             <h1>Voice log removed</h1>
-            <p>Your passport and stamp total were restored.</p>
+            <p>Your skills and stamp total were restored.</p>
             <button onClick={() => go("voice-log")}>
               Create a New Voice Log
             </button>
@@ -4787,11 +4787,11 @@ function VoiceLogConfirmed({ go }: { go: (page: Page) => void }) {
           </button>
           <button onClick={() => go("passport")}>
             <Flow8Asset group="confirmed" file="b4e85.svg" />
-            View in Skill Passport
+            View in My Skills
           </button>
         </Flow8Buttons>
       </main>
-      <nav className="flow8-bottom-nav" aria-label="Passport navigation">
+      <nav className="flow8-bottom-nav" aria-label="My Skills navigation">
         {[
           ["6b6e7.svg", "Skills", "passport"],
           ["4a77d.svg", "Activity", "home"],
