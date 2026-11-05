@@ -2,7 +2,9 @@
 // every call returns null and the app shows its built-in sample flows instead.
 import type {
   LogParseResult,
+  PointAskIdentifyResponse,
   PointAskResponse,
+  PointAskSteps,
   SupportLevel,
 } from "@skill-passport/shared"
 
@@ -66,6 +68,36 @@ export async function askAboutPhoto(
     imageBase64,
     goal,
     knownSkills,
+  })
+}
+
+/** Fast part: what the AI sees, for "Does this look right?". */
+export async function identifyPhoto(
+  imageBase64: string,
+  goal: string,
+  knownSkills: KnownSkill[],
+): Promise<PointAskIdentifyResponse | null> {
+  if (!apiAvailable) return null
+  return post<PointAskIdentifyResponse>("/point-ask/identify", {
+    imageBase64,
+    goal,
+    knownSkills,
+  })
+}
+
+/** Slower part: the steps. Sent at the same time as identifyPhoto. */
+export async function stepsForPhoto(
+  imageBase64: string,
+  goal: string,
+  knownSkills: KnownSkill[],
+  confirmedItem?: string,
+): Promise<PointAskSteps | null> {
+  if (!apiAvailable) return null
+  return post<PointAskSteps>("/point-ask/steps", {
+    imageBase64,
+    goal,
+    knownSkills,
+    confirmedItem,
   })
 }
 

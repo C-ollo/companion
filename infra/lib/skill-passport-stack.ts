@@ -70,6 +70,8 @@ export class SkillPassportStack extends Stack {
     const aiFunctions = {
       logParse: fn('LogParse', 'log-parse.ts', 'handler'),
       pointAsk: fn('PointAsk', 'point-ask.ts', 'handler', { memorySize: 1024 }),
+      pointAskIdentify: fn('PointAskIdentify', 'point-ask.ts', 'identify', { memorySize: 1024 }),
+      pointAskSteps: fn('PointAskSteps', 'point-ask.ts', 'steps', { memorySize: 1024 }),
       checkStep: fn('CheckStep', 'check-step.ts', 'handler', { memorySize: 1024 }),
       summary: fn('Summary', 'summary.ts', 'handler'),
     };
@@ -108,6 +110,8 @@ export class SkillPassportStack extends Stack {
 
     route('/log/parse', HttpMethod.POST, aiFunctions.logParse);
     route('/point-ask', HttpMethod.POST, aiFunctions.pointAsk);
+    route('/point-ask/identify', HttpMethod.POST, aiFunctions.pointAskIdentify);
+    route('/point-ask/steps', HttpMethod.POST, aiFunctions.pointAskSteps);
     route('/check-step', HttpMethod.POST, aiFunctions.checkStep);
     route('/summary', HttpMethod.POST, aiFunctions.summary);
     route('/share', HttpMethod.POST, shareCreate);

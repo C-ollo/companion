@@ -1,7 +1,7 @@
 import type { PointAskResult, Step } from '@skill-passport/shared';
 import { describe, expect, it } from 'vitest';
 
-import { guardLogParse, guardPointAsk } from './guards';
+import { guardIdentify, guardLogParse, guardPointAsk, guardSteps } from './guards';
 
 const step: Step = {
   step_title: 'Choosing the cycle',
@@ -9,9 +9,6 @@ const step: Step = {
   where: 'Right side, next to the small screen.',
   box: { x: 0.6, y: 0.2, w: 0.2, h: 0.2 },
   done_when: 'The word Normal lights up.',
-  compared: 'different',
-  compared_note: 'Your old washer had the dial on the left.',
-  more: null,
   hint: null,
   caution: null,
 };
@@ -82,5 +79,27 @@ describe('guardLogParse', () => {
     expect(out.skill_id).toBe('none');
     expect(out.next_skill_id).toBe('dryer');
     expect(out.confidence).toBe(1);
+  });
+});
+
+describe('two-part Point & Ask', () => {
+  const { steps: _steps, ...identified } = washer;
+
+  it('identify passes a confident answer through', () => {
+    expect(guardIdentify(identified).unsure_reason).toBeNull();
+  });
+
+  it('identify blocks stoves and flags them', () => {
+    const out = guardIdentify({ ...identified, appliance: 'gas_stove' });
+    expect(out.safety_blocked).toBe(true);
+    expect(out.unsure_reason).toMatch(/keep you safe/);
+  });
+
+  it('identify is unsure below the confidence threshold', () => {
+    expect(guardIdentify({ ...identified, confidence: 0.4 }).unsure_reason).toBeTruthy();
+  });
+
+  it('steps are never returned for blocked items', () => {
+    expect(guardSteps({ appliance: 'oven', item_name: 'Oven', steps: [step] }).steps).toEqual([]);
   });
 });

@@ -30,8 +30,8 @@ Writing the steps:
 - where: exactly where it is, using what is visible: position, shape, color, label text, nearby landmarks. Example: "Right side, next to the small screen."
 - box: where the control is in the photo, as fractions of the image width and height from the top-left corner (x, y, w, h, each from 0 to 1). Use null unless you are confident about the location.
 - done_when: how the person will know the step worked, using something they can see or hear. Example: "The word Normal lights up."
-- compared: "same" if it works like what they know, "different" if it works differently or is in a different place, "new" if they have no related experience.
-- compared_note: one short sentence explaining the difference, or null.
-- more: one or two extra sentences of useful detail for "Tell me more", or null.
 - hint: one short extra clue for "Show hint", like "Look at the first row. Find the cold drink cup.", or null.
 - caution: one short safety note if one is truly needed, like "Do not open the door while water is inside.", otherwise null.
+
+When the request says it is the identify part: return only what you see (appliance, item_name, skill_id, confidence, check_statement, same_as_before, different, unsure_reason). Do not plan or write steps.
+When the request says it is the steps part: return only appliance, item_name and steps for this item.

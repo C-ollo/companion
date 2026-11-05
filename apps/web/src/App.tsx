@@ -1386,7 +1386,7 @@ function CafeIdentify({ go }: { go: (page: Page) => void }) {
   const session = usePointAskSession()
   const result = session.result
   const live = session.status !== "idle"
-  const unsure = session.status === "ready" && (result?.steps.length ?? 0) === 0
+  const unsure = session.status === "ready" && Boolean(result?.unsure_reason)
   useEffect(() => {
     if (result?.safety_blocked) go("safety-block")
   }, [result, go])
@@ -1531,13 +1531,25 @@ function CafeSteps({ go }: { go: (page: Page) => void }) {
   const session = usePointAskSession()
   const steps = session.result?.steps ?? []
   const live = steps.length > 0
+  // Identify is back but the steps are still coming (or failed).
+  const waiting = !live && session.status === "ready" && session.stepsStatus === "loading"
+  const failed = !live && session.status === "ready" && session.stepsStatus === "error"
+  const pending = waiting || failed
   const index = Math.min(session.stepIndex, Math.max(steps.length - 1, 0))
   const step = steps[index]
   const total = live ? steps.length : 3
   const current = live ? index + 1 : 1
   const dots = Array.from({ length: total }, (_, i) => (i < current ? "●" : "○")).join("")
-  const instruction = step?.action ?? "Tap the Iced Drinks button on the screen."
-  const where = step?.where ?? "Touch the cold drinks picture in the top row."
+  const instruction = waiting
+    ? "Getting your steps ready..."
+    : failed
+      ? "I couldn't get the steps right now."
+      : (step?.action ?? "Tap the Iced Drinks button on the screen.")
+  const where = waiting
+    ? "This takes a few seconds. Take your time."
+    : failed
+      ? "Try another photo, or ask someone you trust."
+      : (step?.where ?? "Touch the cold drinks picture in the top row.")
   const hintText =
     step?.hint ?? step?.done_when ?? "Look at the first row. Find the cold drink cup."
   const askSarah = () => {
@@ -1573,16 +1585,16 @@ function CafeSteps({ go }: { go: (page: Page) => void }) {
         </div>
         <section className="cafe-step-counter">
           <span>
-            <b>
-              Step {current} of {total}
-            </b>
-            <small>{step?.step_title ?? "Choosing your item"}</small>
+            <b>{pending ? "Step 1" : `Step ${current} of ${total}`}</b>
+            <small>
+              {pending ? "Getting ready" : (step?.step_title ?? "Choosing your item")}
+            </small>
           </span>
-          <em>{dots}</em>
+          {!pending && <em>{dots}</em>}
           <p>Take your time. There is no time limit.</p>
         </section>
         <section className="ar-viewfinder">
-          {live ? (
+          {live || pending ? (
             // Show the whole photo at its real shape so the highlight lines up.
             <div
               style={{
@@ -1639,7 +1651,7 @@ function CafeSteps({ go }: { go: (page: Page) => void }) {
             <small
               style={{ whiteSpace: "normal", width: "90%", textAlign: "center" }}
             >
-              {step?.box ? "Look inside the green box" : step?.where}
+              {pending ? "Your photo" : step?.box ? "Look inside the green box" : step?.where}
             </small>
           ) : (
             <small>Look inside the green box</small>
@@ -1689,7 +1701,9 @@ function CafeSteps({ go }: { go: (page: Page) => void }) {
         <button onClick={() => setPaused(!paused)}>
           {paused ? "Continue" : "Pause"}
         </button>
-        <button onClick={next}>Next →</button>
+        <button onClick={next} disabled={pending}>
+          Next →
+        </button>
         <button onClick={() => go("scan")}>Ask something else</button>
       </nav>
     </div>

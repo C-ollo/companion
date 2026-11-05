@@ -69,10 +69,6 @@ export const StepSchema = z.object({
     .nullable(),
   /** How the person will know the step worked. */
   done_when: z.string(),
-  compared: z.enum(["same", "different", "new"]),
-  compared_note: z.string().nullable(),
-  /** Extra detail, shown only on "Tell me more". */
-  more: z.string().nullable(),
   /** A short extra clue, shown on "Show hint". */
   hint: z.string().nullable(),
   caution: z.string().nullable(),
@@ -99,6 +95,27 @@ export const PointAskResultSchema = z.object({
 /** What the API returns: the model's answer plus the code-enforced safety flag. */
 export type PointAskResponse = z.infer<typeof PointAskResultSchema> & { safety_blocked?: boolean };
 export type PointAskResult = z.infer<typeof PointAskResultSchema>;
+
+/**
+ * Point & Ask in two parts, requested at the same time so the person sees
+ * "Does this look right?" quickly while the steps are still being written.
+ */
+export const PointAskStepsRequestSchema = PointAskRequestSchema.extend({
+  /** Set when re-asking for steps after the identify answer disagreed. */
+  confirmedItem: z.string().max(200).optional(),
+});
+export type PointAskStepsRequest = z.infer<typeof PointAskStepsRequestSchema>;
+
+export const PointAskIdentifySchema = PointAskResultSchema.omit({ steps: true });
+export type PointAskIdentify = z.infer<typeof PointAskIdentifySchema>;
+export type PointAskIdentifyResponse = PointAskIdentify & { safety_blocked?: boolean };
+
+export const PointAskStepsSchema = z.object({
+  appliance: z.string(),
+  item_name: z.string(),
+  steps: z.array(StepSchema),
+});
+export type PointAskSteps = z.infer<typeof PointAskStepsSchema>;
 
 // POST /check-step
 export const CheckStepRequestSchema = z.object({

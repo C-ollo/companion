@@ -1,5 +1,13 @@
 import { getSkill, isSafetyBlocked } from '@skill-passport/shared';
-import type { LogParseResult, PointAskResponse, PointAskResult, Step } from '@skill-passport/shared';
+import type {
+  LogParseResult,
+  PointAskIdentify,
+  PointAskIdentifyResponse,
+  PointAskResponse,
+  PointAskResult,
+  PointAskSteps,
+  Step,
+} from '@skill-passport/shared';
 
 /** Below this, Point & Ask shows no steps, whatever the model says. */
 export const POINT_ASK_MIN_CONFIDENCE = 0.7;
@@ -78,4 +86,34 @@ export function unsurePointAsk(reason = UNSURE_DEFAULT): PointAskResponse {
     unsure_reason: reason,
     safety_blocked: false,
   };
+}
+
+/** Identify part: same rules as above, minus steps. */
+export function guardIdentify(result: PointAskIdentify): PointAskIdentifyResponse {
+  const confidence = clamp01(result.confidence);
+  const skill_id = getSkill(result.skill_id) ? result.skill_id : 'none';
+  if (isSafetyBlocked(result.appliance)) {
+    return { ...result, skill_id, confidence, unsure_reason: BLOCKED_REASON, safety_blocked: true };
+  }
+  if (confidence < POINT_ASK_MIN_CONFIDENCE) {
+    return {
+      ...result,
+      skill_id,
+      confidence,
+      unsure_reason: result.unsure_reason ?? UNSURE_DEFAULT,
+      safety_blocked: false,
+    };
+  }
+  return { ...result, skill_id, confidence, unsure_reason: null, safety_blocked: false };
+}
+
+/** Steps part: never steps for blocked items; drop boxes that run off the image. */
+export function guardSteps(result: PointAskSteps): PointAskSteps {
+  if (isSafetyBlocked(result.appliance)) return { ...result, steps: [] };
+  return { ...result, steps: result.steps.map(clampBox) };
+}
+
+export function unsureIdentify(reason = UNSURE_DEFAULT): PointAskIdentifyResponse {
+  const { steps: _steps, ...rest } = unsurePointAsk(reason);
+  return rest;
 }
