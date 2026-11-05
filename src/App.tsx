@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react"
 type Page = "home" | "point" | "passport" | "people" | "guidance" | "logging" | "celebration" | "scan" | "identify" | "cafesteps" | "cafecomplete" | "summary" | "summary-editor" | "summary-sharing" | "summary-shares" | "supporters" | "add-supporter" | "cheer-detail" | "confirmer" | "credential" | "credential-export" | "data-backup" | "storage-control" | "safety-block" | "photo-confirmation" | "coach-standby" | "safe-alternatives" | "voice-log" | "skill-mapping" | "skill-clarification" | "voice-confirmed"
 const A = "/assets"
 const icons = {
-  logo: `${A}/f23a6.svg`,
+  logo: `${A}/e2f39.svg`,
   sound: `${A}/8b506.svg`,
   profile: `${A}/59e02.svg`,
   home: `${A}/f6436.svg`,
@@ -55,9 +55,9 @@ const pageCopy: Record<Page, string> = {
   confirmer:
     "In-person confirmation. Hand the phone to a trusted friend or family member. They tap to verify you did this together.",
   credential:
-    "Official Skill Passport. A verifiable summary of independent living routines earned by Maya Lin.",
+    "Official Skill Passport. A record of everyday skills Maya has learned.",
   "credential-export":
-    "Print or save as PDF. Choose how to save or share your official credential.",
+    "Print or save a copy. Choose how to keep or share your official skill record.",
   "data-backup":
     "Backup your Passport. Your data stays on your phone. Create an offline backup file.",
   "storage-control":
@@ -249,7 +249,7 @@ function Home({ go }: { go: (page: Page) => void }) {
             instant guidance.
           </p>
           <button
-            className="outline-button home-point-action"
+            className="primary-button home-point-action"
             onClick={() => go("point")}
           >
             Open Point & Ask Camera
@@ -273,7 +273,7 @@ function Home({ go }: { go: (page: Page) => void }) {
             </div>
           </div>
           <button
-            className="primary-button home-passport-action"
+            className="outline-button home-passport-action"
             onClick={() => go("passport")}
           >
             Open Skill Passport
@@ -558,7 +558,7 @@ function Passport({ go }: { go: (page: Page) => void }) {
               </span>
               <MasteryRing />
               <span className="mastered">
-                <b>Mastered</b>
+                <b>Learned</b>
                 <small>{day}</small>
               </span>
             </article>
@@ -577,7 +577,7 @@ function Passport({ go }: { go: (page: Page) => void }) {
         <button onClick={() => go("credential")}>
           <span>Official document</span>
           <b>Official Skill Passport</b>
-          <small>View and export your verified credential.</small>
+          <small>View and save your official skill record.</small>
         </button>
         <button onClick={() => go("data-backup")}>
           <span>Local-first</span>
@@ -767,8 +767,8 @@ const observations = [
   },
   {
     title: "I needed a reminder",
-    level: "●●○ With a prompt",
-    copy: "I used visual cards or a quick prompt.",
+    level: "●●○ With a little help",
+    copy: "I used visual cards or a quick reminder.",
   },
   {
     title: "I did it on my own",
@@ -782,7 +782,7 @@ function Logging({ go }: { go: (page: Page) => void }) {
   return (
     <div className="flow-screen">
       <FlowTopBar
-        title="Log Observation"
+        title="How It Went"
         back={() => go("guidance")}
         close={() => go("home")}
       />
@@ -879,7 +879,7 @@ function Logging({ go }: { go: (page: Page) => void }) {
               onClick={() => setConfirmed(!confirmed)}
             >
               <i />
-              {confirmed ? "ON" : "OFF"}
+              {confirmed ? "On" : "Off"}
             </button>
           </div>
           {confirmed && (
@@ -967,20 +967,20 @@ function Celebration({ go }: { go: (page: Page) => void }) {
               </span>
             </div>
             <div>
-              <h2>Level 2 of 3 · With a prompt</h2>
-              <span className="level-pill">●●○ Prompted autonomy</span>
+              <h2>Level 2 of 3 · With a little help</h2>
+              <span className="level-pill">●●○ A little help</span>
               <p>My Apartment upgraded to Level 2.</p>
-              <p>One independent routine earns full mastery.</p>
+              <p>One routine by yourself earns the next skill level.</p>
             </div>
           </section>
           <section className="metric-grid">
             <div>
-              <small>Verified Routine</small>
+              <small>Confirmed routine</small>
               <b>✓ Wash & Fold Cycle</b>
             </div>
             <div>
               <small>Support Used</small>
-              <b>1 Verbal Step Prompt</b>
+              <b>1 spoken reminder</b>
             </div>
             <div>
               <small>Time Spent</small>
@@ -1178,7 +1178,7 @@ function CafeIdentify({ go }: { go: (page: Page) => void }) {
             </button>
           </div>
           <p>Does this look right to you?</p>
-          <span className="level-pill">●●○ With a prompt</span>
+          <span className="level-pill">●●○ With a little help</span>
           <button className="flow-primary" onClick={() => go("cafesteps")}>
             ✓ Yes, that's right
           </button>
@@ -1329,7 +1329,7 @@ function CafeComplete({ go }: { go: (page: Page) => void }) {
           <article>
             <Icon src={`${A}/71212.svg`} />
             <span>
-              <b>●●○ Level 2: With a prompt</b>
+              <b>●●○ Level 2: With a little help</b>
               <p>Great consistency. You ordered independently!</p>
             </span>
           </article>
@@ -1372,7 +1372,7 @@ const summarySections = [
   {
     title: "Getting stronger",
     items: [
-      "You did 3 routines with just a prompt.",
+      "You did 3 routines with a little help.",
       "You used the Point & Ask camera smoothly.",
     ],
   },
@@ -1421,7 +1421,7 @@ function MonthlySummary({ go }: { go: (page: Page) => void }) {
         />
         <header className="summary-intro">
           <h1>My November Progress</h1>
-          <p>Created from your verified logs.</p>
+          <p>Created from your confirmed logs.</p>
           <p>You own and control this summary.</p>
         </header>
         <nav className="month-picker" aria-label="Choose summary month">
@@ -1479,7 +1479,7 @@ function MonthlySummary({ go }: { go: (page: Page) => void }) {
                     <i />
                     <i />
                     <i />
-                    With a prompt
+                    With a little help
                   </span>
                 </div>
               )}
@@ -1703,7 +1703,7 @@ function PrivateSharing({ go }: { go: (page: Page) => void }) {
           <p>You choose who gets a private link.</p>
         </header>
         <aside className="sharing-off" role="status">
-          <b>Sharing is Currently OFF</b>
+          <b>Sharing is currently off</b>
           <p>Nobody can see this page until you create a link below.</p>
         </aside>
         <section className="sharing-step">
@@ -1824,7 +1824,7 @@ function ActiveShares({ go }: { go: (page: Page) => void }) {
   return (
     <div className="flow-screen summary-flow">
       <FlowTopBar
-        title="Active Shares Revocation"
+        title="Manage Shared Links"
         back={() => go("summary-sharing")}
         close={() => go("home")}
       />
@@ -1842,7 +1842,7 @@ function ActiveShares({ go }: { go: (page: Page) => void }) {
         {revoked && (
           <aside className="revocation-toast" role="status">
             <b>Stopped sharing with {revoked}. Link no longer works.</b>
-            <p>Access was revoked instantly.</p>
+            <p>Access stopped right away.</p>
             <button onClick={undoRevocation}>Undo (Available for 10s)</button>
           </aside>
         )}
@@ -2159,7 +2159,7 @@ function SupportersHub({ go }: { go: (page: Page) => void }) {
               They can tap in person and confirm a routine you did together.
             </p>
           </span>
-          <button onClick={() => go("confirmer")}>Open Confirmer Tap</button>
+          <button onClick={() => go("confirmer")}>Confirm Together</button>
         </section>
         <aside className="flow5-privacy">
           <span className="flow5-round-icon">
@@ -2521,7 +2521,7 @@ function ConfirmerTap({ go }: { go: (page: Page) => void }) {
               <i />
               <i />
               <i />
-              With a prompt
+              With a little help
             </span>
           </div>
         </section>
@@ -2724,7 +2724,7 @@ function makeCredentialPdf(
     "Companion - Official Skill Passport",
     "Maya Lin - Member ID CP-2024-884",
     "Issued by Companion - November 2024",
-    "14 verified stamps - 4 life domains - 100% mastery",
+    "14 skill stamps - 4 life areas - all current skills learned",
     ...(includeStamps
       ? [
           "Household: Washing Machine Laundry - Level 3",
@@ -2869,22 +2869,24 @@ function CredentialPreview({ go }: { go: (page: Page) => void }) {
   const shareCredential = async () => {
     const shareData = {
       title: "Maya Lin’s Official Skill Passport",
-      text: "View Maya Lin’s verified Companion credential.",
+      text: "View Maya Lin’s Companion skill record.",
       url: window.location.href,
     }
     if (navigator.share) {
       try {
         await navigator.share(shareData)
-        setShareStatus("Credential sharing opened.")
+        setShareStatus("Skill record sharing opened.")
         return
       } catch {
-        setShareStatus("Sharing was canceled. Your credential stayed private.")
+        setShareStatus(
+          "Sharing was canceled. Your skill record stayed private.",
+        )
         return
       }
     }
     if (navigator.clipboard) {
       await navigator.clipboard.writeText(window.location.href)
-      setShareStatus("Credential link copied.")
+      setShareStatus("Skill record link copied.")
     } else {
       setShareStatus("Sharing is not available on this device.")
     }
@@ -2893,7 +2895,7 @@ function CredentialPreview({ go }: { go: (page: Page) => void }) {
     <div className="flow-screen flow6-screen">
       <Flow6TopBar
         group="credential"
-        title="Official Credential"
+        title="Official Skill Record"
         back={() => go("passport")}
         close={() => go("home")}
       />
@@ -2906,7 +2908,7 @@ function CredentialPreview({ go }: { go: (page: Page) => void }) {
         />
         <header className="flow6-intro">
           <h1>Official Skill Passport</h1>
-          <p>A verifiable summary of independent living routines.</p>
+          <p>A record of everyday skills you have learned.</p>
           <p>Earned by Maya Lin.</p>
         </header>
         <article className="credential-certificate">
@@ -2915,12 +2917,12 @@ function CredentialPreview({ go }: { go: (page: Page) => void }) {
               <Flow6Asset group="credential" file="7a70b.svg" />
             </span>
             <span>
-              <small>Companion · Credential</small>
+              <small>Companion · Skill Record</small>
               <b>Independent Living Passport</b>
             </span>
             <strong>
               <Flow6Asset group="credential" file="463eb.svg" />
-              Verified
+              Confirmed
             </strong>
           </header>
           <section className="candidate-record">
@@ -2929,14 +2931,14 @@ function CredentialPreview({ go }: { go: (page: Page) => void }) {
               Maya Lin <span>Age 24</span>
             </h2>
             <p>
-              Member ID: <b>#CP-2024-884</b>
+              Member number: <b>#CP-2024-884</b>
             </p>
             <div className="credential-qr">
               <span>
                 <Flow6Asset group="credential" file="45fcc.svg" />
               </span>
-              <b>Scan to verify</b>
-              <small>Offline verification</small>
+              <b>Scan to check</b>
+              <small>Check without internet</small>
             </div>
           </section>
           <dl className="credential-meta">
@@ -2954,15 +2956,15 @@ function CredentialPreview({ go }: { go: (page: Page) => void }) {
           <div className="credential-metrics">
             <span>
               <b>14</b>
-              <small>Verified Stamps</small>
+              <small>Confirmed Stamps</small>
             </span>
             <span>
               <b>4</b>
               <small>Life Domains</small>
             </span>
             <span>
-              <b>100%</b>
-              <small>Mastery Rate</small>
+              <b>4</b>
+              <small>Skills Learned</small>
             </span>
           </div>
           <section className="credential-skills">
@@ -2993,22 +2995,22 @@ function CredentialPreview({ go }: { go: (page: Page) => void }) {
               <Flow6Asset group="credential" file="f0ef9.svg" />
             </span>
             <span>
-              <small>Attestation</small>
+              <small>Confirmed by</small>
               <b>Sarah Martinez</b>
               <p>Family Friend · My People</p>
             </span>
             <strong>
               <Flow6Asset group="credential" file="4caf8.svg" />
-              Passport verified
+              Passport confirmed
             </strong>
           </footer>
         </article>
         <aside className="flow6-info">
           <Flow6Asset group="credential" file="be6ad.svg" />
           <p>
-            <b>Data Sovereignty & Offline Portability</b>
-            Survives device changes and network loss. Printable on standard
-            paper or savable as a signed PDF.
+            <b>Your data stays yours</b>
+            It works without internet and can move to a new device. You can
+            print it or save a signed document.
           </p>
         </aside>
         {shareStatus && (
@@ -3022,11 +3024,11 @@ function CredentialPreview({ go }: { go: (page: Page) => void }) {
             onClick={() => go("credential-export")}
           >
             <Flow6Asset group="credential" file="660cb.svg" />
-            Print or Export PDF
+            Print or Save a Copy
           </button>
           <button onClick={shareCredential}>
             <Flow6Asset group="credential" file="85349.svg" />
-            Share Credential Link
+            Share Skill Record
           </button>
         </div>
       </main>
@@ -3036,7 +3038,7 @@ function CredentialPreview({ go }: { go: (page: Page) => void }) {
 const exportDestinations = [
   {
     id: "pdf",
-    title: "Save as PDF Document",
+    title: "Save as a Document",
     copy: "Saves to your phone’s Files. Works offline forever.",
     icon: "e2ac1.svg",
   },
@@ -3048,8 +3050,8 @@ const exportDestinations = [
   },
   {
     id: "email",
-    title: "Send via Email to Support Team",
-    copy: "Attach the PDF to an email for your support team.",
+    title: "Send by Email",
+    copy: "Attach the saved document to an email.",
     icon: "f12b4.svg",
   },
 ] as const
@@ -3069,29 +3071,29 @@ function CredentialExport({ go }: { go: (page: Page) => void }) {
     )
     if (destination === "email") {
       window.location.href =
-        "mailto:?subject=Maya%20Lin%20Official%20Skill%20Passport&body=The%20credential%20PDF%20was%20saved%20to%20your%20device.%20Attach%20it%20to%20this%20email."
-      setStatus("The PDF was saved. Attach it to your email.")
+        "mailto:?subject=Maya%20Lin%20Official%20Skill%20Passport&body=The%20skill%20record%20was%20saved%20to%20your%20device.%20Attach%20it%20to%20this%20email."
+      setStatus("The document was saved. Attach it to your email.")
     } else {
-      setStatus("Official credential PDF saved.")
+      setStatus("Official skill record saved.")
     }
   }
   return (
     <div className="flow-screen flow6-screen">
       <Flow6TopBar
         group="export"
-        title="Print & PDF Export"
+        title="Print or Save"
         back={() => go("credential")}
         close={() => go("home")}
       />
       <main className="flow6-main">
         <Flow6Landmark
           group="export"
-          label="Print or save as PDF"
+          label="Print or save a copy"
           copy={pageCopy["credential-export"]}
         />
         <header className="flow6-intro">
-          <h1>Print or Save as PDF</h1>
-          <p>Choose how to save your official credential.</p>
+          <h1>Print or Save a Copy</h1>
+          <p>Choose how to save your official skill record.</p>
         </header>
         <section className="document-preview">
           <div className="document-thumb" aria-hidden="true">
@@ -3105,8 +3107,8 @@ function CredentialExport({ go }: { go: (page: Page) => void }) {
             </span>
           </div>
           <span>
-            <b>Verified Completion Certificate</b>
-            <strong>Independent Living Credential</strong>
+            <b>Confirmed Skill Record</b>
+            <strong>Independent Living Skill Record</strong>
             <small>
               <Flow6Asset group="export" file="2a0e1.svg" />1 Page · Standard
               Letter (8.5 × 11 in)
@@ -3138,7 +3140,7 @@ function CredentialExport({ go }: { go: (page: Page) => void }) {
           <h2>2. What to Include</h2>
           <div className="export-inclusions">
             {[
-              ["Include 14 earned stamp badges", "Shows your mastery icons"],
+              ["Include 14 earned stamp badges", "Shows your learned skills"],
               [
                 "Include trusted person confirmations",
                 "Includes friend or family confirmation",
@@ -3188,7 +3190,7 @@ function CredentialExport({ go }: { go: (page: Page) => void }) {
         )}
         <div className="flow6-actions">
           <button className="flow6-primary" onClick={generate}>
-            Generate PDF Now
+            Save Document Now
             <Flow6Asset group="export" file="2ac9b.svg" />
           </button>
           <button onClick={() => go("credential")}>Cancel & Return</button>
@@ -3479,7 +3481,7 @@ function StorageControl({ go }: { go: (page: Page) => void }) {
             <div>
               <button onClick={exportCsv}>
                 <Flow6Asset group="storage" file="77e18.svg" />
-                Export CSV
+                Export Spreadsheet
               </button>
               <button onClick={() => setLogsVisible(!logsVisible)}>
                 <Flow6Asset group="storage" file="0e275.svg" />
@@ -3543,7 +3545,7 @@ function StorageControl({ go }: { go: (page: Page) => void }) {
                 <p>
                   {shareActive
                     ? "Mom’s November 2024 view."
-                    : "The shared link is revoked."}
+                    : "The shared link is stopped."}
                 </p>
               </span>
             </header>
@@ -3556,7 +3558,7 @@ function StorageControl({ go }: { go: (page: Page) => void }) {
                 }}
               >
                 <Flow6Asset group="storage" file="70698.svg" />
-                Revoke Link
+                Stop Sharing
               </button>
             </div>
           </article>
@@ -3567,7 +3569,7 @@ function StorageControl({ go }: { go: (page: Page) => void }) {
             <h2>Clear Local App Data</h2>
           </header>
           <p>Removes all local logs on this device.</p>
-          <p>Earned PDF credentials remain safe and valid.</p>
+          <p>Saved skill records remain safe and valid.</p>
           <button className="flow6-primary" onClick={downloadPassportBackup}>
             <Flow6Asset group="storage" file="94437.svg" />
             Export Backup Before Reset
@@ -3814,10 +3816,7 @@ function PhotoConfirmation({ go }: { go: (page: Page) => void }) {
               Privacy Protections
             </h2>
             {[
-              [
-                "No faces or personal items detected",
-                "Verified clean frame (R28.6)",
-              ],
+              ["No faces or personal items detected", "No personal items seen"],
               ["Photo is sent only to Sarah", "Encrypted direct share"],
               [
                 "Photo is erased immediately after help",
@@ -4044,7 +4043,7 @@ const safeOptions = [
   {
     title: "Electric Kettle",
     subtitle: "Warm Water Routine",
-    level: "●●○ With a prompt",
+    level: "●●○ With a little help",
     copy: "Auto-shutoff switch turns off automatically when boiled.",
     action: "Open Kettle Guide",
     icon: "9a512.svg",
@@ -4132,7 +4131,7 @@ function SafeAlternatives({ go }: { go: (page: Page) => void }) {
             <b className="skill-level">Sarah arriving in ~15 mins</b>
             <p>Practice boiling pasta with Sarah when she arrives.</p>
             <button onClick={() => go("confirmer")}>
-              Earns Confirmer Tap stamp
+              Earns a Confirm Together stamp
               <Flow7Asset group="alternatives" file="fe87c.svg" />
             </button>
           </article>
@@ -4442,7 +4441,7 @@ function SkillMapping({
             <span>Mobility · Community transit</span>
             <b>
               <i />
-              96% Verified Match
+              96% match
             </b>
           </header>
           <div className="matched-title">
@@ -4523,7 +4522,7 @@ function SkillMapping({
 }
 const supportLevels = [
   ["With help", 1],
-  ["With a prompt", 2],
+  ["With a little help", 2],
   ["On my own", 3],
 ] as const
 function SkillClarification({ go }: { go: (page: Page) => void }) {
@@ -4723,7 +4722,7 @@ function VoiceLogConfirmed({ go }: { go: (page: Page) => void }) {
                 <b>Saved entry details</b>
                 <span>
                   <Flow8Asset group="confirmed" file="4f6b0.svg" />
-                  Verified Log
+                  Confirmed log
                 </span>
               </header>
               <div className="saved-skill">
@@ -4746,7 +4745,7 @@ function VoiceLogConfirmed({ go }: { go: (page: Page) => void }) {
               </div>
               <p>
                 <Flow8Asset group="confirmed" file="ca64c.svg" />
-                Logged by Voice · Verified in Memory
+                Saved from your voice · Kept on this device
               </p>
               <p>
                 <Flow8Asset group="confirmed" file="63a43.svg" />
