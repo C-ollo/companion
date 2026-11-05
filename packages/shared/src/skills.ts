@@ -166,12 +166,24 @@ export function getSkill(id: string): Skill | undefined {
  * heaters, electrical work, and medication. The AI is told this too, but the API
  * also enforces it in code. Microwaves are allowed (warming food safely).
  */
-const BLOCKED_PATTERN = /stove|oven|cooktop|burner|range_top|heater|fireplace|electrical|medic|pill|drug/;
+const BLOCKED_PATTERNS = {
+  heat: /stove|oven|cooktop|burner|range_top|heater|fireplace/,
+  electrical: /electrical/,
+  medication: /medic|pill|drug/,
+} as const;
+
+export type SafetyCategory = keyof typeof BLOCKED_PATTERNS;
 
 export const BLOCKED_ITEM_EXAMPLES = ["stoves", "ovens", "burners", "heaters", "fireplaces", "electrical panels", "medication"];
 
-export function isSafetyBlocked(item: string): boolean {
+/** Which kind of blocked item this is (for the safety screen's wording), or null. */
+export function safetyCategory(item: string): SafetyCategory | null {
   const name = item.toLowerCase();
-  if (name.includes("microwave")) return false;
-  return BLOCKED_PATTERN.test(name);
+  if (name.includes("microwave")) return null;
+  const found = Object.entries(BLOCKED_PATTERNS).find(([, pattern]) => pattern.test(name));
+  return found ? (found[0] as SafetyCategory) : null;
+}
+
+export function isSafetyBlocked(item: string): boolean {
+  return safetyCategory(item) !== null;
 }

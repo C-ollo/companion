@@ -4,7 +4,8 @@ import {
   CATEGORY_LABELS,
   SUPPORT_LEVELS,
 } from "@skill-passport/shared/src/types"
-import { getSkill } from "@skill-passport/shared/src/skills"
+import { getSkill, safetyCategory } from "@skill-passport/shared/src/skills"
+import type { SafetyCategory } from "@skill-passport/shared/src/skills"
 
 import { apiAvailable } from "./api"
 import { speak } from "./read-aloud"
@@ -4117,10 +4118,40 @@ function Flow7TopBar({
 function Flow7Actions({ children }: { children: React.ReactNode }) {
   return <div className="flow7-actions">{children}</div>
 }
+// What the safety screen says, by the kind of item that was blocked.
+const SAFETY_COPY: Record<
+  SafetyCategory,
+  { intro: string; hazard: string; info: string }
+> = {
+  heat: {
+    intro: "We do not guide stoves, ovens or heaters, for your safety.",
+    hazard: "High heat & burn risk",
+    info: "Stoves, ovens and heaters need a support person present. This rule keeps you safe.",
+  },
+  electrical: {
+    intro: "We do not guide electrical work, for your safety.",
+    hazard: "Electric shock risk",
+    info: "Electrical panels and wiring need a support person present. This rule keeps you safe.",
+  },
+  medication: {
+    intro: "We do not guide medication, for your safety.",
+    hazard: "Taking the wrong dose can hurt you",
+    info: "Check medication with a support person, nurse or pharmacist. This rule keeps you safe.",
+  },
+}
+
 function SafetyBlock({ go }: { go: (page: Page) => void }) {
-  const copy = pageCopy["safety-block"]
   const session = usePointAskSession()
   const blocked = session.result?.safety_blocked ? session.result : null
+  const category =
+    (blocked &&
+      (safetyCategory(blocked.appliance) ??
+        safetyCategory(blocked.item_name))) ||
+    "heat"
+  const text = SAFETY_COPY[category]
+  const copy = blocked
+    ? `${blocked.item_name} detected. ${text.intro} A trusted friend or family member can help you in person.`
+    : pageCopy["safety-block"]
   return (
     <div className="flow-screen flow7-screen">
       <Flow7TopBar
@@ -4152,7 +4183,7 @@ function SafetyBlock({ go }: { go: (page: Page) => void }) {
               ? `${blocked.item_name} Detected`
               : "Stovetop Burner Detected"}
           </h1>
-          <p>We do not guide stoves or heaters for your safety.</p>
+          <p>{text.intro}</p>
         </header>
         <figure className="flow7-hero safety-photo">
           {blocked && session.photoUrl ? (
@@ -4176,16 +4207,13 @@ function SafetyBlock({ go }: { go: (page: Page) => void }) {
               <b>
                 Object: {blocked ? blocked.item_name : "Electric Coil Stovetop"}
               </b>
-              <small>Hazard: High heat & burn risk</small>
+              <small>Hazard: {text.hazard}</small>
             </span>
           </span>
         </figure>
         <aside className="flow7-info">
           <Flow7Asset group="block" file="6e52b.svg" />
-          <p>
-            Stoves, ovens, heaters, and medication need a support person
-            present. This rule keeps you safe.
-          </p>
+<p>{text.info}</p>
         </aside>
         <Flow7Actions>
           <button
