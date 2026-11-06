@@ -1348,11 +1348,6 @@ function CafeScan({ go }: { go: (page: Page) => void }) {
         </section>
         )}
       </main>
-      <nav className="cafe-bottom">
-        <button className="flow-primary" onClick={scan}>
-          {apiAvailable ? "Take Photo & Get Help →" : "Scan Kiosk Screen →"}
-        </button>
-      </nav>
     </div>
   )
 }
@@ -1661,20 +1656,6 @@ function CafeIdentify({ go }: { go: (page: Page) => void }) {
           </section>
         )}
       </main>
-      <nav className="cafe-bottom with-note">
-        <button
-          className="flow-primary"
-          onClick={asking ? startSteps : confirm}
-          disabled={!canStart || Boolean(goalError)}
-        >
-          {asking
-            ? goalText.trim()
-              ? "Get my steps →"
-              : "Just show me the basics →"
-            : "Start Step-by-Step Guidance →"}
-        </button>
-        <small>Take your time. Ask for help anytime.</small>
-      </nav>
     </div>
   )
 }
