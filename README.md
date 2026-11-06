@@ -271,8 +271,8 @@ Key files in the app (`apps/web/src`):
 Requires **Node 20+** and npm.
 
 ```bash
-git clone https://github.com/C-ollo/skill-passport.git
-cd skill-passport
+git clone https://github.com/C-ollo/companion.git
+cd companion
 npm install
 npm test                      # unit tests: guardrails and level rules (no AWS calls)
 ```

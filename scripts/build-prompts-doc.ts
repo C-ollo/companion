@@ -54,7 +54,7 @@ const doc = `# Companion: AI Prompts
 
 - **Team:** Spectrum & Waves
 - **Challenge:** ASU Spark Center North American AI Challenge 2026
-- **Repository:** https://github.com/C-ollo/skill-passport (prompt source files in \`/prompts\`)
+- **Repository:** https://github.com/C-ollo/companion (prompt source files in \`/prompts\`)
 
 This document lists every prompt Companion sends to the AI, exactly as the model receives it, with placeholders filled in. It is generated from the code by \`scripts/build-prompts-doc.ts\`.
 
