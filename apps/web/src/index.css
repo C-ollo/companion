@@ -4969,7 +4969,7 @@ textarea:focus-visible {
 /* Steps screen: one compact row of controls, and only as much room below as the bar needs. */
 .cafe-flow.steps-screen{padding-bottom:0}
 .cafe-flow.steps-screen .cafe-main{padding-bottom:84px}
-.cafe-step-actions.compact{grid-template-columns:48px 48px 1fr;align-items:center}
-.cafe-step-actions.compact button:nth-child(-n+2){width:48px;padding:0;border-radius:var(--radius-round);font-size:20px;display:grid;place-items:center}
+.cafe-step-actions.compact{grid-template-columns:1fr 2fr;align-items:center}
 .cafe-step-actions.compact button:last-child{grid-column:auto;border:0;color:#fff;background:var(--color-brand)}
 .cafe-step-actions.compact button:last-child:disabled{color:#fff}
+.cafe-step-actions.compact button:last-child:hover,.cafe-step-actions.compact button:last-child:active{background:var(--color-brand-hover)}

@@ -1660,7 +1660,6 @@ function CafeIdentify({ go }: { go: (page: Page) => void }) {
   )
 }
 function CafeSteps({ go }: { go: (page: Page) => void }) {
-  const [paused, setPaused] = useState(false)
   const [hint, setHint] = useState(false)
   const [photoRatio, setPhotoRatio] = useState(4 / 3)
   const session = usePointAskSession()
@@ -1826,35 +1825,9 @@ function CafeSteps({ go }: { go: (page: Page) => void }) {
           <button onClick={() => go("scan")}>Ask something else</button>
         </div>
       </main>
-      {paused && (
-        <div className="pause-notice" role="status">
-          <b>Guidance paused.</b>
-          <span>Continue when ready.</span>
-        </div>
-      )}
       <nav className="cafe-step-actions compact">
-        <button
-          disabled={!live || index === 0}
-          onClick={() => showStep(index - 1)}
-          aria-label="Back"
-        >
-          ←
-        </button>
-        <button
-          onClick={() => setPaused(!paused)}
-          aria-label={paused ? "Continue" : "Pause"}
-          aria-pressed={paused}
-        >
-          {paused ? (
-            <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
-              <path d="M4 2.5v11l9-5.5z" fill="currentColor" />
-            </svg>
-          ) : (
-            <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
-              <rect x="3" y="2.5" width="3.5" height="11" rx="1" fill="currentColor" />
-              <rect x="9.5" y="2.5" width="3.5" height="11" rx="1" fill="currentColor" />
-            </svg>
-          )}
+        <button disabled={!live || index === 0} onClick={() => showStep(index - 1)}>
+          ← Back
         </button>
         <button onClick={next} disabled={pending}>
           Next →
