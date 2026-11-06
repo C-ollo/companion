@@ -59,7 +59,7 @@ const icons = {
 const pageCopy: Record<Page, string> = {
   home: "Good morning, Maya. How can I help you today? Choose My Skills to practice your skills, or Point and Ask for visual help.",
   point:
-    "Point and Ask. Show me what you need help with. Point at any appliance, transit sign, menu, button, or label. Photos are never saved.",
+    "Point and Ask. Show me what you need help with. Point your camera at anything, especially anything new or confusing. Photos are never saved.",
   passport:
     "My Skills. You have two practice choices today: Washing Machine Laundry and Warm Food Safely. Choose the skill you want to practice.",
   people:
@@ -274,8 +274,8 @@ function Home({ go }: { go: (page: Page) => void }) {
           <p className="eyebrow feature-heading">Point & Ask</p>
           <h2 className="feature-tagline">Visual Help Anywhere</h2>
           <p>
-            Point your camera at appliances, signs, labels, or counters for
-            instant guidance.
+            Point your camera at anything new or confusing for step-by-step
+            help.
           </p>
           <button
             className="primary-button home-point-action"
@@ -314,7 +314,7 @@ function Home({ go }: { go: (page: Page) => void }) {
   )
 }
 const categories = [
-  ["washer", "Appliances & Machines", "Washers, microwaves, kettles, stoves"],
+  ["washer", "Appliances & Machines", "Washers, microwaves, kettles, coffee machines"],
   [
     "train",
     "Transit & Street Signs",
@@ -360,7 +360,7 @@ function PointAsk({ go }: { go: (page: Page) => void }) {
       <section className="screen-intro">
         <span className="slate-badge">✦ Visual Helper</span>
         <h1>Show me what you need help with.</h1>
-        <p>Point at any appliance, transit sign, menu, button, or label.</p>
+        <p>Point your camera at anything, especially anything new or confusing.</p>
       </section>
       <section className="camera-card">
         <div className="viewfinder">
@@ -412,7 +412,7 @@ function PointAsk({ go }: { go: (page: Page) => void }) {
         )}
       </section>
       <section className="examples">
-        <h2>Examples of what we explain:</h2>
+        <h2>Works with almost anything, like:</h2>
         <div className="category-list">
           {categories.map(([sticker, title, copy]) => (
             <article className="category-card" key={title}>
